@@ -1,4 +1,6 @@
-module.exports = {
+import { defineConfig } from "orval";
+
+export default defineConfig({
   murackTest: {
     input: "./temp/backend_api.json",
     output: {
@@ -10,11 +12,12 @@ module.exports = {
         mutator: {
           path: "src/custom_fetch.ts",
           name: "customFetch",
+          extension: ".ts",
         },
       },
     },
     hooks: {
-      afterAllFilesWrite: "prettier --write",
+      afterAllFilesWrite: "deno fmt src/gen",
     },
   },
   murackTestZod: {
@@ -26,7 +29,7 @@ module.exports = {
       httpClient: "fetch",
     },
     hooks: {
-      afterAllFilesWrite: "prettier --write",
+      afterAllFilesWrite: "deno fmt src/gen",
     },
   },
-};
+});

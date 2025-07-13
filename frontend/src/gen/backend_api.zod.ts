@@ -7,38 +7,38 @@
 import { z as zod } from "zod";
 
 export const getSongsResponseItem = zod.object({
-  album: zod.string().nullish(),
-  artist: zod.string(),
-  created_at: zod.string().datetime({}),
-  id: zod.number(),
-  title: zod.string(),
+  "album": zod.string().nullish(),
+  "artist": zod.string(),
+  "created_at": zod.string().datetime({}),
+  "id": zod.number(),
+  "title": zod.string(),
 });
 export const getSongsResponse = zod.array(getSongsResponseItem);
 
 export const createSongBody = zod.object({
-  album: zod.string().nullish(),
-  artist: zod.string(),
-  title: zod.string(),
+  "album": zod.string().nullish(),
+  "artist": zod.string(),
+  "title": zod.string(),
 });
 
 export const updateSongParams = zod.object({
-  id: zod.number().describe("Song ID"),
+  "id": zod.number().describe("Song ID"),
 });
 
 export const updateSongBody = zod.object({
-  album: zod.string().nullish(),
-  artist: zod.string().nullish(),
-  title: zod.string().nullish(),
+  "album": zod.string().nullish(),
+  "artist": zod.string().nullish(),
+  "title": zod.string().nullish(),
 });
 
 export const updateSongResponse = zod.object({
-  album: zod.string().nullish(),
-  artist: zod.string(),
-  created_at: zod.string().datetime({}),
-  id: zod.number(),
-  title: zod.string(),
+  "album": zod.string().nullish(),
+  "artist": zod.string(),
+  "created_at": zod.string().datetime({}),
+  "id": zod.number(),
+  "title": zod.string(),
 });
 
 export const deleteSongParams = zod.object({
-  id: zod.number().describe("Song ID"),
+  "id": zod.number().describe("Song ID"),
 });

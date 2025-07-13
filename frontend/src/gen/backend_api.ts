@@ -41,6 +41,10 @@ export interface UpdateSongRequest {
   title?: UpdateSongRequestTitle;
 }
 
+type AwaitedInput<T> = PromiseLike<T> | T;
+
+type Awaited<O> = O extends AwaitedInput<infer T> ? T : never;
+
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
 export type getSongsResponse200 = {
@@ -74,18 +78,20 @@ export type GetSongsQueryResult = NonNullable<
 >;
 export type GetSongsQueryError = unknown;
 
-export const useGetSongs = <TError = unknown>(options?: {
-  swr?: SWRConfiguration<Awaited<ReturnType<typeof getSongs>>, TError> & {
-    swrKey?: Key;
-    enabled?: boolean;
-  };
-  request?: SecondParameter<typeof customFetch>;
-}) => {
+export const useGetSongs = <TError = unknown>(
+  options?: {
+    swr?: SWRConfiguration<Awaited<ReturnType<typeof getSongs>>, TError> & {
+      swrKey?: Key;
+      enabled?: boolean;
+    };
+    request?: SecondParameter<typeof customFetch>;
+  },
+) => {
   const { swr: swrOptions, request: requestOptions } = options ?? {};
 
   const isEnabled = swrOptions?.enabled !== false;
   const swrKey = swrOptions?.swrKey ??
-    (() => (isEnabled ? getGetSongsKey() : null));
+    (() => isEnabled ? getGetSongsKey() : null);
   const swrFn = () => getSongs(requestOptions);
 
   const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
@@ -123,7 +129,9 @@ export const createSong = async (
     ...options,
     method: "POST",
     headers: { "Content-Type": "application/json", ...options?.headers },
-    body: JSON.stringify(createSongRequest),
+    body: JSON.stringify(
+      createSongRequest,
+    ),
   });
 };
 
@@ -144,18 +152,20 @@ export type CreateSongMutationResult = NonNullable<
 >;
 export type CreateSongMutationError = unknown;
 
-export const useCreateSong = <TError = unknown>(options?: {
-  swr?:
-    & SWRMutationConfiguration<
-      Awaited<ReturnType<typeof createSong>>,
-      TError,
-      Key,
-      CreateSongRequest,
-      Awaited<ReturnType<typeof createSong>>
-    >
-    & { swrKey?: string };
-  request?: SecondParameter<typeof customFetch>;
-}) => {
+export const useCreateSong = <TError = unknown>(
+  options?: {
+    swr?:
+      & SWRMutationConfiguration<
+        Awaited<ReturnType<typeof createSong>>,
+        TError,
+        Key,
+        CreateSongRequest,
+        Awaited<ReturnType<typeof createSong>>
+      >
+      & { swrKey?: string };
+    request?: SecondParameter<typeof customFetch>;
+  },
+) => {
   const { swr: swrOptions, request: requestOptions } = options ?? {};
 
   const swrKey = swrOptions?.swrKey ?? getCreateSongMutationKey();
@@ -200,7 +210,9 @@ export const updateSong = async (
     ...options,
     method: "PUT",
     headers: { "Content-Type": "application/json", ...options?.headers },
-    body: JSON.stringify(updateSongRequest),
+    body: JSON.stringify(
+      updateSongRequest,
+    ),
   });
 };
 

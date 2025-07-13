@@ -1,6 +1,10 @@
 {
   "tasks": {
     "dev": "deno run -A --node-modules-dir npm:vite",
+    "gen-api": {
+      "description": "backend API のコードを orval で自動生成",
+      "command": "mkdir -p temp && curl -fsS http://0.0.0.0:3000/api/docs/openapi.json > temp/backend_api.json && deno run -A --unstable-detect-cjs npm:orval --config orval.config.ts"
+    },
     "build": "deno run -A --node-modules-dir npm:vite build",
     "preview": "deno run -A --node-modules-dir npm:vite preview",
     "serve": "deno run --allow-net --allow-read jsr:@std/http@1/file-server dist/"
@@ -16,10 +20,17 @@
     "@types/react": "npm:@types/react@^19.1.8",
     "@types/react-dom": "npm:@types/react-dom@^19.1.6",
     "@vitejs/plugin-react": "npm:@vitejs/plugin-react@^4.6.0",
+    "orval": "npm:orval@^7.10.0",
     "react": "npm:react@^19.1.0",
     "react-dom": "npm:react-dom@^19.1.0",
     "swr": "npm:swr@^2.3.4",
     "vite": "npm:vite@^7.0.0",
     "zod": "npm:zod@^3.25.74"
+  },
+  "lint": {
+    "exclude": [
+      // await が無い関数に async が付く対策
+      "src/gen/backend_api.ts"
+    ]
   }
 }
