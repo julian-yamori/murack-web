@@ -1,3 +1,5 @@
+/// <reference types="npm:vite/client" />
+
 const API_BASE_URL = import.meta.env.PROD
   ? "https://murack-api.railway.app"
   : "http://localhost:3000";

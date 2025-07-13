@@ -10,7 +10,7 @@ import type { Arguments, Key, SWRConfiguration } from "swr";
 import useSWRMutation from "swr/mutation";
 import type { SWRMutationConfiguration } from "swr/mutation";
 
-import { customFetch } from "../custom_fetch";
+import { customFetch } from "../custom_fetch.ts";
 export type CreateSongRequestAlbum = string | null;
 
 export interface CreateSongRequest {
@@ -84,8 +84,8 @@ export const useGetSongs = <TError = unknown>(options?: {
   const { swr: swrOptions, request: requestOptions } = options ?? {};
 
   const isEnabled = swrOptions?.enabled !== false;
-  const swrKey =
-    swrOptions?.swrKey ?? (() => (isEnabled ? getGetSongsKey() : null));
+  const swrKey = swrOptions?.swrKey ??
+    (() => (isEnabled ? getGetSongsKey() : null));
   const swrFn = () => getSongs(requestOptions);
 
   const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
@@ -145,13 +145,15 @@ export type CreateSongMutationResult = NonNullable<
 export type CreateSongMutationError = unknown;
 
 export const useCreateSong = <TError = unknown>(options?: {
-  swr?: SWRMutationConfiguration<
-    Awaited<ReturnType<typeof createSong>>,
-    TError,
-    Key,
-    CreateSongRequest,
-    Awaited<ReturnType<typeof createSong>>
-  > & { swrKey?: string };
+  swr?:
+    & SWRMutationConfiguration<
+      Awaited<ReturnType<typeof createSong>>,
+      TError,
+      Key,
+      CreateSongRequest,
+      Awaited<ReturnType<typeof createSong>>
+    >
+    & { swrKey?: string };
   request?: SecondParameter<typeof customFetch>;
 }) => {
   const { swr: swrOptions, request: requestOptions } = options ?? {};
@@ -224,13 +226,15 @@ export type UpdateSongMutationError = void;
 export const useUpdateSong = <TError = void>(
   id: number,
   options?: {
-    swr?: SWRMutationConfiguration<
-      Awaited<ReturnType<typeof updateSong>>,
-      TError,
-      Key,
-      UpdateSongRequest,
-      Awaited<ReturnType<typeof updateSong>>
-    > & { swrKey?: string };
+    swr?:
+      & SWRMutationConfiguration<
+        Awaited<ReturnType<typeof updateSong>>,
+        TError,
+        Key,
+        UpdateSongRequest,
+        Awaited<ReturnType<typeof updateSong>>
+      >
+      & { swrKey?: string };
     request?: SecondParameter<typeof customFetch>;
   },
 ) => {
@@ -298,13 +302,15 @@ export type DeleteSongMutationError = void;
 export const useDeleteSong = <TError = void>(
   id: number,
   options?: {
-    swr?: SWRMutationConfiguration<
-      Awaited<ReturnType<typeof deleteSong>>,
-      TError,
-      Key,
-      Arguments,
-      Awaited<ReturnType<typeof deleteSong>>
-    > & { swrKey?: string };
+    swr?:
+      & SWRMutationConfiguration<
+        Awaited<ReturnType<typeof deleteSong>>,
+        TError,
+        Key,
+        Arguments,
+        Awaited<ReturnType<typeof deleteSong>>
+      >
+      & { swrKey?: string };
     request?: SecondParameter<typeof customFetch>;
   },
 ) => {

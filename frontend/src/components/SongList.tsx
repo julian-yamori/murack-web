@@ -1,5 +1,9 @@
 import React from "react";
-import { deleteSong, getDeleteSongMutationKey, Song } from "../gen/backend_api";
+import {
+  deleteSong,
+  getDeleteSongMutationKey,
+  Song,
+} from "../gen/backend_api.ts";
 import { mutate } from "swr";
 
 interface SongListProps {

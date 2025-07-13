@@ -1,8 +1,8 @@
 import { useMemo, useState } from "react";
-import { SongList } from "./components/SongList";
-import { SongForm } from "./components/SongForm";
-import { Song, useGetSongs } from "./gen/backend_api";
-import { getSongsResponse } from "./gen/backend_api.zod";
+import { SongList } from "./components/SongList.tsx";
+import { SongForm } from "./components/SongForm.tsx";
+import { Song, useGetSongs } from "./gen/backend_api.ts";
+import { getSongsResponse } from "./gen/backend_api.zod.ts";
 
 function App() {
   const { data: songsResponse, error, mutate: mutateSongs } = useGetSongs();

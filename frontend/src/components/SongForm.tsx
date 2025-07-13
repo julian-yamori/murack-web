@@ -5,7 +5,7 @@ import {
   getUpdateSongMutationKey,
   Song,
   updateSong,
-} from "../gen/backend_api";
+} from "../gen/backend_api.ts";
 import { mutate } from "swr";
 
 interface SongFormProps {
