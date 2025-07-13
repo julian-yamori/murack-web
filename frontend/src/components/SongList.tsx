@@ -26,7 +26,7 @@ export const SongList: React.FC<SongListProps> = ({
   }
 
   const handleDelete = (id: number) => {
-    if (window.confirm("この楽曲を削除しますか？")) {
+    if (globalThis.confirm("この楽曲を削除しますか？")) {
       void (async () => {
         await deleteSong(id);
         await mutate(getDeleteSongMutationKey(id));
@@ -79,12 +79,14 @@ export const SongList: React.FC<SongListProps> = ({
               </td>
               <td style={{ border: "1px solid #ddd", padding: "8px" }}>
                 <button
+                  type="button"
                   onClick={() => startEdit(song)}
                   style={{ marginRight: "8px" }}
                 >
                   編集
                 </button>
                 <button
+                  type="button"
                   onClick={() => handleDelete(song.id)}
                   style={{ color: "red" }}
                 >

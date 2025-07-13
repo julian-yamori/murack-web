@@ -57,6 +57,7 @@ function App() {
       <main>
         <div style={{ marginBottom: "16px" }}>
           <button
+            type="button"
             onClick={handleAddNew}
             style={{
               padding: "8px 16px",
