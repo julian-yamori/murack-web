@@ -1,3 +1,3 @@
-pub mod songs;
+pub mod tag_groups;
 
-pub use songs::*;
+pub use tag_groups::*;

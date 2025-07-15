@@ -17,13 +17,13 @@ use models::*;
 #[derive(OpenApi)]
 #[openapi(
     paths(
-        handlers::get_songs,
-        handlers::create_song,
-        handlers::update_song,
-        handlers::delete_song,
+        handlers::get_tag_groups,
+        handlers::create_tag_group,
+        handlers::update_tag_group,
+        handlers::delete_tag_group,
     ),
     components(
-        schemas(Song, CreateSongRequest, UpdateSongRequest)
+        schemas(TagGroup, CreateTagGroupRequest, UpdateTagGroupRequest)
     ),
     tags(
         (name = "songs", description = "Song management API")
@@ -54,8 +54,11 @@ async fn main() -> Result<(), MainError> {
 
     // Build our application with routes
     let app = Router::new()
-        .route("/api/songs", get(get_songs).post(create_song))
-        .route("/api/songs/{id}", put(update_song).delete(delete_song))
+        .route("/api/tag_group", get(get_tag_groups).post(create_tag_group))
+        .route(
+            "/api/tag_group/{id}",
+            put(update_tag_group).delete(delete_tag_group),
+        )
         .route("/api/docs/openapi.json", get(serve_openapi_spec))
         .layer(cors)
         .with_state(pool);
