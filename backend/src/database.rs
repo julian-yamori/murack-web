@@ -3,9 +3,6 @@ use sqlx::{PgPool, Row};
 pub async fn create_pool(database_url: &str) -> sqlx::Result<PgPool> {
     let pool = PgPool::connect(database_url).await?;
 
-    // Run migrations
-    sqlx::migrate!("./migrations").run(&pool).await?;
-
     Ok(pool)
 }
 
