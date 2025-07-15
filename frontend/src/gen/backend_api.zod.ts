@@ -6,39 +6,39 @@
  */
 import { z as zod } from "zod";
 
-export const getSongsResponseItem = zod.object({
-  "album": zod.string().nullish(),
-  "artist": zod.string(),
+export const getTagGroupsResponseItem = zod.object({
   "created_at": zod.string().datetime({}),
+  "description": zod.string(),
   "id": zod.number(),
-  "title": zod.string(),
+  "name": zod.string(),
+  "order_index": zod.number(),
 });
-export const getSongsResponse = zod.array(getSongsResponseItem);
+export const getTagGroupsResponse = zod.array(getTagGroupsResponseItem);
 
-export const createSongBody = zod.object({
-  "album": zod.string().nullish(),
-  "artist": zod.string(),
-  "title": zod.string(),
-});
-
-export const updateSongParams = zod.object({
-  "id": zod.number().describe("Song ID"),
+export const createTagGroupBody = zod.object({
+  "description": zod.string(),
+  "name": zod.string(),
+  "order_index": zod.number(),
 });
 
-export const updateSongBody = zod.object({
-  "album": zod.string().nullish(),
-  "artist": zod.string().nullish(),
-  "title": zod.string().nullish(),
+export const updateTagGroupParams = zod.object({
+  "id": zod.number().describe("Tag group ID"),
 });
 
-export const updateSongResponse = zod.object({
-  "album": zod.string().nullish(),
-  "artist": zod.string(),
+export const updateTagGroupBody = zod.object({
+  "description": zod.string().nullish(),
+  "name": zod.string().nullish(),
+  "order_index": zod.number().nullish(),
+});
+
+export const updateTagGroupResponse = zod.object({
   "created_at": zod.string().datetime({}),
+  "description": zod.string(),
   "id": zod.number(),
-  "title": zod.string(),
+  "name": zod.string(),
+  "order_index": zod.number(),
 });
 
-export const deleteSongParams = zod.object({
-  "id": zod.number().describe("Song ID"),
+export const deleteTagGroupParams = zod.object({
+  "id": zod.number().describe("Tag group ID"),
 });

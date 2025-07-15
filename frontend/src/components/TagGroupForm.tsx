@@ -1,63 +1,68 @@
 import React, { useEffect, useState } from "react";
 import {
-  createSong,
-  getCreateSongMutationKey,
-  getUpdateSongMutationKey,
-  Song,
-  updateSong,
+  createTagGroup,
+  getCreateTagGroupMutationKey,
+  getUpdateTagGroupMutationKey,
+  TagGroup,
+  updateTagGroup,
 } from "../gen/backend_api.ts";
 import { mutate } from "swr";
 
-interface SongFormProps {
-  editingSong: Song | null;
+interface TagGroupFormProps {
+  editingGroup: TagGroup | null;
   closeForm: () => void;
 }
 
-export const SongForm: React.FC<SongFormProps> = ({
-  editingSong,
+export const TagGroupForm: React.FC<TagGroupFormProps> = ({
+  editingGroup,
   closeForm,
 }) => {
-  const [title, setTitle] = useState("");
-  const [artist, setArtist] = useState("");
-  const [album, setAlbum] = useState("");
+  const [name, setName] = useState("");
+  const [orderIndex, setOrderIndex] = useState<number | null>(null);
+  const [description, setDescription] = useState("");
   const [sending, setSending] = useState(false);
 
   useEffect(() => {
     setSending(false);
-    if (editingSong) {
-      setTitle(editingSong.title);
-      setArtist(editingSong.artist);
-      setAlbum(editingSong.album || "");
+    if (editingGroup) {
+      setName(editingGroup.name);
+      setOrderIndex(editingGroup.order_index);
+      setDescription(editingGroup.description);
     } else {
-      setTitle("");
-      setArtist("");
-      setAlbum("");
+      setName("");
+      setOrderIndex(null);
+      setDescription("");
     }
-  }, [editingSong]);
+  }, [editingGroup]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!title.trim() || !artist.trim()) {
-      alert("タイトルとアーティストは必須です。");
+    if (!name.trim() || orderIndex === null) {
+      alert("グループ名と順番は必須です。");
       return;
     }
 
-    const songData = {
-      title: title.trim(),
-      artist: artist.trim(),
-      album: album.trim() || null,
+    if (Number.isNaN(orderIndex)) {
+      alert("並び順が数値ではありません");
+      return;
+    }
+
+    const groupData = {
+      name: name.trim(),
+      order_index: orderIndex,
+      description: description.trim(),
     };
 
     setSending(true);
 
     void (async () => {
-      if (editingSong) {
-        await updateSong(editingSong.id, songData);
-        await mutate(getUpdateSongMutationKey(editingSong.id));
+      if (editingGroup) {
+        await updateTagGroup(editingGroup.id, groupData);
+        await mutate(getUpdateTagGroupMutationKey(editingGroup.id));
       } else {
-        await createSong(songData);
-        await mutate(getCreateSongMutationKey());
+        await createTagGroup(groupData);
+        await mutate(getCreateTagGroupMutationKey());
       }
       closeForm();
     })();
@@ -72,20 +77,20 @@ export const SongForm: React.FC<SongFormProps> = ({
         borderRadius: "4px",
       }}
     >
-      <h3>{editingSong ? "楽曲編集" : "楽曲追加"}</h3>
+      <h3>{editingGroup ? "楽曲編集" : "楽曲追加"}</h3>
       <form onSubmit={handleSubmit}>
         <div style={{ marginBottom: "12px" }}>
           <label
-            htmlFor="title"
+            htmlFor="name"
             style={{ display: "block", marginBottom: "4px" }}
           >
-            タイトル *
+            グループ名 *
           </label>
           <input
-            id="title"
+            id="name"
             type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
+            value={name}
+            onChange={(e) => setName(e.target.value)}
             style={{
               width: "100%",
               padding: "8px",
@@ -99,16 +104,16 @@ export const SongForm: React.FC<SongFormProps> = ({
 
         <div style={{ marginBottom: "12px" }}>
           <label
-            htmlFor="artist"
+            htmlFor="order_index"
             style={{ display: "block", marginBottom: "4px" }}
           >
-            アーティスト *
+            並び順 *
           </label>
           <input
-            id="artist"
+            id="order_index"
             type="text"
-            value={artist}
-            onChange={(e) => setArtist(e.target.value)}
+            value={orderIndex ?? ""}
+            onChange={(e) => setOrderIndex(Number(e.target.value))}
             style={{
               width: "100%",
               padding: "8px",
@@ -122,16 +127,16 @@ export const SongForm: React.FC<SongFormProps> = ({
 
         <div style={{ marginBottom: "16px" }}>
           <label
-            htmlFor="album"
+            htmlFor="description"
             style={{ display: "block", marginBottom: "4px" }}
           >
-            アルバム
+            説明
           </label>
           <input
-            id="album"
+            id="description"
             type="text"
-            value={album}
-            onChange={(e) => setAlbum(e.target.value)}
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
             style={{
               width: "100%",
               padding: "8px",
@@ -156,7 +161,7 @@ export const SongForm: React.FC<SongFormProps> = ({
               cursor: sending ? "not-allowed" : "pointer",
             }}
           >
-            {sending ? "処理中..." : editingSong ? "更新" : "追加"}
+            {sending ? "処理中..." : editingGroup ? "更新" : "追加"}
           </button>
           <button
             type="button"

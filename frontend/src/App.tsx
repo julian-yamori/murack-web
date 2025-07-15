@@ -1,38 +1,39 @@
 import { useMemo, useState } from "react";
-import { SongList } from "./components/SongList.tsx";
-import { SongForm } from "./components/SongForm.tsx";
-import { Song, useGetSongs } from "./gen/backend_api.ts";
-import { getSongsResponse } from "./gen/backend_api.zod.ts";
+import { TagGroupList } from "./components/TagGroupList.tsx";
+import { TagGroupForm } from "./components/TagGroupForm.tsx";
+import { TagGroup, useGetTagGroups } from "./gen/backend_api.ts";
+import { getTagGroupsResponse } from "./gen/backend_api.zod.ts";
 
 function App() {
-  const { data: songsResponse, error, mutate: mutateSongs } = useGetSongs();
+  const { data: groupsResponse, error, mutate: mutateGroups } =
+    useGetTagGroups();
 
-  const songs = useMemo(() => {
+  const groups = useMemo(() => {
     // 型チェック
-    return getSongsResponse.optional().parse(songsResponse?.data);
-  }, [songsResponse]);
+    return getTagGroupsResponse.optional().parse(groupsResponse?.data);
+  }, [groupsResponse]);
 
-  const [editingSong, setEditingSong] = useState<Song | null>(null);
+  const [editingGroup, setEditingGroup] = useState<TagGroup | null>(null);
   const [showForm, setShowForm] = useState(false);
 
   const handleAddNew = () => {
-    setEditingSong(null);
+    setEditingGroup(null);
     setShowForm(true);
   };
 
-  const handleStartEdit = (song: Song) => {
-    setEditingSong(song);
+  const handleStartEdit = (group: TagGroup) => {
+    setEditingGroup(group);
     setShowForm(true);
   };
 
   const handleCloseForm = () => {
     setShowForm(false);
-    setEditingSong(null);
-    void mutateSongs();
+    setEditingGroup(null);
+    void mutateGroups();
   };
 
   const handleDeleted = () => {
-    void mutateSongs();
+    void mutateGroups();
   };
 
   if (error) {
@@ -73,11 +74,14 @@ function App() {
         </div>
 
         {showForm && (
-          <SongForm editingSong={editingSong} closeForm={handleCloseForm} />
+          <TagGroupForm
+            editingGroup={editingGroup}
+            closeForm={handleCloseForm}
+          />
         )}
 
-        <SongList
-          songs={songs}
+        <TagGroupList
+          groups={groups}
           startEdit={handleStartEdit}
           onDeleted={handleDeleted}
         />

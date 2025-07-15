@@ -1,35 +1,35 @@
 import React from "react";
 import {
-  deleteSong,
-  getDeleteSongMutationKey,
-  Song,
+  deleteTagGroup,
+  getDeleteTagGroupMutationKey,
+  TagGroup,
 } from "../gen/backend_api.ts";
 import { mutate } from "swr";
 
-interface SongListProps {
-  songs: Song[] | undefined;
-  startEdit: (song: Song) => void;
+interface TagGroupListProps {
+  groups: TagGroup[] | undefined;
+  startEdit: (group: TagGroup) => void;
   onDeleted: () => void;
 }
 
-export const SongList: React.FC<SongListProps> = ({
-  songs,
+export const TagGroupList: React.FC<TagGroupListProps> = ({
+  groups,
   startEdit,
   onDeleted,
 }) => {
-  if (!songs) {
+  if (!groups) {
     return <div>Loading...</div>;
   }
 
-  if (songs.length === 0) {
-    return <div>楽曲がありません。</div>;
+  if (groups.length === 0) {
+    return <div>タググループがありません。</div>;
   }
 
   const handleDelete = (id: number) => {
-    if (globalThis.confirm("この楽曲を削除しますか？")) {
+    if (globalThis.confirm("このグループを削除しますか？")) {
       void (async () => {
-        await deleteSong(id);
-        await mutate(getDeleteSongMutationKey(id));
+        await deleteTagGroup(id);
+        await mutate(getDeleteTagGroupMutationKey(id));
 
         // 親コンポーネントに通知
         onDeleted();
@@ -39,19 +39,19 @@ export const SongList: React.FC<SongListProps> = ({
 
   return (
     <div>
-      <h2>楽曲一覧</h2>
+      <h2>タググループ一覧</h2>
       <table style={{ width: "100%", borderCollapse: "collapse" }}>
         <thead>
           <tr>
             <th style={{ border: "1px solid #ddd", padding: "8px" }}>ID</th>
             <th style={{ border: "1px solid #ddd", padding: "8px" }}>
-              タイトル
+              グループ名
             </th>
             <th style={{ border: "1px solid #ddd", padding: "8px" }}>
-              アーティスト
+              並び順
             </th>
             <th style={{ border: "1px solid #ddd", padding: "8px" }}>
-              アルバム
+              説明
             </th>
             <th style={{ border: "1px solid #ddd", padding: "8px" }}>
               作成日時
@@ -60,34 +60,34 @@ export const SongList: React.FC<SongListProps> = ({
           </tr>
         </thead>
         <tbody>
-          {songs.map((song) => (
-            <tr key={song.id}>
+          {groups.map((group) => (
+            <tr key={group.id}>
               <td style={{ border: "1px solid #ddd", padding: "8px" }}>
-                {song.id}
+                {group.id}
               </td>
               <td style={{ border: "1px solid #ddd", padding: "8px" }}>
-                {song.title}
+                {group.name}
               </td>
               <td style={{ border: "1px solid #ddd", padding: "8px" }}>
-                {song.artist}
+                {group.order_index}
               </td>
               <td style={{ border: "1px solid #ddd", padding: "8px" }}>
-                {song.album || "-"}
+                {group.description || "-"}
               </td>
               <td style={{ border: "1px solid #ddd", padding: "8px" }}>
-                {new Date(song.created_at).toLocaleString("ja-JP")}
+                {new Date(group.created_at).toLocaleString("ja-JP")}
               </td>
               <td style={{ border: "1px solid #ddd", padding: "8px" }}>
                 <button
                   type="button"
-                  onClick={() => startEdit(song)}
+                  onClick={() => startEdit(group)}
                   style={{ marginRight: "8px" }}
                 >
                   編集
                 </button>
                 <button
                   type="button"
-                  onClick={() => handleDelete(song.id)}
+                  onClick={() => handleDelete(group.id)}
                   style={{ color: "red" }}
                 >
                   削除

@@ -51,7 +51,7 @@ impl axum::response::IntoResponse for ApiError {
 pub async fn get_tag_groups(State(pool): State<PgPool>) -> ApiResult<Json<Vec<TagGroup>>> {
     let tag_groups = sqlx::query_as!(
         TagGroup,
-        "SELECT id, name, order_index, description, created_at FROM tag_groups ORDER BY order_index DESC",
+        "SELECT id, name, order_index, description, created_at FROM tag_groups ORDER BY order_index ASC",
     )
     .fetch_all(&pool)
     .await?;
@@ -129,7 +129,7 @@ pub async fn update_tag_group(
 
 #[utoipa::path(
     delete,
-    path = "/api/tag_group/{id}",
+    path = "/api/tag_groups/{id}",
     params(
         ("id" = i32, Path, description = "Tag group ID")
     ),

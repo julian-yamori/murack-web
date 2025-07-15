@@ -11,34 +11,30 @@ import useSWRMutation from "swr/mutation";
 import type { SWRMutationConfiguration } from "swr/mutation";
 
 import { customFetch } from "../custom_fetch.ts";
-export type CreateSongRequestAlbum = string | null;
-
-export interface CreateSongRequest {
-  album?: CreateSongRequestAlbum;
-  artist: string;
-  title: string;
+export interface CreateTagGroupRequest {
+  description: string;
+  name: string;
+  order_index: number;
 }
 
-export type SongAlbum = string | null;
-
-export interface Song {
-  album?: SongAlbum;
-  artist: string;
+export interface TagGroup {
   created_at: string;
+  description: string;
   id: number;
-  title: string;
+  name: string;
+  order_index: number;
 }
 
-export type UpdateSongRequestAlbum = string | null;
+export type UpdateTagGroupRequestDescription = string | null;
 
-export type UpdateSongRequestArtist = string | null;
+export type UpdateTagGroupRequestName = string | null;
 
-export type UpdateSongRequestTitle = string | null;
+export type UpdateTagGroupRequestOrderIndex = number | null;
 
-export interface UpdateSongRequest {
-  album?: UpdateSongRequestAlbum;
-  artist?: UpdateSongRequestArtist;
-  title?: UpdateSongRequestTitle;
+export interface UpdateTagGroupRequest {
+  description?: UpdateTagGroupRequestDescription;
+  name?: UpdateTagGroupRequestName;
+  order_index?: UpdateTagGroupRequestOrderIndex;
 }
 
 type AwaitedInput<T> = PromiseLike<T> | T;
@@ -47,40 +43,40 @@ type Awaited<O> = O extends AwaitedInput<infer T> ? T : never;
 
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
-export type getSongsResponse200 = {
-  data: Song[];
+export type getTagGroupsResponse200 = {
+  data: TagGroup[];
   status: 200;
 };
 
-export type getSongsResponseComposite = getSongsResponse200;
+export type getTagGroupsResponseComposite = getTagGroupsResponse200;
 
-export type getSongsResponse = getSongsResponseComposite & {
+export type getTagGroupsResponse = getTagGroupsResponseComposite & {
   headers: Headers;
 };
 
-export const getGetSongsUrl = () => {
-  return `/api/songs`;
+export const getGetTagGroupsUrl = () => {
+  return `/api/tag_groups`;
 };
 
-export const getSongs = async (
+export const getTagGroups = async (
   options?: RequestInit,
-): Promise<getSongsResponse> => {
-  return customFetch<getSongsResponse>(getGetSongsUrl(), {
+): Promise<getTagGroupsResponse> => {
+  return customFetch<getTagGroupsResponse>(getGetTagGroupsUrl(), {
     ...options,
     method: "GET",
   });
 };
 
-export const getGetSongsKey = () => [`/api/songs`] as const;
+export const getGetTagGroupsKey = () => [`/api/tag_groups`] as const;
 
-export type GetSongsQueryResult = NonNullable<
-  Awaited<ReturnType<typeof getSongs>>
+export type GetTagGroupsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getTagGroups>>
 >;
-export type GetSongsQueryError = unknown;
+export type GetTagGroupsQueryError = unknown;
 
-export const useGetSongs = <TError = unknown>(
+export const useGetTagGroups = <TError = unknown>(
   options?: {
-    swr?: SWRConfiguration<Awaited<ReturnType<typeof getSongs>>, TError> & {
+    swr?: SWRConfiguration<Awaited<ReturnType<typeof getTagGroups>>, TError> & {
       swrKey?: Key;
       enabled?: boolean;
     };
@@ -91,8 +87,8 @@ export const useGetSongs = <TError = unknown>(
 
   const isEnabled = swrOptions?.enabled !== false;
   const swrKey = swrOptions?.swrKey ??
-    (() => isEnabled ? getGetSongsKey() : null);
-  const swrFn = () => getSongs(requestOptions);
+    (() => isEnabled ? getGetTagGroupsKey() : null);
+  const swrFn = () => getTagGroups(requestOptions);
 
   const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
     swrKey,
@@ -106,61 +102,61 @@ export const useGetSongs = <TError = unknown>(
   };
 };
 
-export type createSongResponse201 = {
-  data: Song;
+export type createTagGroupResponse201 = {
+  data: TagGroup;
   status: 201;
 };
 
-export type createSongResponseComposite = createSongResponse201;
+export type createTagGroupResponseComposite = createTagGroupResponse201;
 
-export type createSongResponse = createSongResponseComposite & {
+export type createTagGroupResponse = createTagGroupResponseComposite & {
   headers: Headers;
 };
 
-export const getCreateSongUrl = () => {
-  return `/api/songs`;
+export const getCreateTagGroupUrl = () => {
+  return `/api/tag_groups`;
 };
 
-export const createSong = async (
-  createSongRequest: CreateSongRequest,
+export const createTagGroup = async (
+  createTagGroupRequest: CreateTagGroupRequest,
   options?: RequestInit,
-): Promise<createSongResponse> => {
-  return customFetch<createSongResponse>(getCreateSongUrl(), {
+): Promise<createTagGroupResponse> => {
+  return customFetch<createTagGroupResponse>(getCreateTagGroupUrl(), {
     ...options,
     method: "POST",
     headers: { "Content-Type": "application/json", ...options?.headers },
     body: JSON.stringify(
-      createSongRequest,
+      createTagGroupRequest,
     ),
   });
 };
 
-export const getCreateSongMutationFetcher = (
+export const getCreateTagGroupMutationFetcher = (
   options?: SecondParameter<typeof customFetch>,
 ) => {
   return (
     _: Key,
-    { arg }: { arg: CreateSongRequest },
-  ): Promise<createSongResponse> => {
-    return createSong(arg, options);
+    { arg }: { arg: CreateTagGroupRequest },
+  ): Promise<createTagGroupResponse> => {
+    return createTagGroup(arg, options);
   };
 };
-export const getCreateSongMutationKey = () => [`/api/songs`] as const;
+export const getCreateTagGroupMutationKey = () => [`/api/tag_groups`] as const;
 
-export type CreateSongMutationResult = NonNullable<
-  Awaited<ReturnType<typeof createSong>>
+export type CreateTagGroupMutationResult = NonNullable<
+  Awaited<ReturnType<typeof createTagGroup>>
 >;
-export type CreateSongMutationError = unknown;
+export type CreateTagGroupMutationError = unknown;
 
-export const useCreateSong = <TError = unknown>(
+export const useCreateTagGroup = <TError = unknown>(
   options?: {
     swr?:
       & SWRMutationConfiguration<
-        Awaited<ReturnType<typeof createSong>>,
+        Awaited<ReturnType<typeof createTagGroup>>,
         TError,
         Key,
-        CreateSongRequest,
-        Awaited<ReturnType<typeof createSong>>
+        CreateTagGroupRequest,
+        Awaited<ReturnType<typeof createTagGroup>>
       >
       & { swrKey?: string };
     request?: SecondParameter<typeof customFetch>;
@@ -168,8 +164,8 @@ export const useCreateSong = <TError = unknown>(
 ) => {
   const { swr: swrOptions, request: requestOptions } = options ?? {};
 
-  const swrKey = swrOptions?.swrKey ?? getCreateSongMutationKey();
-  const swrFn = getCreateSongMutationFetcher(requestOptions);
+  const swrKey = swrOptions?.swrKey ?? getCreateTagGroupMutationKey();
+  const swrFn = getCreateTagGroupMutationFetcher(requestOptions);
 
   const query = useSWRMutation(swrKey, swrFn, swrOptions);
 
@@ -179,72 +175,72 @@ export const useCreateSong = <TError = unknown>(
   };
 };
 
-export type updateSongResponse200 = {
-  data: Song;
+export type updateTagGroupResponse200 = {
+  data: TagGroup;
   status: 200;
 };
 
-export type updateSongResponse404 = {
+export type updateTagGroupResponse404 = {
   data: void;
   status: 404;
 };
 
-export type updateSongResponseComposite =
-  | updateSongResponse200
-  | updateSongResponse404;
+export type updateTagGroupResponseComposite =
+  | updateTagGroupResponse200
+  | updateTagGroupResponse404;
 
-export type updateSongResponse = updateSongResponseComposite & {
+export type updateTagGroupResponse = updateTagGroupResponseComposite & {
   headers: Headers;
 };
 
-export const getUpdateSongUrl = (id: number) => {
-  return `/api/songs/${id}`;
+export const getUpdateTagGroupUrl = (id: number) => {
+  return `/api/tag_groups/${id}`;
 };
 
-export const updateSong = async (
+export const updateTagGroup = async (
   id: number,
-  updateSongRequest: UpdateSongRequest,
+  updateTagGroupRequest: UpdateTagGroupRequest,
   options?: RequestInit,
-): Promise<updateSongResponse> => {
-  return customFetch<updateSongResponse>(getUpdateSongUrl(id), {
+): Promise<updateTagGroupResponse> => {
+  return customFetch<updateTagGroupResponse>(getUpdateTagGroupUrl(id), {
     ...options,
     method: "PUT",
     headers: { "Content-Type": "application/json", ...options?.headers },
     body: JSON.stringify(
-      updateSongRequest,
+      updateTagGroupRequest,
     ),
   });
 };
 
-export const getUpdateSongMutationFetcher = (
+export const getUpdateTagGroupMutationFetcher = (
   id: number,
   options?: SecondParameter<typeof customFetch>,
 ) => {
   return (
     _: Key,
-    { arg }: { arg: UpdateSongRequest },
-  ): Promise<updateSongResponse> => {
-    return updateSong(id, arg, options);
+    { arg }: { arg: UpdateTagGroupRequest },
+  ): Promise<updateTagGroupResponse> => {
+    return updateTagGroup(id, arg, options);
   };
 };
-export const getUpdateSongMutationKey = (id: number) =>
-  [`/api/songs/${id}`] as const;
+export const getUpdateTagGroupMutationKey = (id: number) =>
+  [`/api/tag_groups/${id}`] as const;
 
-export type UpdateSongMutationResult = NonNullable<
-  Awaited<ReturnType<typeof updateSong>>
+export type UpdateTagGroupMutationResult = NonNullable<
+  Awaited<ReturnType<typeof updateTagGroup>>
 >;
-export type UpdateSongMutationError = void;
+export type UpdateTagGroupMutationError = void;
 
-export const useUpdateSong = <TError = void>(
+export const useUpdateTagGroup = <TError = void>(
   id: number,
   options?: {
     swr?:
       & SWRMutationConfiguration<
-        Awaited<ReturnType<typeof updateSong>>,
+        Awaited<ReturnType<typeof updateTagGroup>>,
         TError,
         Key,
-        UpdateSongRequest,
-        Awaited<ReturnType<typeof updateSong>>
+        UpdateTagGroupRequest,
+        Awaited<ReturnType<typeof updateTagGroup>>
       >
       & { swrKey?: string };
     request?: SecondParameter<typeof customFetch>;
@@ -252,8 +248,8 @@ export const useUpdateSong = <TError = void>(
 ) => {
   const { swr: swrOptions, request: requestOptions } = options ?? {};
 
-  const swrKey = swrOptions?.swrKey ?? getUpdateSongMutationKey(id);
-  const swrFn = getUpdateSongMutationFetcher(id, requestOptions);
+  const swrKey = swrOptions?.swrKey ?? getUpdateTagGroupMutationKey(id);
+  const swrFn = getUpdateTagGroupMutationFetcher(id, requestOptions);
 
   const query = useSWRMutation(swrKey, swrFn, swrOptions);
 
@@ -263,64 +259,64 @@ export const useUpdateSong = <TError = void>(
   };
 };
 
-export type deleteSongResponse204 = {
+export type deleteTagGroupResponse204 = {
   data: void;
   status: 204;
 };
 
-export type deleteSongResponse404 = {
+export type deleteTagGroupResponse404 = {
   data: void;
   status: 404;
 };
 
-export type deleteSongResponseComposite =
-  | deleteSongResponse204
-  | deleteSongResponse404;
+export type deleteTagGroupResponseComposite =
+  | deleteTagGroupResponse204
+  | deleteTagGroupResponse404;
 
-export type deleteSongResponse = deleteSongResponseComposite & {
+export type deleteTagGroupResponse = deleteTagGroupResponseComposite & {
   headers: Headers;
 };
 
-export const getDeleteSongUrl = (id: number) => {
-  return `/api/songs/${id}`;
+export const getDeleteTagGroupUrl = (id: number) => {
+  return `/api/tag_groups/${id}`;
 };
 
-export const deleteSong = async (
+export const deleteTagGroup = async (
   id: number,
   options?: RequestInit,
-): Promise<deleteSongResponse> => {
-  return customFetch<deleteSongResponse>(getDeleteSongUrl(id), {
+): Promise<deleteTagGroupResponse> => {
+  return customFetch<deleteTagGroupResponse>(getDeleteTagGroupUrl(id), {
     ...options,
     method: "DELETE",
   });
 };
 
-export const getDeleteSongMutationFetcher = (
+export const getDeleteTagGroupMutationFetcher = (
   id: number,
   options?: SecondParameter<typeof customFetch>,
 ) => {
-  return (_: Key, __: { arg: Arguments }): Promise<deleteSongResponse> => {
-    return deleteSong(id, options);
+  return (_: Key, __: { arg: Arguments }): Promise<deleteTagGroupResponse> => {
+    return deleteTagGroup(id, options);
   };
 };
-export const getDeleteSongMutationKey = (id: number) =>
-  [`/api/songs/${id}`] as const;
+export const getDeleteTagGroupMutationKey = (id: number) =>
+  [`/api/tag_groups/${id}`] as const;
 
-export type DeleteSongMutationResult = NonNullable<
-  Awaited<ReturnType<typeof deleteSong>>
+export type DeleteTagGroupMutationResult = NonNullable<
+  Awaited<ReturnType<typeof deleteTagGroup>>
 >;
-export type DeleteSongMutationError = void;
+export type DeleteTagGroupMutationError = void;
 
-export const useDeleteSong = <TError = void>(
+export const useDeleteTagGroup = <TError = void>(
   id: number,
   options?: {
     swr?:
       & SWRMutationConfiguration<
-        Awaited<ReturnType<typeof deleteSong>>,
+        Awaited<ReturnType<typeof deleteTagGroup>>,
         TError,
         Key,
         Arguments,
-        Awaited<ReturnType<typeof deleteSong>>
+        Awaited<ReturnType<typeof deleteTagGroup>>
       >
       & { swrKey?: string };
     request?: SecondParameter<typeof customFetch>;
@@ -328,8 +324,8 @@ export const useDeleteSong = <TError = void>(
 ) => {
   const { swr: swrOptions, request: requestOptions } = options ?? {};
 
-  const swrKey = swrOptions?.swrKey ?? getDeleteSongMutationKey(id);
-  const swrFn = getDeleteSongMutationFetcher(id, requestOptions);
+  const swrKey = swrOptions?.swrKey ?? getDeleteTagGroupMutationKey(id);
+  const swrFn = getDeleteTagGroupMutationFetcher(id, requestOptions);
 
   const query = useSWRMutation(swrKey, swrFn, swrOptions);
 

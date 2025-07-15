@@ -54,9 +54,12 @@ async fn main() -> Result<(), MainError> {
 
     // Build our application with routes
     let app = Router::new()
-        .route("/api/tag_group", get(get_tag_groups).post(create_tag_group))
         .route(
-            "/api/tag_group/{id}",
+            "/api/tag_groups",
+            get(get_tag_groups).post(create_tag_group),
+        )
+        .route(
+            "/api/tag_groups/{id}",
             put(update_tag_group).delete(delete_tag_group),
         )
         .route("/api/docs/openapi.json", get(serve_openapi_spec))
