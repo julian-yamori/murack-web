@@ -7,6 +7,14 @@ import {
   updateTagGroup,
 } from "../gen/backend_api.ts";
 import { mutate } from "swr";
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  TextField,
+  Typography,
+} from "@mui/material";
 
 interface TagGroupFormProps {
   editingGroup: TagGroup | null;
@@ -69,117 +77,66 @@ export const TagGroupForm: React.FC<TagGroupFormProps> = ({
   };
 
   return (
-    <div
-      style={{
-        border: "1px solid #ddd",
-        padding: "16px",
-        marginBottom: "16px",
-        borderRadius: "4px",
-      }}
-    >
-      <h3>{editingGroup ? "楽曲編集" : "楽曲追加"}</h3>
-      <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: "12px" }}>
-          <label
-            htmlFor="name"
-            style={{ display: "block", marginBottom: "4px" }}
-          >
-            グループ名 *
-          </label>
-          <input
-            id="name"
-            type="text"
+    <Card sx={{ mb: 2 }}>
+      <CardContent>
+        <Typography variant="h6" gutterBottom>
+          {editingGroup ? "楽曲編集" : "楽曲追加"}
+        </Typography>
+        <Box component="form" onSubmit={handleSubmit}>
+          <TextField
+            fullWidth
+            label="グループ名"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            style={{
-              width: "100%",
-              padding: "8px",
-              border: "1px solid #ddd",
-              borderRadius: "4px",
-            }}
             required
             disabled={sending}
+            margin="normal"
+            variant="outlined"
           />
-        </div>
 
-        <div style={{ marginBottom: "12px" }}>
-          <label
-            htmlFor="order_index"
-            style={{ display: "block", marginBottom: "4px" }}
-          >
-            並び順 *
-          </label>
-          <input
-            id="order_index"
-            type="text"
+          <TextField
+            fullWidth
+            label="並び順"
+            type="number"
             value={orderIndex ?? ""}
             onChange={(e) => setOrderIndex(Number(e.target.value))}
-            style={{
-              width: "100%",
-              padding: "8px",
-              border: "1px solid #ddd",
-              borderRadius: "4px",
-            }}
             required
             disabled={sending}
+            margin="normal"
+            variant="outlined"
           />
-        </div>
 
-        <div style={{ marginBottom: "16px" }}>
-          <label
-            htmlFor="description"
-            style={{ display: "block", marginBottom: "4px" }}
-          >
-            説明
-          </label>
-          <input
-            id="description"
-            type="text"
+          <TextField
+            fullWidth
+            label="説明"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            style={{
-              width: "100%",
-              padding: "8px",
-              border: "1px solid #ddd",
-              borderRadius: "4px",
-            }}
             disabled={sending}
+            margin="normal"
+            variant="outlined"
+            multiline
+            rows={3}
           />
-        </div>
 
-        <div>
-          <button
-            type="submit"
-            disabled={sending}
-            style={{
-              marginRight: "8px",
-              padding: "8px 16px",
-              backgroundColor: "#007bff",
-              color: "white",
-              border: "none",
-              borderRadius: "4px",
-              cursor: sending ? "not-allowed" : "pointer",
-            }}
-          >
-            {sending ? "処理中..." : editingGroup ? "更新" : "追加"}
-          </button>
-          <button
-            type="button"
-            onClick={closeForm}
-            disabled={sending}
-            style={{
-              padding: "8px 16px",
-              backgroundColor: "#6c757d",
-              color: "white",
-              border: "none",
-              borderRadius: "4px",
-              cursor: sending ? "not-allowed" : "pointer",
-            }}
-          >
-            キャンセル
-          </button>
-        </div>
-      </form>
-    </div>
+          <Box sx={{ mt: 2, display: "flex", gap: 1 }}>
+            <Button
+              type="submit"
+              variant="contained"
+              disabled={sending}
+            >
+              {sending ? "処理中..." : editingGroup ? "更新" : "追加"}
+            </Button>
+            <Button
+              type="button"
+              variant="outlined"
+              onClick={closeForm}
+              disabled={sending}
+            >
+              キャンセル
+            </Button>
+          </Box>
+        </Box>
+      </CardContent>
+    </Card>
   );
 };

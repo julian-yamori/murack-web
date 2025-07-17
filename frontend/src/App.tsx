@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import Button from "@mui/material/Button";
+import { Alert, Box, Button, Container, Typography } from "@mui/material";
 import { TagGroupList } from "./components/TagGroupList.tsx";
 import { TagGroupForm } from "./components/TagGroupForm.tsx";
 import { TagGroup, useGetTagGroups } from "./gen/backend_api.ts";
@@ -39,29 +39,30 @@ function App() {
 
   if (error) {
     console.error(error);
-    return <div style={{ color: "red" }}>Error</div>;
+    return (
+      <Container maxWidth="lg" sx={{ py: 4 }}>
+        <Alert severity="error">Error loading data</Alert>
+      </Container>
+    );
   }
 
   return (
-    <div
-      style={{
-        maxWidth: "1200px",
-        margin: "0 auto",
-        padding: "20px",
-        fontFamily: "Arial, sans-serif",
-      }}
-    >
-      <header style={{ marginBottom: "24px" }}>
-        <h1>Murack Web</h1>
-        <p>楽曲ライブラリ管理システム</p>
-      </header>
+    <Container maxWidth="lg" sx={{ py: 4 }}>
+      <Box component="header" sx={{ mb: 4 }}>
+        <Typography variant="h3" component="h1" gutterBottom>
+          Murack Web
+        </Typography>
+        <Typography variant="subtitle1" color="text.secondary">
+          楽曲ライブラリ管理システム
+        </Typography>
+      </Box>
 
-      <main>
-        <div style={{ marginBottom: "16px" }}>
+      <Box component="main">
+        <Box sx={{ mb: 2 }}>
           <Button variant="contained" onClick={handleAddNew}>
             新しい楽曲を追加
           </Button>
-        </div>
+        </Box>
 
         {showForm && (
           <TagGroupForm
@@ -75,8 +76,8 @@ function App() {
           startEdit={handleStartEdit}
           onDeleted={handleDeleted}
         />
-      </main>
-    </div>
+      </Box>
+    </Container>
   );
 }
 

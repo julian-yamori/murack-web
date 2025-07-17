@@ -5,6 +5,19 @@ import {
   TagGroup,
 } from "../gen/backend_api.ts";
 import { mutate } from "swr";
+import {
+  Box,
+  Button,
+  CircularProgress,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Typography,
+} from "@mui/material";
 
 interface TagGroupListProps {
   groups: TagGroup[] | undefined;
@@ -18,11 +31,19 @@ export const TagGroupList: React.FC<TagGroupListProps> = ({
   onDeleted,
 }) => {
   if (!groups) {
-    return <div>Loading...</div>;
+    return (
+      <Box sx={{ display: "flex", justifyContent: "center", p: 2 }}>
+        <CircularProgress />
+      </Box>
+    );
   }
 
   if (groups.length === 0) {
-    return <div>タググループがありません。</div>;
+    return (
+      <Typography variant="body1" sx={{ textAlign: "center", p: 2 }}>
+        タググループがありません。
+      </Typography>
+    );
   }
 
   const handleDelete = (id: number) => {
@@ -38,65 +59,61 @@ export const TagGroupList: React.FC<TagGroupListProps> = ({
   };
 
   return (
-    <div>
-      <h2>タググループ一覧</h2>
-      <table style={{ width: "100%", borderCollapse: "collapse" }}>
-        <thead>
-          <tr>
-            <th style={{ border: "1px solid #ddd", padding: "8px" }}>ID</th>
-            <th style={{ border: "1px solid #ddd", padding: "8px" }}>
-              グループ名
-            </th>
-            <th style={{ border: "1px solid #ddd", padding: "8px" }}>
-              並び順
-            </th>
-            <th style={{ border: "1px solid #ddd", padding: "8px" }}>
-              説明
-            </th>
-            <th style={{ border: "1px solid #ddd", padding: "8px" }}>
-              作成日時
-            </th>
-            <th style={{ border: "1px solid #ddd", padding: "8px" }}>操作</th>
-          </tr>
-        </thead>
-        <tbody>
-          {groups.map((group) => (
-            <tr key={group.id}>
-              <td style={{ border: "1px solid #ddd", padding: "8px" }}>
-                {group.id}
-              </td>
-              <td style={{ border: "1px solid #ddd", padding: "8px" }}>
-                {group.name}
-              </td>
-              <td style={{ border: "1px solid #ddd", padding: "8px" }}>
-                {group.order_index}
-              </td>
-              <td style={{ border: "1px solid #ddd", padding: "8px" }}>
-                {group.description || "-"}
-              </td>
-              <td style={{ border: "1px solid #ddd", padding: "8px" }}>
-                {new Date(group.created_at).toLocaleString("ja-JP")}
-              </td>
-              <td style={{ border: "1px solid #ddd", padding: "8px" }}>
-                <button
-                  type="button"
-                  onClick={() => startEdit(group)}
-                  style={{ marginRight: "8px" }}
-                >
-                  編集
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleDelete(group.id)}
-                  style={{ color: "red" }}
-                >
-                  削除
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+    <Box>
+      <Typography variant="h5" gutterBottom>
+        タググループ一覧
+      </Typography>
+      <TableContainer component={Paper}>
+        <Table sx={{ minWidth: 650 }} aria-label="tag groups table">
+          <TableHead>
+            <TableRow>
+              <TableCell>ID</TableCell>
+              <TableCell>グループ名</TableCell>
+              <TableCell>並び順</TableCell>
+              <TableCell>説明</TableCell>
+              <TableCell>作成日時</TableCell>
+              <TableCell>操作</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {groups.map((group) => (
+              <TableRow
+                key={group.id}
+                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+              >
+                <TableCell component="th" scope="row">
+                  {group.id}
+                </TableCell>
+                <TableCell>{group.name}</TableCell>
+                <TableCell>{group.order_index}</TableCell>
+                <TableCell>{group.description || "-"}</TableCell>
+                <TableCell>
+                  {new Date(group.created_at).toLocaleString("ja-JP")}
+                </TableCell>
+                <TableCell>
+                  <Box sx={{ display: "flex", gap: 1 }}>
+                    <Button
+                      variant="outlined"
+                      size="small"
+                      onClick={() => startEdit(group)}
+                    >
+                      編集
+                    </Button>
+                    <Button
+                      variant="outlined"
+                      size="small"
+                      color="error"
+                      onClick={() => handleDelete(group.id)}
+                    >
+                      削除
+                    </Button>
+                  </Box>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </Box>
   );
 };
