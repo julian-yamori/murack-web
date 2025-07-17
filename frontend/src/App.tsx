@@ -52,7 +52,7 @@ function App() {
       }}
     >
       <header style={{ marginBottom: "24px" }}>
-        <h1>Murack Web プロトタイプ</h1>
+        <h1>Murack Web</h1>
         <p>楽曲ライブラリ管理システム</p>
       </header>
 
@@ -76,18 +76,6 @@ function App() {
           onDeleted={handleDeleted}
         />
       </main>
-
-      <footer
-        style={{
-          marginTop: "40px",
-          padding: "16px 0",
-          borderTop: "1px solid #ddd",
-          textAlign: "center",
-          color: "#666",
-        }}
-      >
-        <p>Murack Web プロトタイプ - 技術検証用アプリケーション</p>
-      </footer>
     </div>
   );
 }
