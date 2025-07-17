@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import Button from "@mui/material/Button";
 import { TagGroupList } from "./components/TagGroupList.tsx";
 import { TagGroupForm } from "./components/TagGroupForm.tsx";
 import { TagGroup, useGetTagGroups } from "./gen/backend_api.ts";
@@ -57,20 +58,9 @@ function App() {
 
       <main>
         <div style={{ marginBottom: "16px" }}>
-          <button
-            type="button"
-            onClick={handleAddNew}
-            style={{
-              padding: "8px 16px",
-              backgroundColor: "#28a745",
-              color: "white",
-              border: "none",
-              borderRadius: "4px",
-              cursor: "pointer",
-            }}
-          >
+          <Button variant="contained" onClick={handleAddNew}>
             新しい楽曲を追加
-          </button>
+          </Button>
         </div>
 
         {showForm && (
