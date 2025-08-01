@@ -6,6 +6,7 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import MenuIcon from "@mui/icons-material/Menu";
 import { NavigationMenu } from "./NavigationMenu.tsx";
 
@@ -24,6 +25,16 @@ export const AppBar: React.FC = () => {
           onClick={() => setMenuOpened(true)}
         >
           <MenuIcon />
+        </IconButton>
+
+        <IconButton
+          size="large"
+          color="inherit"
+          aria-label="back"
+          sx={{ mr: 2 }}
+          onClick={() => {}}
+        >
+          <ArrowBackIcon />
         </IconButton>
 
         <Typography variant="h4">Murack Web</Typography>
