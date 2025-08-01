@@ -7,7 +7,7 @@ export const App: React.FC = () => {
   return (
     <NavigationStateProvider>
       <AppBar />
-      <Container maxWidth="lg" sx={{ py: 4 }}>
+      <Container maxWidth="lg" sx={{ py: 1 }}>
         <NavigationView />
       </Container>
     </NavigationStateProvider>

@@ -1,5 +1,6 @@
 import { Box, Button, Typography } from "@mui/material";
 import { usePushPage } from "../navigation/navigation_hooks.ts";
+import { NavBreadcrumbs } from "../navigation/NavBreadcrumbs.tsx";
 
 /** グループリストページを開くコマンド */
 export type PageCommandGroupList = Readonly<{
@@ -27,6 +28,8 @@ export const GroupListPage: React.FC<{ command: PageCommandGroupList }> = (
 
   return (
     <Box component="main">
+      <NavBreadcrumbs />
+
       <Typography>ナビゲーションテスト : {command.depth}</Typography>
 
       <Box sx={{ mb: 2 }}>
