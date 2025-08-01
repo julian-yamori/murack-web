@@ -19,13 +19,11 @@ import {
   Typography,
 } from "@mui/material";
 
-interface TagGroupListProps {
+export const TagGroupList: React.FC<{
   groups: TagGroup[] | undefined;
   startEdit: (group: TagGroup) => void;
   onDeleted: () => void;
-}
-
-export const TagGroupList: React.FC<TagGroupListProps> = ({
+}> = ({
   groups,
   startEdit,
   onDeleted,

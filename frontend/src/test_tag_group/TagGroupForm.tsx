@@ -16,12 +16,10 @@ import {
   Typography,
 } from "@mui/material";
 
-interface TagGroupFormProps {
+export const TagGroupForm: React.FC<{
   editingGroup: TagGroup | null;
   closeForm: () => void;
-}
-
-export const TagGroupForm: React.FC<TagGroupFormProps> = ({
+}> = ({
   editingGroup,
   closeForm,
 }) => {
