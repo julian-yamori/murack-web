@@ -5,6 +5,11 @@ import { TagGroupForm } from "./TagGroupForm.tsx";
 import { TagGroup, useGetTagGroups } from "../gen/backend_api.ts";
 import { getTagGroupsResponse } from "../gen/backend_api.zod.ts";
 
+/** プロトタイプ用のタググループリストページを開くコマンド */
+export type PageCommandTestTagGroup = Readonly<{
+  type: "test-tag-group";
+}>;
+
 /**
  * タググループリストのページ (プロトタイプ用)
  */
