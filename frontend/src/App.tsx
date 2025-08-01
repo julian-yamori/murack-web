@@ -1,7 +1,7 @@
 import { Box, Container, Typography } from "@mui/material";
 import { TestTagGroupPage } from "./test_tag_group/TestTagGroupPage.tsx";
 
-function App() {
+export const App: React.FC = () => {
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
       <Box component="header" sx={{ mb: 4 }}>
@@ -16,6 +16,4 @@ function App() {
       <TestTagGroupPage />
     </Container>
   );
-}
-
-export default App;
+};

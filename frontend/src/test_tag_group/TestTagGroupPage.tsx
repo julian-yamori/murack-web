@@ -8,7 +8,7 @@ import { getTagGroupsResponse } from "../gen/backend_api.zod.ts";
 /**
  * タググループリストのページ (プロトタイプ用)
  */
-export function TestTagGroupPage() {
+export const TestTagGroupPage: React.FC = () => {
   const { data: groupsResponse, error, mutate: mutateGroups } =
     useGetTagGroups();
 
@@ -71,4 +71,4 @@ export function TestTagGroupPage() {
       />
     </Box>
   );
-}
+};
