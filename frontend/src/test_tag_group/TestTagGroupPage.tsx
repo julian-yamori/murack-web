@@ -17,11 +17,11 @@ export const TestTagGroupPage: React.FC = () => {
     return getTagGroupsResponse.optional().parse(groupsResponse?.data);
   }, [groupsResponse]);
 
-  const [editingGroup, setEditingGroup] = useState<TagGroup | null>(null);
+  const [editingGroup, setEditingGroup] = useState<TagGroup | undefined>();
   const [showForm, setShowForm] = useState(false);
 
   const handleAddNew = () => {
-    setEditingGroup(null);
+    setEditingGroup(undefined);
     setShowForm(true);
   };
 
@@ -32,7 +32,7 @@ export const TestTagGroupPage: React.FC = () => {
 
   const handleCloseForm = () => {
     setShowForm(false);
-    setEditingGroup(null);
+    setEditingGroup(undefined);
     void mutateGroups();
   };
 

@@ -17,14 +17,14 @@ import {
 } from "@mui/material";
 
 export const TagGroupForm: React.FC<{
-  editingGroup: TagGroup | null;
+  editingGroup: TagGroup | undefined;
   closeForm: () => void;
 }> = ({
   editingGroup,
   closeForm,
 }) => {
   const [name, setName] = useState("");
-  const [orderIndex, setOrderIndex] = useState<number | null>(null);
+  const [orderIndex, setOrderIndex] = useState<number | undefined>();
   const [description, setDescription] = useState("");
   const [sending, setSending] = useState(false);
 
@@ -36,7 +36,7 @@ export const TagGroupForm: React.FC<{
       setDescription(editingGroup.description);
     } else {
       setName("");
-      setOrderIndex(null);
+      setOrderIndex(undefined);
       setDescription("");
     }
   }, [editingGroup]);
@@ -44,7 +44,7 @@ export const TagGroupForm: React.FC<{
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!name.trim() || orderIndex === null) {
+    if (!name.trim() || orderIndex === undefined) {
       alert("グループ名と順番は必須です。");
       return;
     }
