@@ -50,7 +50,8 @@ DATABASE_URL=postgresql://user:password@localhost/murack_web
 # プロジェクト構造メモ
 
 - バックエンドはハンドラー、モデル、データベースモジュールを分離したモジュラー構造
-- フロントエンドコンポーネントは `src/components/`、生成された API コードは `src/gen/`
+  - 機能別のモジュール構造に変更するかも
+- バックエンド用に生成された API コードは `src/gen/`
 - Material UI テーマは `src/theme.ts` で設定
 - API 呼び出し用のカスタム fetch 設定は `src/custom_fetch.ts`
 
