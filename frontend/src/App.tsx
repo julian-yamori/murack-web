@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { Alert, Box, Button, Container, Typography } from "@mui/material";
-import { TagGroupList } from "./components/TagGroupList.tsx";
-import { TagGroupForm } from "./components/TagGroupForm.tsx";
+import { TagGroupList } from "./test_tag_group/TagGroupList.tsx";
+import { TagGroupForm } from "./test_tag_group/TagGroupForm.tsx";
 import { TagGroup, useGetTagGroups } from "./gen/backend_api.ts";
 import { getTagGroupsResponse } from "./gen/backend_api.zod.ts";
 
