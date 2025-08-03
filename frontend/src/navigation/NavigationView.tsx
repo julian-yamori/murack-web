@@ -1,9 +1,6 @@
 import React from "react";
-import { GroupListPage } from "../group_list/GroupListPage.tsx";
-import { TestTagGroupPage } from "../test_tag_group/TestTagGroupPage.tsx";
 import { useNavigationState } from "./navigation_state.tsx";
 
-/** ナビゲーションの状態に応じたページを表示するコンポーネント */
 export const NavigationView: React.FC = () => {
   const navigationState = useNavigationState();
 
@@ -14,11 +11,5 @@ export const NavigationView: React.FC = () => {
     return null;
   }
 
-  switch (currentPage.type) {
-    case "group-list":
-      return <GroupListPage command={currentPage} />;
-
-    case "test-tag-group":
-      return <TestTagGroupPage />;
-  }
+  return <currentPage.render />;
 };

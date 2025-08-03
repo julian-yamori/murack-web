@@ -1,4 +1,4 @@
-import {
+import React, {
   createContext,
   Dispatch,
   ReactNode,
@@ -6,20 +6,25 @@ import {
   useContext,
   useState,
 } from "react";
-import { PageCommandGroupList } from "../group_list/GroupListPage.tsx";
-import { PageCommandTestTagGroup } from "../test_tag_group/TestTagGroupPage.tsx";
+import { NavigationMenuKey } from "./NavigationMenu.tsx";
 
 /** アプリ全体のナビゲーションの状態を保持するオブジェクト */
 export type NavigationState = Readonly<{
-  pageStack: ReadonlyArray<PageCommand>;
+  pageStack: ReadonlyArray<PageStackItem>;
 }>;
 
 /**
- * ページ一つを開くための情報
- *
- * このオブジェクトが `NavigationState.pageStack` に積まれ、戻るボタンやパンくずリストの機能に使用される。
+ * ページバックやパンくずリスト用のスタック要素
  */
-export type PageCommand = PageCommandGroupList | PageCommandTestTagGroup;
+export type PageStackItem = Readonly<{
+  /** ページのコンポーネント */
+  render: React.FC;
+
+  navigationMenuKey: NavigationMenuKey | undefined;
+
+  /** パンくずリストでの表示名 */
+  breadCrumb: string | undefined;
+}>;
 
 function defaultNavigationState(): NavigationState {
   return {

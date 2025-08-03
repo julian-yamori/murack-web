@@ -1,9 +1,14 @@
 import { Divider, ListItemText, MenuItem, MenuList } from "@mui/material";
 import {
-  PageCommand,
+  PageStackItem,
   useNavigationState,
   useSetNavigationState,
 } from "./navigation_state.tsx";
+import { GroupListPage } from "../group_list/GroupListPage.tsx";
+import { TestTagGroupPage } from "../test_tag_group/TestTagGroupPage.tsx";
+
+/** ナビゲーションメニューで、どの項目が選択されているかを判別するためのキー */
+export type NavigationMenuKey = "group-list" | "test-tag-group";
 
 /// AppBar から呼び出す、最上位の各種ページに遷移するメニュー
 export const NavigationMenu: React.FC<{
@@ -16,10 +21,10 @@ export const NavigationMenu: React.FC<{
   const currentPage = navigationState.pageStack.at(-1);
 
   /** ページスタックの最上位を、メニューで選択されたページに置き換える */
-  const changeRootPage = (command: PageCommand) => {
+  const changeRootPage = (stackItem: PageStackItem) => {
     setNavigationState((old) => ({
       ...old,
-      pageStack: [command],
+      pageStack: [stackItem],
     }));
 
     onClose();
@@ -29,15 +34,25 @@ export const NavigationMenu: React.FC<{
     <MenuList>
       <PageItem
         text="アーティスト"
-        selected={currentPage?.type === "group-list"}
-        onClick={() => changeRootPage({ type: "group-list", depth: 1 })}
+        selected={currentPage?.navigationMenuKey === "group-list"}
+        onClick={() =>
+          changeRootPage({
+            render: () => <GroupListPage depth={1} />,
+            navigationMenuKey: "group-list",
+            breadCrumb: "アーティスト",
+          })}
       />
       <Divider />
 
       <PageItem
         text="タググループリスト（仮）"
-        selected={currentPage?.type === "test-tag-group"}
-        onClick={() => changeRootPage({ type: "test-tag-group" })}
+        selected={currentPage?.navigationMenuKey === "test-tag-group"}
+        onClick={() =>
+          changeRootPage({
+            render: () => <TestTagGroupPage />,
+            navigationMenuKey: "test-tag-group",
+            breadCrumb: "タググループ一覧",
+          })}
       />
     </MenuList>
   );

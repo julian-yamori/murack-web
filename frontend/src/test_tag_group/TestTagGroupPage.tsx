@@ -6,11 +6,6 @@ import { TagGroup, useGetTagGroups } from "../gen/backend_api.ts";
 import { getTagGroupsResponse } from "../gen/backend_api.zod.ts";
 import { NavBreadcrumbs } from "../navigation/NavBreadcrumbs.tsx";
 
-/** プロトタイプ用のタググループリストページを開くコマンド */
-export type PageCommandTestTagGroup = Readonly<{
-  type: "test-tag-group";
-}>;
-
 /**
  * タググループリストのページ (プロトタイプ用)
  */

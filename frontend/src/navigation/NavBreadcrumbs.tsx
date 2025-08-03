@@ -3,7 +3,6 @@ import Typography from "@mui/material/Typography";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Link from "@mui/material/Link";
 import {
-  PageCommand,
   useNavigationState,
   useSetNavigationState,
 } from "./navigation_state.tsx";
@@ -25,43 +24,59 @@ export const NavBreadcrumbs: React.FC = () => {
 
   return (
     <Breadcrumbs aria-label="breadcrumb">
-      {pageStack.map((pageCommand, stackIndex) =>
-        stackIndex !== lastIndex
-          ? (
-            // 末尾以外のリンクボタン
-            <Link
+      {pageStack.map((stackItem, stackIndex) => {
+        const text = stackItem.breadCrumb;
+        if (text !== undefined) {
+          return (
+            <BreadcrumbItem
               key={stackIndex}
-              underline="hover"
-              color="inherit"
-              component="button"
-              onClick={() => handleLinkClick(stackIndex)}
-              sx={{
-                background: "none",
-                border: "none",
-                cursor: "pointer",
-                font: "inherit",
-              }}
-            >
-              {pageCommandToText(pageCommand)}
-            </Link>
-          )
-          : (
-            // 末尾の強調表示
-            <Typography key={stackIndex} sx={{ color: "text.primary" }}>
-              {pageCommandToText(pageCommand)}
-            </Typography>
-          )
-      )}
+              text={text}
+              stackIndex={stackIndex}
+              last={stackIndex === lastIndex}
+              onLinkClick={handleLinkClick}
+            />
+          );
+        } else {
+          return undefined;
+        }
+      }).filter((elem) => elem !== undefined)}
     </Breadcrumbs>
   );
 };
 
-function pageCommandToText(command: PageCommand): string {
-  switch (command.type) {
-    case "group-list":
-      return command.depth.toString();
-
-    case "test-tag-group":
-      return "タググループ一覧";
+/** パンくずリストのページ毎の要素 */
+const BreadcrumbItem: React.FC<
+  {
+    text: string;
+    stackIndex: number;
+    last: boolean;
+    onLinkClick: (stackIndex: number) => unknown;
   }
-}
+> = ({ text, stackIndex, last, onLinkClick }) => {
+  if (!last) {
+    // 末尾以外のリンクボタン
+    return (
+      <Link
+        underline="hover"
+        color="inherit"
+        component="button"
+        onClick={() => onLinkClick(stackIndex)}
+        sx={{
+          background: "none",
+          border: "none",
+          cursor: "pointer",
+          font: "inherit",
+        }}
+      >
+        {text}
+      </Link>
+    );
+  } else {
+    return (
+      // 末尾の強調表示
+      <Typography sx={{ color: "text.primary" }}>
+        {text}
+      </Typography>
+    );
+  }
+};
