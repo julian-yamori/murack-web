@@ -1,26 +1,25 @@
+mod database;
+mod test_tag_group;
+
+use std::env;
+
 use axum::{
     Router,
     response::Json,
     routing::{get, put},
 };
-use std::env;
 use tower_http::cors::{Any, CorsLayer};
 use utoipa::OpenApi;
 
-mod database;
-mod handlers;
-mod models;
-
-use handlers::*;
-use models::*;
+use crate::test_tag_group::{handlers::*, models::*};
 
 #[derive(OpenApi)]
 #[openapi(
     paths(
-        handlers::get_tag_groups,
-        handlers::create_tag_group,
-        handlers::update_tag_group,
-        handlers::delete_tag_group,
+        get_tag_groups,
+        create_tag_group,
+        update_tag_group,
+        delete_tag_group,
     ),
     components(
         schemas(TagGroup, CreateTagGroupRequest, UpdateTagGroupRequest)

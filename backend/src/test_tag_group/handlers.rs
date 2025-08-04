@@ -1,10 +1,11 @@
-use crate::models::{CreateTagGroupRequest, TagGroup, UpdateTagGroupRequest};
 use axum::{
     extract::{Path, State},
     http::StatusCode,
     response::Json,
 };
 use sqlx::PgPool;
+
+use crate::test_tag_group::models::{CreateTagGroupRequest, TagGroup, UpdateTagGroupRequest};
 
 pub type ApiResult<T> = Result<T, ApiError>;
 
