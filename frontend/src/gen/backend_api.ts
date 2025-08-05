@@ -180,14 +180,7 @@ export type updateTagGroupResponse200 = {
   status: 200;
 };
 
-export type updateTagGroupResponse404 = {
-  data: void;
-  status: 404;
-};
-
-export type updateTagGroupResponseComposite =
-  | updateTagGroupResponse200
-  | updateTagGroupResponse404;
+export type updateTagGroupResponseComposite = updateTagGroupResponse200;
 
 export type updateTagGroupResponse = updateTagGroupResponseComposite & {
   headers: Headers;
@@ -229,9 +222,9 @@ export const getUpdateTagGroupMutationKey = (id: number) =>
 export type UpdateTagGroupMutationResult = NonNullable<
   Awaited<ReturnType<typeof updateTagGroup>>
 >;
-export type UpdateTagGroupMutationError = void;
+export type UpdateTagGroupMutationError = unknown;
 
-export const useUpdateTagGroup = <TError = void>(
+export const useUpdateTagGroup = <TError = unknown>(
   id: number,
   options?: {
     swr?:
@@ -264,14 +257,7 @@ export type deleteTagGroupResponse204 = {
   status: 204;
 };
 
-export type deleteTagGroupResponse404 = {
-  data: void;
-  status: 404;
-};
-
-export type deleteTagGroupResponseComposite =
-  | deleteTagGroupResponse204
-  | deleteTagGroupResponse404;
+export type deleteTagGroupResponseComposite = deleteTagGroupResponse204;
 
 export type deleteTagGroupResponse = deleteTagGroupResponseComposite & {
   headers: Headers;
@@ -305,9 +291,9 @@ export const getDeleteTagGroupMutationKey = (id: number) =>
 export type DeleteTagGroupMutationResult = NonNullable<
   Awaited<ReturnType<typeof deleteTagGroup>>
 >;
-export type DeleteTagGroupMutationError = void;
+export type DeleteTagGroupMutationError = unknown;
 
-export const useDeleteTagGroup = <TError = void>(
+export const useDeleteTagGroup = <TError = unknown>(
   id: number,
   options?: {
     swr?:

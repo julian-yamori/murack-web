@@ -60,8 +60,7 @@ pub async fn create_tag_group(
     ),
     request_body = UpdateTagGroupRequest,
     responses(
-        (status = 200, description = "Tag group updated successfully", body = TagGroup),
-        (status = 404, description = "Tag group not found")
+        (status = 200, description = "Tag group updated successfully", body = TagGroup)
     )
 )]
 pub async fn update_tag_group(
@@ -103,8 +102,7 @@ pub async fn update_tag_group(
         ("id" = i32, Path, description = "Tag group ID")
     ),
     responses(
-        (status = 204, description = "Tag group deleted successfully"),
-        (status = 404, description = "Tag group not found")
+        (status = 204, description = "Tag group deleted successfully")
     )
 )]
 pub async fn delete_tag_group(
