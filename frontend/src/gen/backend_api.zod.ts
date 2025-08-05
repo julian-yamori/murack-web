@@ -21,6 +21,14 @@ export const createTagGroupBody = zod.object({
   "order_index": zod.number(),
 });
 
+export const createTagGroupResponse = zod.object({
+  "created_at": zod.string().datetime({}),
+  "description": zod.string(),
+  "id": zod.number(),
+  "name": zod.string(),
+  "order_index": zod.number(),
+});
+
 export const updateTagGroupParams = zod.object({
   "id": zod.number().describe("Tag group ID"),
 });

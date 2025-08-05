@@ -102,12 +102,12 @@ export const useGetTagGroups = <TError = unknown>(
   };
 };
 
-export type createTagGroupResponse201 = {
+export type createTagGroupResponse200 = {
   data: TagGroup;
-  status: 201;
+  status: 200;
 };
 
-export type createTagGroupResponseComposite = createTagGroupResponse201;
+export type createTagGroupResponseComposite = createTagGroupResponse200;
 
 export type createTagGroupResponse = createTagGroupResponseComposite & {
   headers: Headers;
@@ -252,12 +252,12 @@ export const useUpdateTagGroup = <TError = unknown>(
   };
 };
 
-export type deleteTagGroupResponse204 = {
+export type deleteTagGroupResponse200 = {
   data: void;
-  status: 204;
+  status: 200;
 };
 
-export type deleteTagGroupResponseComposite = deleteTagGroupResponse204;
+export type deleteTagGroupResponseComposite = deleteTagGroupResponse200;
 
 export type deleteTagGroupResponse = deleteTagGroupResponseComposite & {
   headers: Headers;

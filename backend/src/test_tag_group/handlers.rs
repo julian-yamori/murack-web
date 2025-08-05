@@ -1,6 +1,5 @@
 use axum::{
     extract::{Path, State},
-    http::StatusCode,
     response::Json,
 };
 use sqlx::PgPool;
@@ -32,13 +31,13 @@ pub async fn get_tag_groups(State(pool): State<PgPool>) -> ApiResult<Json<Vec<Ta
     post,
     path = "/api/tag_groups",
     responses(
-        (status = 201, description = "Tag group created successfully", body = TagGroup)
+        (status = 200, description = "Tag group created successfully", body = TagGroup)
     )
 )]
 pub async fn create_tag_group(
     State(pool): State<PgPool>,
     Json(request): Json<CreateTagGroupRequest>,
-) -> ApiResult<(StatusCode, Json<TagGroup>)> {
+) -> ApiResult<Json<TagGroup>> {
     let tag_group = sqlx::query_as!(TagGroup,
         "INSERT INTO tag_groups (name, order_index, description) VALUES ($1, $2, $3) RETURNING id, name, order_index, description, created_at",
         &request.name,
@@ -48,7 +47,7 @@ pub async fn create_tag_group(
     .fetch_one(&pool)
     .await?;
 
-    Ok((StatusCode::CREATED, Json(tag_group)))
+    Ok(Json(tag_group))
 }
 
 #[utoipa::path(
@@ -100,13 +99,10 @@ pub async fn update_tag_group(
         ("id", description = "Tag group ID")
     ),
     responses(
-        (status = 204, description = "Tag group deleted successfully")
+        (status = 200, description = "Tag group deleted successfully")
     )
 )]
-pub async fn delete_tag_group(
-    Path(id): Path<i32>,
-    State(pool): State<PgPool>,
-) -> ApiResult<StatusCode> {
+pub async fn delete_tag_group(Path(id): Path<i32>, State(pool): State<PgPool>) -> ApiResult<()> {
     let result = sqlx::query!("DELETE FROM tag_groups WHERE id = $1", id)
         .execute(&pool)
         .await?;
@@ -115,5 +111,5 @@ pub async fn delete_tag_group(
         return Err(ApiError::no_rows_affected());
     }
 
-    Ok(StatusCode::NO_CONTENT)
+    Ok(())
 }
