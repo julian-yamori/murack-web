@@ -5,42 +5,10 @@ use axum::{
 };
 use sqlx::PgPool;
 
-use crate::test_tag_group::models::{CreateTagGroupRequest, TagGroup, UpdateTagGroupRequest};
-
-pub type ApiResult<T> = Result<T, ApiError>;
-
-#[derive(Debug)]
-pub struct ApiError {
-    pub status: StatusCode,
-    pub message: String,
-}
-
-impl From<sqlx::Error> for ApiError {
-    fn from(err: sqlx::Error) -> Self {
-        match err {
-            sqlx::Error::RowNotFound => ApiError {
-                status: StatusCode::NOT_FOUND,
-                message: "Song not found".to_string(),
-            },
-            _ => ApiError {
-                status: StatusCode::INTERNAL_SERVER_ERROR,
-                message: format!("Database error: {err}"),
-            },
-        }
-    }
-}
-
-impl axum::response::IntoResponse for ApiError {
-    fn into_response(self) -> axum::response::Response {
-        (
-            self.status,
-            Json(serde_json::json!({
-                "error": self.message
-            })),
-        )
-            .into_response()
-    }
-}
+use crate::{
+    error_handling::{ApiError, ApiResult},
+    test_tag_group::models::{CreateTagGroupRequest, TagGroup, UpdateTagGroupRequest},
+};
 
 #[utoipa::path(
     get,
@@ -148,10 +116,7 @@ pub async fn delete_tag_group(
         .await?;
 
     if result.rows_affected() == 0 {
-        return Err(ApiError {
-            status: StatusCode::NOT_FOUND,
-            message: "Tag group not found".to_string(),
-        });
+        return Err(ApiError::no_rows_affected());
     }
 
     Ok(StatusCode::NO_CONTENT)

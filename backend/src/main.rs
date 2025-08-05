@@ -1,17 +1,21 @@
 mod database;
+mod error_handling;
 mod test_tag_group;
 
 use std::env;
 
 use axum::{
-    Router,
+    Router, middleware,
     response::Json,
     routing::{get, put},
 };
 use tower_http::cors::{Any, CorsLayer};
 use utoipa::OpenApi;
 
-use crate::test_tag_group::{handlers::*, models::*};
+use crate::{
+    error_handling::error_handler_middleware,
+    test_tag_group::{handlers::*, models::*},
+};
 
 #[derive(OpenApi)]
 #[openapi(
@@ -62,6 +66,7 @@ async fn main() -> Result<(), MainError> {
             put(update_tag_group).delete(delete_tag_group),
         )
         .route("/api/docs/openapi.json", get(serve_openapi_spec))
+        .layer(middleware::from_fn(error_handler_middleware))
         .layer(cors)
         .with_state(pool);
 
