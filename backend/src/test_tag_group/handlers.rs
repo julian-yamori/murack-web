@@ -31,7 +31,6 @@ pub async fn get_tag_groups(State(pool): State<PgPool>) -> ApiResult<Json<Vec<Ta
 #[utoipa::path(
     post,
     path = "/api/tag_groups",
-    request_body = CreateTagGroupRequest,
     responses(
         (status = 201, description = "Tag group created successfully", body = TagGroup)
     )
@@ -56,9 +55,8 @@ pub async fn create_tag_group(
     put,
     path = "/api/tag_groups/{id}",
     params(
-        ("id" = i32, Path, description = "Tag group ID")
+        ("id", description = "Tag group ID")
     ),
-    request_body = UpdateTagGroupRequest,
     responses(
         (status = 200, description = "Tag group updated successfully", body = TagGroup)
     )
@@ -99,7 +97,7 @@ pub async fn update_tag_group(
     delete,
     path = "/api/tag_groups/{id}",
     params(
-        ("id" = i32, Path, description = "Tag group ID")
+        ("id", description = "Tag group ID")
     ),
     responses(
         (status = 204, description = "Tag group deleted successfully")
