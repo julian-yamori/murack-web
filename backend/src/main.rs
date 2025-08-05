@@ -19,18 +19,8 @@ use crate::{
 
 #[derive(OpenApi)]
 #[openapi(
-    paths(
-        get_tag_groups,
-        create_tag_group,
-        update_tag_group,
-        delete_tag_group,
-    ),
-    components(
-        schemas(TagGroup, CreateTagGroupRequest, UpdateTagGroupRequest)
-    ),
-    tags(
-        (name = "songs", description = "Song management API")
-    )
+    paths(get_tag_groups, create_tag_group, update_tag_group, delete_tag_group,),
+    components(schemas(TagGroup, CreateTagGroupRequest, UpdateTagGroupRequest))
 )]
 struct ApiDoc;
 
