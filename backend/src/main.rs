@@ -12,16 +12,10 @@ use axum::{
 use tower_http::cors::{Any, CorsLayer};
 use utoipa::OpenApi;
 
-use crate::{
-    error_handling::error_handler_middleware,
-    test_tag_group::{handlers::*, models::*},
-};
+use crate::{error_handling::error_handler_middleware, test_tag_group::handlers::*};
 
 #[derive(OpenApi)]
-#[openapi(
-    paths(get_tag_groups, create_tag_group, update_tag_group, delete_tag_group,),
-    components(schemas(TagGroup, CreateTagGroupRequest, UpdateTagGroupRequest))
-)]
+#[openapi(paths(get_tag_groups, create_tag_group, update_tag_group, delete_tag_group))]
 struct ApiDoc;
 
 async fn serve_openapi_spec() -> Json<utoipa::openapi::OpenApi> {
