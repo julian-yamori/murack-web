@@ -9,3 +9,6 @@ pub mod group_query;
 pub use group_query::GroupQuery;
 
 pub mod handlers;
+
+#[cfg(test)]
+pub mod handlers_test;

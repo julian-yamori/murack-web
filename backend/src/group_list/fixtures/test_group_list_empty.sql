@@ -1,0 +1,2 @@
+-- Test fixture for empty database
+-- This sets up an empty database (no tracks exist)
