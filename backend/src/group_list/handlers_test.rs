@@ -236,3 +236,70 @@ mod test_special_values {
         Ok(())
     }
 }
+
+mod test_order_alternate {
+    use super::*;
+
+    #[sqlx::test(
+        migrator = "crate::MIGRATOR",
+        fixtures("test_group_list_order_alternate")
+    )]
+    async fn ジャンル並び順(pool: PgPool) -> ApiResult<()> {
+        // 全ての曲を検索
+        let query = GroupQuery {
+            genre: None,
+            artist: None,
+            album: None,
+        };
+
+        let result = get_genre_names(Query(query), State(pool)).await?;
+        let Json(artists) = result;
+
+        // genre_order の順で取得する
+        let expected = vec!["abc", "DEF", "ghr"];
+        assert_eq!(artists, expected);
+        Ok(())
+    }
+
+    #[sqlx::test(
+        migrator = "crate::MIGRATOR",
+        fixtures("test_group_list_order_alternate")
+    )]
+    async fn アーティスト並び順(pool: PgPool) -> ApiResult<()> {
+        // 全ての曲を検索
+        let query = GroupQuery {
+            genre: None,
+            artist: None,
+            album: None,
+        };
+
+        let result = get_artist_names(Query(query), State(pool)).await?;
+        let Json(artists) = result;
+
+        // album_order の順で取得する
+        let expected = vec!["abc", "DEF", "ghr"];
+        assert_eq!(artists, expected);
+        Ok(())
+    }
+
+    #[sqlx::test(
+        migrator = "crate::MIGRATOR",
+        fixtures("test_group_list_order_alternate")
+    )]
+    async fn アルバム並び順(pool: PgPool) -> ApiResult<()> {
+        // 全ての曲を検索
+        let query = GroupQuery {
+            genre: None,
+            artist: None,
+            album: None,
+        };
+
+        let result = get_album_names(Query(query), State(pool)).await?;
+        let Json(artists) = result;
+
+        // album_order の順で取得する
+        let expected = vec!["あいう", "カキク", "さしす"];
+        assert_eq!(artists, expected);
+        Ok(())
+    }
+}
