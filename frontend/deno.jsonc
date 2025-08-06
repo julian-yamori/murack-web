@@ -3,7 +3,7 @@
     "dev": "deno run -A --node-modules-dir npm:vite",
     "gen-api": {
       "description": "backend API のコードを orval で自動生成",
-      "command": "mkdir -p temp && curl -fsS http://0.0.0.0:3000/api/docs/openapi.json > temp/backend_api.json && deno run -A --unstable-detect-cjs npm:orval --config orval.config.ts"
+      "command": "cd ../backend && cargo run -- --apidoc > ../frontend/temp/backend_api.json && cd ../frontend && deno run -A --unstable-detect-cjs npm:orval --config orval.config.ts"
     },
     "lint": "deno check src/main.tsx && deno lint",
     "build": "deno run -A --node-modules-dir npm:vite build",
