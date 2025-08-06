@@ -9,9 +9,9 @@ INSERT INTO tracks (
     -- 空文字列ジャンルのデータ
     (1, 180, '/music/unknown.mp3', 'Unknown Song', 
      'Unknown Artist', 'Unknown Artist', 'Unknown Album', '',
-     'Unknown Artist', 'Unknown Artist', 'Unknown Album', ''),
+     'unknown artist', 'unknown artist', 'unknown album', ''),
     
     -- 正常データも含める
     (2, 200, '/music/normal.mp3', 'Normal Song', 
      'Normal Artist', 'Normal Artist', 'Normal Album', 'Rock',
-     'Normal Artist', 'Normal Artist', 'Normal Album', 'Rock');
+     'normal artist', 'normal artist', 'normal album', 'rock');

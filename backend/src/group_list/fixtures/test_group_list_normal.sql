@@ -9,13 +9,13 @@ INSERT INTO tracks (
     -- Rock ジャンルのデータ
     (1, 180, '/music/track1.mp3', 'Song 1', 
      'Artist A', 'Artist A', 'Album 1', 'Rock',
-     'Artist A', 'Artist A', 'Album 1', 'Rock'),
+     'artist a', 'artist a', 'album 1', 'rock'),
     
     (2, 200, '/music/track2.mp3', 'Song 2', 
      'Artist B', 'Artist B', 'Album 3', 'Rock',
-     'Artist B', 'Artist B', 'Album 3', 'Rock'),
+     'artist b', 'artist b', 'album 3', 'rock'),
     
     -- Jazz ジャンルのデータ
     (3, 240, '/music/track3.mp3', 'Song 3', 
      'Artist C', 'Artist C', 'Album 2', 'Jazz',
-     'Artist C', 'Artist C', 'Album 2', 'Jazz');
+     'artist c', 'artist c', 'album 2', 'jazz');
