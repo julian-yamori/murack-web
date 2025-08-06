@@ -139,7 +139,7 @@ mod test_get_album_names {
         let result = get_album_names(Query(query), State(pool)).await?;
         let Json(albums) = result;
 
-        let expected = vec!["Album 1", "Album 2", "Album 3"];
+        let expected = vec!["Album 1", "Album 1-A", "Album 2", "Album 3"];
         assert_eq!(albums, expected);
         Ok(())
     }
@@ -156,7 +156,7 @@ mod test_get_album_names {
         let result = get_album_names(Query(query), State(pool)).await?;
         let Json(albums) = result;
 
-        let expected = vec!["Album 1"];
+        let expected = vec!["Album 1", "Album 1-A"];
         assert_eq!(albums, expected);
         Ok(())
     }
@@ -173,7 +173,7 @@ mod test_get_album_names {
         let result = get_album_names(Query(query), State(pool)).await?;
         let Json(albums) = result;
 
-        let expected = vec!["Album 2"];
+        let expected = vec!["Album 1-A", "Album 2"];
         assert_eq!(albums, expected);
         Ok(())
     }
