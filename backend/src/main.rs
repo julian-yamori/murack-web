@@ -1,5 +1,7 @@
 mod database;
+mod db_utils;
 mod error_handling;
+mod group_list;
 mod test_tag_group;
 
 use std::env;
@@ -11,10 +13,20 @@ use axum::{
 use tower_http::cors::{Any, CorsLayer};
 use utoipa::OpenApi;
 
-use crate::{error_handling::error_handler_middleware, test_tag_group::handlers::*};
+use crate::{
+    error_handling::error_handler_middleware, group_list::handlers::*, test_tag_group::handlers::*,
+};
 
 #[derive(OpenApi)]
-#[openapi(paths(get_tag_groups, create_tag_group, update_tag_group, delete_tag_group))]
+#[openapi(paths(
+    get_genre_names,
+    get_artist_names,
+    get_album_names,
+    get_tag_groups,
+    create_tag_group,
+    update_tag_group,
+    delete_tag_group
+))]
 struct ApiDoc;
 
 #[tokio::main]
@@ -42,6 +54,9 @@ async fn main() -> anyhow::Result<()> {
 
     // Build our application with routes
     let app = Router::new()
+        .route("/api/group_list/genres", get(get_genre_names))
+        .route("/api/group_list/artist_names", get(get_artist_names))
+        .route("/api/group_list/albums", get(get_album_names))
         .route(
             "/api/tag_groups",
             get(get_tag_groups).post(create_tag_group),
