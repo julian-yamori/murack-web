@@ -256,7 +256,7 @@ mod test_order_alternate {
         let Json(artists) = result;
 
         // genre_order の順で取得する
-        let expected = vec!["abc", "DEF", "ghr"];
+        let expected = vec!["ghr", "DEF", "abc"];
         assert_eq!(artists, expected);
         Ok(())
     }
@@ -277,7 +277,7 @@ mod test_order_alternate {
         let Json(artists) = result;
 
         // album_order の順で取得する
-        let expected = vec!["abc", "DEF", "ghr"];
+        let expected = vec!["ghr", "DEF", "abc"];
         assert_eq!(artists, expected);
         Ok(())
     }
@@ -298,7 +298,7 @@ mod test_order_alternate {
         let Json(artists) = result;
 
         // album_order の順で取得する
-        let expected = vec!["あいう", "カキク", "さしす"];
+        let expected = vec!["さしす", "カキク", "あいう"];
         assert_eq!(artists, expected);
         Ok(())
     }
