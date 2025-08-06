@@ -35,10 +35,9 @@ deno task gen-api             # バックエンドの OpenAPI 仕様から API �
 # API コード生成ワークフロー
 
 フロントエンドは Orval を使って TypeScript API クライアントを生成：
-1. バックエンドサーバーを起動 (backend/ で `cargo run`)
-2. frontend/ で `deno task gen-api` を実行 - http://0.0.0.0:3000/api/docs/openapi.json から OpenAPI 仕様を取得
-3. `src/gen/` に生成ファイルが作成される (SWR フックと Zod スキーマの両方)
-4. React コンポーネントで `useGetTagGroups` などの生成されたフックをインポート
+1. frontend/ で `deno task gen-api` を実行 - タスク内で `cargo run -- --apidoc` から OpenAPI 仕様を取得する
+2. `src/gen/` に生成ファイルが作成される (SWR フックと Zod スキーマの両方)
+3. React コンポーネントで `useGetTagGroups` などの生成されたフックをインポート
 
 # データベース設定
 
@@ -58,6 +57,5 @@ DATABASE_URL=postgresql://user:password@localhost/murack_web
 # 開発のコツ
 
 - バックエンドのスキーマ変更後は必ず API クライアントを再生成
-- バックエンドは `/api/docs/openapi.json` で OpenAPI 仕様を自動配信
 - フロントエンドは生成ファイルをリント対象から除外 (deno.jsonc の lint 設定参照)
 - 一貫したコードフォーマットのため `cargo fmt` と `deno fmt` を使用
