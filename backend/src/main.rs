@@ -6,7 +6,6 @@ use std::env;
 
 use axum::{
     Router, middleware,
-    response::Json,
     routing::{get, put},
 };
 use tower_http::cors::{Any, CorsLayer};
@@ -18,12 +17,14 @@ use crate::{error_handling::error_handler_middleware, test_tag_group::handlers::
 #[openapi(paths(get_tag_groups, create_tag_group, update_tag_group, delete_tag_group))]
 struct ApiDoc;
 
-async fn serve_openapi_spec() -> Json<utoipa::openapi::OpenApi> {
-    Json(ApiDoc::openapi())
-}
-
 #[tokio::main]
-async fn main() -> Result<(), MainError> {
+async fn main() -> anyhow::Result<()> {
+    // 引数で --apidoc が指定された場合、stdout に出力だけして終了
+    if let Some("--apidoc") = env::args().nth(1).as_deref() {
+        println!("{}", ApiDoc::openapi().to_json()?);
+        return Ok(());
+    }
+
     // Load environment variables
     dotenvy::dotenv().ok();
 
@@ -49,7 +50,6 @@ async fn main() -> Result<(), MainError> {
             "/api/tag_groups/{id}",
             put(update_tag_group).delete(delete_tag_group),
         )
-        .route("/api/docs/openapi.json", get(serve_openapi_spec))
         .layer(middleware::from_fn(error_handler_middleware))
         .layer(cors)
         .with_state(pool);
@@ -59,24 +59,10 @@ async fn main() -> Result<(), MainError> {
     let addr = format!("0.0.0.0:{port}");
 
     println!("🚀 Server starting on http://{addr}");
-    println!("📚 API documentation available at http://{addr}/api/docs/openapi.json");
 
     // Start server
     let listener = tokio::net::TcpListener::bind(&addr).await?;
     axum::serve(listener, app).await?;
 
     Ok(())
-}
-
-// main 関数用のエラー型
-#[derive(thiserror::Error, Debug)]
-enum MainError {
-    #[error(transparent)]
-    Env(#[from] std::env::VarError),
-
-    #[error(transparent)]
-    Db(#[from] sqlx::Error),
-
-    #[error(transparent)]
-    Io(#[from] std::io::Error),
 }
