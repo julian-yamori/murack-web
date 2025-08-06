@@ -81,3 +81,6 @@ async fn main() -> anyhow::Result<()> {
 
     Ok(())
 }
+
+#[cfg(test)]
+pub static MIGRATOR: sqlx::migrate::Migrator = sqlx::migrate!("../../murack-core/migrations");
