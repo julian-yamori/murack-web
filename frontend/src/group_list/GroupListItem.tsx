@@ -6,6 +6,7 @@ import {
   Typography,
 } from "@mui/material";
 import type { GroupListItem as GroupListItemData } from "../gen/backend_api.ts";
+import { API_BASE_URL } from "../api_base_url.ts";
 
 export const GroupListItem: React.FC<{
   item: GroupListItemData;
@@ -51,5 +52,5 @@ function getArtworkSrc(artworkId: number | null | undefined): string {
   if (artworkId === null || artworkId === undefined) {
     return "/artwork_none.png";
   }
-  return `/api/artworks/${artworkId}/mini`;
+  return `${API_BASE_URL}/api/artworks/${artworkId}/mini`;
 }

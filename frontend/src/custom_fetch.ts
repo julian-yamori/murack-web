@@ -1,11 +1,4 @@
-/// <reference types="npm:vite/client" />
-
-// deno-lint-ignore no-explicit-any
-const env = (import.meta as any).env;
-
-const API_BASE_URL = env.PROD
-  ? "https://murack-api.railway.app"
-  : "http://localhost:3000";
+import { API_BASE_URL } from "./api_base_url.ts";
 
 export async function customFetch<T>(
   contextUrl: string,
