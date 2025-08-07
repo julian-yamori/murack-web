@@ -3,6 +3,8 @@ import {
   type GroupListItem as GroupListItemData,
   useGetGenreList,
 } from "../gen/backend_api.ts";
+import { usePushPage } from "../navigation/navigation_hooks.ts";
+import { ArtistListPage } from "./ArtistListPage.tsx";
 
 export const GenreListPage: React.FC<{
   filterParams?: {
@@ -14,10 +16,21 @@ export const GenreListPage: React.FC<{
   filterParams,
 }) => {
   const { data, error, isLoading } = useGetGenreList(filterParams);
+  const pushPage = usePushPage();
 
   const handleItemClick = (item: GroupListItemData) => {
-    // TODO: ナビゲーション処理を実装
-    console.log("Clicked genre:", item);
+    const currentFilter = filterParams ?? {};
+
+    // アーティスト選択画面に遷移
+    pushPage({
+      render: () => (
+        <ArtistListPage
+          filterParams={{ ...currentFilter, genre: item.name }}
+        />
+      ),
+      navigationMenuKey: undefined,
+      breadCrumb: item.name,
+    });
   };
 
   return (

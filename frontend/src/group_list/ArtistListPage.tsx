@@ -3,6 +3,8 @@ import {
   type GroupListItem as GroupListItemData,
   useGetArtistList,
 } from "../gen/backend_api.ts";
+import { usePushPage } from "../navigation/navigation_hooks.ts";
+import { AlbumListPage } from "./AlbumListPage.tsx";
 
 export const ArtistListPage: React.FC<{
   filterParams?: {
@@ -14,10 +16,19 @@ export const ArtistListPage: React.FC<{
   filterParams,
 }) => {
   const { data, error, isLoading } = useGetArtistList(filterParams);
+  const pushPage = usePushPage();
 
   const handleItemClick = (item: GroupListItemData) => {
-    // TODO: ナビゲーション処理を実装
-    console.log("Clicked artist:", item);
+    const currentFilter = filterParams ?? {};
+
+    // アルバム選択画面に遷移
+    pushPage({
+      render: () => (
+        <AlbumListPage filterParams={{ ...currentFilter, artist: item.name }} />
+      ),
+      navigationMenuKey: undefined,
+      breadCrumb: item.name,
+    });
   };
 
   return (
