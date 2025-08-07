@@ -1,6 +1,6 @@
 import { Alert, Box, CircularProgress, List, Typography } from "@mui/material";
 import { NavBreadcrumbs } from "../navigation/NavBreadcrumbs.tsx";
-import { GroupListItem } from "./GroupListItem.tsx";
+import { GroupListItem, GroupListItemAll } from "./GroupListItem.tsx";
 import type { GroupListItem as GroupListItemData } from "../gen/backend_api.ts";
 
 /** 各グループ選択画面の共通画面レイアウト */
@@ -9,15 +9,19 @@ export const GroupListLayout: React.FC<{
   error: unknown;
   isLoading: boolean;
 
+  /** `全てのXX` のリスト要素の項目名 */
+  allItemText?: string;
+
   /** リストの空文字列値の代わりに表示するテキスト */
   emptyItemText: string;
 
-  onItemClick: (item: GroupListItemData) => unknown;
+  onItemClick: (item: GroupListItemData | "all") => unknown;
 }> = ({
   list_data,
   error,
   isLoading,
   emptyItemText,
+  allItemText,
   onItemClick,
 }) => {
   return (
@@ -40,6 +44,14 @@ export const GroupListLayout: React.FC<{
 
       {list_data && (
         <List>
+          {allItemText !== undefined
+            ? (
+              <GroupListItemAll
+                text={allItemText}
+                onClick={() => onItemClick("all")}
+              />
+            )
+            : null}
           {list_data.map((item: GroupListItemData, index: number) => (
             <GroupListItem
               key={index}

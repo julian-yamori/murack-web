@@ -5,6 +5,7 @@ import {
 } from "../gen/backend_api.ts";
 import { usePushPage } from "../navigation/navigation_hooks.ts";
 import { GroupTrackListPage } from "./GroupTrackListPage.tsx";
+import { is_empty_params } from "./group_filter_params.ts";
 
 export const AlbumListPage: React.FC<{
   filterParams?: {
@@ -18,19 +19,28 @@ export const AlbumListPage: React.FC<{
   const { data, error, isLoading } = useGetAlbumList(filterParams);
   const pushPage = usePushPage();
 
-  const handleItemClick = (item: GroupListItemData) => {
+  const handleItemClick = (item: GroupListItemData | "all") => {
     const currentFilter = filterParams ?? {};
 
-    // 曲リスト画面に遷移
-    pushPage({
-      render: () => (
-        <GroupTrackListPage
-          filterParams={{ ...currentFilter, album: item.name }}
-        />
-      ),
-      navigationMenuKey: undefined,
-      breadCrumb: nextBreadCrumb(item),
-    });
+    if (item === "all") {
+      // アルバムを絞り込まずに曲リスト画面に遷移
+      pushPage({
+        render: () => <GroupTrackListPage filterParams={currentFilter} />,
+        navigationMenuKey: undefined,
+        breadCrumb: ALL_ALBUM,
+      });
+    } else {
+      // 曲リスト画面に遷移
+      pushPage({
+        render: () => (
+          <GroupTrackListPage
+            filterParams={{ ...currentFilter, album: item.name }}
+          />
+        ),
+        navigationMenuKey: undefined,
+        breadCrumb: nextBreadCrumb(item),
+      });
+    }
   };
 
   return (
@@ -38,12 +48,15 @@ export const AlbumListPage: React.FC<{
       list_data={data?.data}
       error={error}
       isLoading={isLoading}
+      // NavigationMenu の直下でなければ「全ての XX」を表示
+      allItemText={is_empty_params(filterParams) ? undefined : ALL_ALBUM}
       emptyItemText={UNKNOWN_ALBUM}
       onItemClick={handleItemClick}
     />
   );
 };
 
+const ALL_ALBUM = "全てのアルバム";
 const UNKNOWN_ALBUM = "不明なアルバム";
 
 /** リスト要素が選択されて次画面に遷移するときの、パンくずリストに表示する名前 */

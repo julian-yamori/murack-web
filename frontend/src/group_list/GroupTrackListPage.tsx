@@ -1,13 +1,10 @@
 import { Box, Typography } from "@mui/material";
 import { NavBreadcrumbs } from "../navigation/NavBreadcrumbs.tsx";
+import { GroupFilterParams } from "./group_filter_params.ts";
 
 /** グループ選択の検索条件に該当する曲リストを表示するページ */
 export const GroupTrackListPage: React.FC<{
-  filterParams: {
-    artist?: string;
-    album?: string;
-    genre?: string;
-  };
+  filterParams: GroupFilterParams;
 }> = ({ filterParams }) => {
   // TODO 曲のリストを読み込む
 

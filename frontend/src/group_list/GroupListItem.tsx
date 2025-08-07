@@ -8,6 +8,7 @@ import {
 import type { GroupListItem as GroupListItemData } from "../gen/backend_api.ts";
 import { API_BASE_URL } from "../api_base_url.ts";
 
+/** グループ選択画面のリスト要素 (検索結果から取得した値) */
 export const GroupListItem: React.FC<{
   item: GroupListItemData;
   viewText?: string;
@@ -18,9 +19,45 @@ export const GroupListItem: React.FC<{
   onClick,
 }) => {
   return (
+    <GroupListItemView
+      text={viewText ?? item.name}
+      thumbSrc={getArtworkSrc(item.artwork_id)}
+      onClick={onClick !== undefined ? () => onClick(item) : undefined}
+    />
+  );
+};
+
+/** グループ選択画面のリスト要素 (`全てのXX` のリスト項目) */
+export const GroupListItemAll: React.FC<{
+  text: string;
+  onClick?: () => unknown;
+}> = ({
+  text,
+  onClick,
+}) => {
+  return (
+    <GroupListItemView
+      text={text}
+      thumbSrc="/artwork_none.png"
+      onClick={onClick}
+    />
+  );
+};
+
+/** グループ選択画面のリスト要素 (共通の表示用コンポーネント) */
+export const GroupListItemView: React.FC<{
+  text: string;
+  thumbSrc: string;
+  onClick?: () => unknown;
+}> = ({
+  text,
+  thumbSrc,
+  onClick,
+}) => {
+  return (
     <ListItem
       component="div"
-      onClick={() => onClick?.(item)}
+      onClick={onClick}
       sx={{
         padding: 2,
         cursor: onClick ? "pointer" : "default",
@@ -31,7 +68,7 @@ export const GroupListItem: React.FC<{
     >
       <ListItemAvatar>
         <Avatar
-          src={getArtworkSrc(item.artwork_id)}
+          src={thumbSrc}
           variant="rounded"
           sx={{
             width: 56,
@@ -42,7 +79,7 @@ export const GroupListItem: React.FC<{
       <ListItemText
         primary={
           <Typography variant="h6" component="div">
-            {viewText ?? item.name}
+            {text}
           </Typography>
         }
       />
