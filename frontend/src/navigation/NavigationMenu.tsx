@@ -4,7 +4,7 @@ import {
   useNavigationState,
   useSetNavigationState,
 } from "./navigation_state.tsx";
-import { GroupListPage } from "../group_list/GroupListPage.tsx";
+import { ArtistListPage } from "../group_list/ArtistListPage.tsx";
 import { TestTagGroupPage } from "../test_tag_group/TestTagGroupPage.tsx";
 
 /** ナビゲーションメニューで、どの項目が選択されているかを判別するためのキー */
@@ -37,7 +37,7 @@ export const NavigationMenu: React.FC<{
         selected={currentPage?.navigationMenuKey === "group-list"}
         onClick={() =>
           changeRootPage({
-            render: () => <GroupListPage depth={1} />,
+            render: () => <ArtistListPage />,
             navigationMenuKey: "group-list",
             breadCrumb: "アーティスト",
           })}
