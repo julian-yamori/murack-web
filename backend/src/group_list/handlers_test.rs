@@ -4,10 +4,17 @@ use axum::{
 };
 use sqlx::PgPool;
 
-use super::handlers::{get_album_names, get_artist_names, get_genre_names};
+use super::handlers::{GroupListItem, get_album_list, get_artist_list, get_genre_list};
 use crate::{error_handling::ApiResult, group_list::GroupQuery};
 
-mod test_get_genre_names {
+fn list_item(name: &str, artwork_id: Option<i32>) -> GroupListItem {
+    GroupListItem {
+        name: name.to_string(),
+        artwork_id,
+    }
+}
+
+mod test_get_genre_list {
     use super::*;
 
     /// ジャンル名取得の基本テスト
@@ -21,10 +28,10 @@ mod test_get_genre_names {
             album: None,
         };
 
-        let result = get_genre_names(Query(query), State(pool)).await?;
+        let result = get_genre_list(Query(query), State(pool)).await?;
         let Json(genres) = result;
 
-        assert_eq!(genres, Vec::<String>::new());
+        assert_eq!(genres, Vec::new());
         Ok(())
     }
 
@@ -40,17 +47,17 @@ mod test_get_genre_names {
             album: None,
         };
 
-        let result = get_genre_names(Query(query), State(pool)).await?;
+        let result = get_genre_list(Query(query), State(pool)).await?;
         let Json(genres) = result;
 
         // 期待するジャンルリスト（genre_order でソート済み）
-        let expected = vec!["Jazz", "Rock"];
+        let expected = vec![list_item("Jazz", None), list_item("Rock", None)];
         assert_eq!(genres, expected);
         Ok(())
     }
 }
 
-mod test_get_artist_names {
+mod test_get_artist_list {
     use super::*;
 
     /// アーティスト名取得の基本テスト
@@ -62,10 +69,10 @@ mod test_get_artist_names {
             album: None,
         };
 
-        let result = get_artist_names(Query(query), State(pool)).await?;
+        let result = get_artist_list(Query(query), State(pool)).await?;
         let Json(artists) = result;
 
-        assert_eq!(artists, Vec::<String>::new());
+        assert_eq!(artists, Vec::new());
         Ok(())
     }
 
@@ -80,11 +87,15 @@ mod test_get_artist_names {
             album: None,
         };
 
-        let result = get_artist_names(Query(query), State(pool)).await?;
+        let result = get_artist_list(Query(query), State(pool)).await?;
         let Json(artists) = result;
 
         // album_artist が空でない場合はそちらが使われる
-        let expected = vec!["Artist A", "Artist B", "Artist C"];
+        let expected = vec![
+            list_item("Artist A", None),
+            list_item("Artist B", None),
+            list_item("Artist C", None),
+        ];
         assert_eq!(artists, expected);
         Ok(())
     }
@@ -98,17 +109,17 @@ mod test_get_artist_names {
             album: None,
         };
 
-        let result = get_artist_names(Query(query), State(pool)).await?;
+        let result = get_artist_list(Query(query), State(pool)).await?;
         let Json(artists) = result;
 
         // Rock ジャンルのアーティストのみ
-        let expected = vec!["Artist A", "Artist B"];
+        let expected = vec![list_item("Artist A", None), list_item("Artist B", None)];
         assert_eq!(artists, expected);
         Ok(())
     }
 }
 
-mod test_get_album_names {
+mod test_get_album_list {
     use super::*;
 
     /// アルバム名取得の基本テスト
@@ -120,10 +131,10 @@ mod test_get_album_names {
             album: None,
         };
 
-        let result = get_album_names(Query(query), State(pool)).await?;
+        let result = get_album_list(Query(query), State(pool)).await?;
         let Json(albums) = result;
 
-        assert_eq!(albums, Vec::<String>::new());
+        assert_eq!(albums, Vec::new());
         Ok(())
     }
 
@@ -136,10 +147,15 @@ mod test_get_album_names {
             album: None,
         };
 
-        let result = get_album_names(Query(query), State(pool)).await?;
+        let result = get_album_list(Query(query), State(pool)).await?;
         let Json(albums) = result;
 
-        let expected = vec!["Album 1", "Album 1-A", "Album 2", "Album 3"];
+        let expected = vec![
+            list_item("Album 1", None),
+            list_item("Album 1-A", None),
+            list_item("Album 2", None),
+            list_item("Album 3", None),
+        ];
         assert_eq!(albums, expected);
         Ok(())
     }
@@ -153,10 +169,10 @@ mod test_get_album_names {
             album: None,
         };
 
-        let result = get_album_names(Query(query), State(pool)).await?;
+        let result = get_album_list(Query(query), State(pool)).await?;
         let Json(albums) = result;
 
-        let expected = vec!["Album 1", "Album 1-A"];
+        let expected = vec![list_item("Album 1", None), list_item("Album 1-A", None)];
         assert_eq!(albums, expected);
         Ok(())
     }
@@ -170,10 +186,10 @@ mod test_get_album_names {
             album: None,
         };
 
-        let result = get_album_names(Query(query), State(pool)).await?;
+        let result = get_album_list(Query(query), State(pool)).await?;
         let Json(albums) = result;
 
-        let expected = vec!["Album 1-A", "Album 2"];
+        let expected = vec![list_item("Album 1-A", None), list_item("Album 2", None)];
         assert_eq!(albums, expected);
         Ok(())
     }
@@ -187,10 +203,10 @@ mod test_get_album_names {
             album: None,
         };
 
-        let result = get_album_names(Query(query), State(pool)).await?;
+        let result = get_album_list(Query(query), State(pool)).await?;
         let Json(albums) = result;
 
-        let expected = vec!["Album 3"];
+        let expected = vec![list_item("Album 3", None)];
         assert_eq!(albums, expected);
         Ok(())
     }
@@ -209,11 +225,11 @@ mod test_special_values {
             album: None,
         };
 
-        let result = get_artist_names(Query(query), State(pool)).await?;
+        let result = get_artist_list(Query(query), State(pool)).await?;
         let Json(artists) = result;
 
         // 空文字列ジャンルに対応するアーティスト
-        let expected = vec!["Unknown Artist"];
+        let expected = vec![list_item("Unknown Artist", None)];
         assert_eq!(artists, expected);
         Ok(())
     }
@@ -227,11 +243,11 @@ mod test_special_values {
             album: None,
         };
 
-        let result = get_genre_names(Query(query), State(pool)).await?;
+        let result = get_genre_list(Query(query), State(pool)).await?;
         let Json(genres) = result;
 
         // 重複データがあっても DISTINCT で1つだけ
-        let expected = vec!["Rock"];
+        let expected = vec![list_item("Rock", None)];
         assert_eq!(genres, expected);
         Ok(())
     }
@@ -252,11 +268,15 @@ mod test_order_alternate {
             album: None,
         };
 
-        let result = get_genre_names(Query(query), State(pool)).await?;
+        let result = get_genre_list(Query(query), State(pool)).await?;
         let Json(artists) = result;
 
         // genre_order の順で取得する
-        let expected = vec!["ghr", "DEF", "abc"];
+        let expected = vec![
+            list_item("ghr", None),
+            list_item("DEF", None),
+            list_item("abc", None),
+        ];
         assert_eq!(artists, expected);
         Ok(())
     }
@@ -273,11 +293,15 @@ mod test_order_alternate {
             album: None,
         };
 
-        let result = get_artist_names(Query(query), State(pool)).await?;
+        let result = get_artist_list(Query(query), State(pool)).await?;
         let Json(artists) = result;
 
         // album_order の順で取得する
-        let expected = vec!["ghr", "DEF", "abc"];
+        let expected = vec![
+            list_item("ghr", None),
+            list_item("DEF", None),
+            list_item("abc", None),
+        ];
         assert_eq!(artists, expected);
         Ok(())
     }
@@ -294,11 +318,15 @@ mod test_order_alternate {
             album: None,
         };
 
-        let result = get_album_names(Query(query), State(pool)).await?;
+        let result = get_album_list(Query(query), State(pool)).await?;
         let Json(artists) = result;
 
         // album_order の順で取得する
-        let expected = vec!["さしす", "カキク", "あいう"];
+        let expected = vec![
+            list_item("さしす", None),
+            list_item("カキク", None),
+            list_item("あいう", None),
+        ];
         assert_eq!(artists, expected);
         Ok(())
     }

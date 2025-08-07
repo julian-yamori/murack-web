@@ -1,3 +1,4 @@
+mod artwork;
 mod database;
 mod db_utils;
 mod error_handling;
@@ -19,9 +20,10 @@ use crate::{
 
 #[derive(OpenApi)]
 #[openapi(paths(
-    get_genre_names,
-    get_artist_names,
-    get_album_names,
+    artwork::get_mini_artwork,
+    get_genre_list,
+    get_artist_list,
+    get_album_list,
     get_tag_groups,
     create_tag_group,
     update_tag_group,
@@ -54,9 +56,10 @@ async fn main() -> anyhow::Result<()> {
 
     // Build our application with routes
     let app = Router::new()
-        .route("/api/group_list/genres", get(get_genre_names))
-        .route("/api/group_list/artist_names", get(get_artist_names))
-        .route("/api/group_list/albums", get(get_album_names))
+        .route("/api/artworks/{id}/mini", get(artwork::get_mini_artwork))
+        .route("/api/group_list/genre_list", get(get_genre_list))
+        .route("/api/group_list/artist_list", get(get_artist_list))
+        .route("/api/group_list/album_list", get(get_album_list))
         .route(
             "/api/tag_groups",
             get(get_tag_groups).post(create_tag_group),
