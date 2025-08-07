@@ -1,5 +1,6 @@
 import {
   Avatar,
+  Divider,
   ListItem,
   ListItemAvatar,
   ListItemText,
@@ -55,35 +56,38 @@ export const GroupListItemView: React.FC<{
   onClick,
 }) => {
   return (
-    <ListItem
-      component="div"
-      onClick={onClick}
-      sx={{
-        padding: 2,
-        cursor: onClick ? "pointer" : "default",
-        "&:hover": {
-          backgroundColor: onClick ? "action.hover" : "transparent",
-        },
-      }}
-    >
-      <ListItemAvatar>
-        <Avatar
-          src={thumbSrc}
-          variant="rounded"
-          sx={{
-            width: 56,
-            height: 56,
-          }}
+    <>
+      <Divider />
+      <ListItem
+        component="div"
+        onClick={onClick}
+        sx={{
+          cursor: onClick ? "pointer" : "default",
+          "&:hover": {
+            backgroundColor: onClick ? "action.hover" : "transparent",
+          },
+        }}
+      >
+        <ListItemAvatar>
+          <Avatar
+            src={thumbSrc}
+            variant="rounded"
+            sx={{
+              width: 56,
+              height: 56,
+              mr: 2,
+            }}
+          />
+        </ListItemAvatar>
+        <ListItemText
+          primary={
+            <Typography variant="h6" component="div">
+              {text}
+            </Typography>
+          }
         />
-      </ListItemAvatar>
-      <ListItemText
-        primary={
-          <Typography variant="h6" component="div">
-            {text}
-          </Typography>
-        }
-      />
-    </ListItem>
+      </ListItem>
+    </>
   );
 };
 
