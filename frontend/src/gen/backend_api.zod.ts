@@ -6,6 +6,58 @@
  */
 import { z as zod } from "zod";
 
+/**
+ * @summary リスト用の mini サイズのアートワークを取得
+ */
+export const getMiniArtworkParams = zod.object({
+  "id": zod.number().describe("Artwork ID"),
+});
+
+/**
+ * @summary グループ選択画面用にアルバムのリストを検索
+ */
+export const getAlbumListQueryParams = zod.object({
+  "artist": zod.string().nullish(),
+  "album": zod.string().nullish(),
+  "genre": zod.string().nullish(),
+});
+
+export const getAlbumListResponseItem = zod.object({
+  "artwork_id": zod.number().nullish(),
+  "name": zod.string().describe("アーティスト名などの値"),
+}).describe("グループ選択画面のリスト要素");
+export const getAlbumListResponse = zod.array(getAlbumListResponseItem);
+
+/**
+ * @summary グループ選択画面用にアーティストのリストを検索
+ */
+export const getArtistListQueryParams = zod.object({
+  "artist": zod.string().nullish(),
+  "album": zod.string().nullish(),
+  "genre": zod.string().nullish(),
+});
+
+export const getArtistListResponseItem = zod.object({
+  "artwork_id": zod.number().nullish(),
+  "name": zod.string().describe("アーティスト名などの値"),
+}).describe("グループ選択画面のリスト要素");
+export const getArtistListResponse = zod.array(getArtistListResponseItem);
+
+/**
+ * @summary グループ選択画面用にジャンルのリストを検索
+ */
+export const getGenreListQueryParams = zod.object({
+  "artist": zod.string().nullish(),
+  "album": zod.string().nullish(),
+  "genre": zod.string().nullish(),
+});
+
+export const getGenreListResponseItem = zod.object({
+  "artwork_id": zod.number().nullish(),
+  "name": zod.string().describe("アーティスト名などの値"),
+}).describe("グループ選択画面のリスト要素");
+export const getGenreListResponse = zod.array(getGenreListResponseItem);
+
 export const getTagGroupsResponseItem = zod.object({
   "created_at": zod.string().datetime({}),
   "description": zod.string(),

@@ -17,6 +17,17 @@ export interface CreateTagGroupRequest {
   order_index: number;
 }
 
+export type GroupListItemArtworkId = number | null;
+
+/**
+ * グループ選択画面のリスト要素
+ */
+export interface GroupListItem {
+  artwork_id?: GroupListItemArtworkId;
+  /** アーティスト名などの値 */
+  name: string;
+}
+
 export interface TagGroup {
   created_at: string;
   description: string;
@@ -37,11 +48,342 @@ export interface UpdateTagGroupRequest {
   order_index?: UpdateTagGroupRequestOrderIndex;
 }
 
+export type GetAlbumListParams = {
+  artist?: string | null;
+  album?: string | null;
+  genre?: string | null;
+};
+
+export type GetArtistListParams = {
+  artist?: string | null;
+  album?: string | null;
+  genre?: string | null;
+};
+
+export type GetGenreListParams = {
+  artist?: string | null;
+  album?: string | null;
+  genre?: string | null;
+};
+
 type AwaitedInput<T> = PromiseLike<T> | T;
 
 type Awaited<O> = O extends AwaitedInput<infer T> ? T : never;
 
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
+
+/**
+ * @summary リスト用の mini サイズのアートワークを取得
+ */
+export type getMiniArtworkResponse200 = {
+  data: number[];
+  status: 200;
+};
+
+export type getMiniArtworkResponse404 = {
+  data: void;
+  status: 404;
+};
+
+export type getMiniArtworkResponseComposite =
+  | getMiniArtworkResponse200
+  | getMiniArtworkResponse404;
+
+export type getMiniArtworkResponse = getMiniArtworkResponseComposite & {
+  headers: Headers;
+};
+
+export const getGetMiniArtworkUrl = (id: number) => {
+  return `/api/artworks/${id}/mini`;
+};
+
+export const getMiniArtwork = async (
+  id: number,
+  options?: RequestInit,
+): Promise<getMiniArtworkResponse> => {
+  return customFetch<getMiniArtworkResponse>(getGetMiniArtworkUrl(id), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getGetMiniArtworkKey = (id: number) =>
+  [`/api/artworks/${id}/mini`] as const;
+
+export type GetMiniArtworkQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getMiniArtwork>>
+>;
+export type GetMiniArtworkQueryError = void;
+
+/**
+ * @summary リスト用の mini サイズのアートワークを取得
+ */
+export const useGetMiniArtwork = <TError = void>(
+  id: number,
+  options?: {
+    swr?:
+      & SWRConfiguration<Awaited<ReturnType<typeof getMiniArtwork>>, TError>
+      & { swrKey?: Key; enabled?: boolean };
+    request?: SecondParameter<typeof customFetch>;
+  },
+) => {
+  const { swr: swrOptions, request: requestOptions } = options ?? {};
+
+  const isEnabled = swrOptions?.enabled !== false && !!id;
+  const swrKey = swrOptions?.swrKey ??
+    (() => isEnabled ? getGetMiniArtworkKey(id) : null);
+  const swrFn = () => getMiniArtwork(id, requestOptions);
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
+    swrKey,
+    swrFn,
+    swrOptions,
+  );
+
+  return {
+    swrKey,
+    ...query,
+  };
+};
+
+/**
+ * @summary グループ選択画面用にアルバムのリストを検索
+ */
+export type getAlbumListResponse200 = {
+  data: GroupListItem[];
+  status: 200;
+};
+
+export type getAlbumListResponseComposite = getAlbumListResponse200;
+
+export type getAlbumListResponse = getAlbumListResponseComposite & {
+  headers: Headers;
+};
+
+export const getGetAlbumListUrl = (params?: GetAlbumListParams) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? "null" : value.toString());
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0
+    ? `/api/group_list/album_list?${stringifiedParams}`
+    : `/api/group_list/album_list`;
+};
+
+export const getAlbumList = async (
+  params?: GetAlbumListParams,
+  options?: RequestInit,
+): Promise<getAlbumListResponse> => {
+  return customFetch<getAlbumListResponse>(getGetAlbumListUrl(params), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getGetAlbumListKey = (params?: GetAlbumListParams) =>
+  [`/api/group_list/album_list`, ...(params ? [params] : [])] as const;
+
+export type GetAlbumListQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getAlbumList>>
+>;
+export type GetAlbumListQueryError = unknown;
+
+/**
+ * @summary グループ選択画面用にアルバムのリストを検索
+ */
+export const useGetAlbumList = <TError = unknown>(
+  params?: GetAlbumListParams,
+  options?: {
+    swr?: SWRConfiguration<Awaited<ReturnType<typeof getAlbumList>>, TError> & {
+      swrKey?: Key;
+      enabled?: boolean;
+    };
+    request?: SecondParameter<typeof customFetch>;
+  },
+) => {
+  const { swr: swrOptions, request: requestOptions } = options ?? {};
+
+  const isEnabled = swrOptions?.enabled !== false;
+  const swrKey = swrOptions?.swrKey ??
+    (() => isEnabled ? getGetAlbumListKey(params) : null);
+  const swrFn = () => getAlbumList(params, requestOptions);
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
+    swrKey,
+    swrFn,
+    swrOptions,
+  );
+
+  return {
+    swrKey,
+    ...query,
+  };
+};
+
+/**
+ * @summary グループ選択画面用にアーティストのリストを検索
+ */
+export type getArtistListResponse200 = {
+  data: GroupListItem[];
+  status: 200;
+};
+
+export type getArtistListResponseComposite = getArtistListResponse200;
+
+export type getArtistListResponse = getArtistListResponseComposite & {
+  headers: Headers;
+};
+
+export const getGetArtistListUrl = (params?: GetArtistListParams) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? "null" : value.toString());
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0
+    ? `/api/group_list/artist_list?${stringifiedParams}`
+    : `/api/group_list/artist_list`;
+};
+
+export const getArtistList = async (
+  params?: GetArtistListParams,
+  options?: RequestInit,
+): Promise<getArtistListResponse> => {
+  return customFetch<getArtistListResponse>(getGetArtistListUrl(params), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getGetArtistListKey = (params?: GetArtistListParams) =>
+  [`/api/group_list/artist_list`, ...(params ? [params] : [])] as const;
+
+export type GetArtistListQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getArtistList>>
+>;
+export type GetArtistListQueryError = unknown;
+
+/**
+ * @summary グループ選択画面用にアーティストのリストを検索
+ */
+export const useGetArtistList = <TError = unknown>(
+  params?: GetArtistListParams,
+  options?: {
+    swr?:
+      & SWRConfiguration<Awaited<ReturnType<typeof getArtistList>>, TError>
+      & { swrKey?: Key; enabled?: boolean };
+    request?: SecondParameter<typeof customFetch>;
+  },
+) => {
+  const { swr: swrOptions, request: requestOptions } = options ?? {};
+
+  const isEnabled = swrOptions?.enabled !== false;
+  const swrKey = swrOptions?.swrKey ??
+    (() => isEnabled ? getGetArtistListKey(params) : null);
+  const swrFn = () => getArtistList(params, requestOptions);
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
+    swrKey,
+    swrFn,
+    swrOptions,
+  );
+
+  return {
+    swrKey,
+    ...query,
+  };
+};
+
+/**
+ * @summary グループ選択画面用にジャンルのリストを検索
+ */
+export type getGenreListResponse200 = {
+  data: GroupListItem[];
+  status: 200;
+};
+
+export type getGenreListResponseComposite = getGenreListResponse200;
+
+export type getGenreListResponse = getGenreListResponseComposite & {
+  headers: Headers;
+};
+
+export const getGetGenreListUrl = (params?: GetGenreListParams) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? "null" : value.toString());
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0
+    ? `/api/group_list/genre_list?${stringifiedParams}`
+    : `/api/group_list/genre_list`;
+};
+
+export const getGenreList = async (
+  params?: GetGenreListParams,
+  options?: RequestInit,
+): Promise<getGenreListResponse> => {
+  return customFetch<getGenreListResponse>(getGetGenreListUrl(params), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getGetGenreListKey = (params?: GetGenreListParams) =>
+  [`/api/group_list/genre_list`, ...(params ? [params] : [])] as const;
+
+export type GetGenreListQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getGenreList>>
+>;
+export type GetGenreListQueryError = unknown;
+
+/**
+ * @summary グループ選択画面用にジャンルのリストを検索
+ */
+export const useGetGenreList = <TError = unknown>(
+  params?: GetGenreListParams,
+  options?: {
+    swr?: SWRConfiguration<Awaited<ReturnType<typeof getGenreList>>, TError> & {
+      swrKey?: Key;
+      enabled?: boolean;
+    };
+    request?: SecondParameter<typeof customFetch>;
+  },
+) => {
+  const { swr: swrOptions, request: requestOptions } = options ?? {};
+
+  const isEnabled = swrOptions?.enabled !== false;
+  const swrKey = swrOptions?.swrKey ??
+    (() => isEnabled ? getGetGenreListKey(params) : null);
+  const swrFn = () => getGenreList(params, requestOptions);
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
+    swrKey,
+    swrFn,
+    swrOptions,
+  );
+
+  return {
+    swrKey,
+    ...query,
+  };
+};
 
 export type getTagGroupsResponse200 = {
   data: TagGroup[];
