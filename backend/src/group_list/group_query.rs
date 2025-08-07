@@ -6,8 +6,13 @@ use crate::{db_utils::escs, group_list::GroupColumn};
 /// グループ選択による曲の検索条件
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, IntoParams)]
 pub struct GroupQuery {
+    #[param(value_type = Option<String>)]
     pub artist: GroupQueryValue,
+
+    #[param(value_type = Option<String>)]
     pub album: GroupQueryValue,
+
+    #[param(value_type = Option<String>)]
     pub genre: GroupQueryValue,
 }
 
