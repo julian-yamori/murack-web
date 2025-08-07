@@ -2,7 +2,7 @@ use axum::{
     Json,
     extract::{Query, State},
 };
-use sqlx::PgPool;
+use sqlx::{PgPool, Row, postgres::PgRow};
 
 use crate::{
     error_handling::ApiResult,
@@ -69,21 +69,15 @@ async fn get_names_generic(
     group_query: &GroupQuery,
     pool: &PgPool,
 ) -> ApiResult<Json<Vec<String>>> {
-    // 基本的なアプローチ：まずDISTINCTでユニークな値を取得してからORDER BYでソート
-    let mut query_base = String::from("SELECT DISTINCT ");
+    // name_target に応じてカラム名を分岐
+    let name_column = name_target.column_query();
+    let order_column = name_target.order_query();
 
-    // 必要な列を追加（DISTINCT対象とORDER BY対象の両方）
-    match name_target {
-        GroupColumn::Genre => {
-            query_base.push_str("genre, genre_order FROM tracks");
-        }
-        GroupColumn::Artist => {
-            query_base.push_str("(CASE album_artist WHEN '' THEN artist ELSE album_artist END) as artist_name, (CASE album_artist_order WHEN '' THEN artist_order ELSE album_artist_order END) as artist_order_name FROM tracks");
-        }
-        GroupColumn::Album => {
-            query_base.push_str("album, album_order FROM tracks");
-        }
-    }
+    // name: 取得する曲のカラムの値
+    // order_column: ORDER BY でソートする値
+    let mut query_base = format!(
+        "SELECT DISTINCT {name_column} AS name, {order_column} AS order_column FROM tracks"
+    );
 
     // 条件があるなら連結
     if let Some(where_query) = group_query.where_query() {
@@ -91,49 +85,13 @@ async fn get_names_generic(
         query_base.push_str(&where_query);
     }
 
-    // ソート追加
-    match name_target {
-        GroupColumn::Genre => {
-            query_base.push_str(" ORDER BY genre_order ASC");
-        }
-        GroupColumn::Artist => {
-            query_base.push_str(" ORDER BY artist_order_name ASC");
-        }
-        GroupColumn::Album => {
-            query_base.push_str(" ORDER BY album_order ASC");
-        }
-    }
+    // SELECT で読み替えたカラム名でソート
+    query_base.push_str(" ORDER BY order_column ASC");
 
-    // SQL を実行
-
-    // 結果取得方式を変更：構造体で取得してから値だけ抽出
-    match name_target {
-        GroupColumn::Genre => {
-            #[derive(sqlx::FromRow)]
-            struct GenreRow {
-                genre: String,
-            }
-            let rows: Vec<GenreRow> = sqlx::query_as(&query_base).fetch_all(pool).await?;
-            let names: Vec<String> = rows.into_iter().map(|r| r.genre).collect();
-            Ok(Json(names))
-        }
-        GroupColumn::Artist => {
-            #[derive(sqlx::FromRow)]
-            struct ArtistRow {
-                artist_name: String,
-            }
-            let rows: Vec<ArtistRow> = sqlx::query_as(&query_base).fetch_all(pool).await?;
-            let names: Vec<String> = rows.into_iter().map(|r| r.artist_name).collect();
-            Ok(Json(names))
-        }
-        GroupColumn::Album => {
-            #[derive(sqlx::FromRow)]
-            struct AlbumRow {
-                album: String,
-            }
-            let rows: Vec<AlbumRow> = sqlx::query_as(&query_base).fetch_all(pool).await?;
-            let names: Vec<String> = rows.into_iter().map(|r| r.album).collect();
-            Ok(Json(names))
-        }
-    }
+    // SQL を実行し、検索対象の名前を取得
+    let names: Vec<String> = sqlx::query(&query_base)
+        .map(|r: PgRow| r.get("name"))
+        .fetch_all(pool)
+        .await?;
+    Ok(Json(names))
 }

@@ -21,7 +21,6 @@ impl GroupColumn {
     }
 
     /// ORDER BY 句で使用する列名を取得
-    #[allow(unused)] // TODO: SQLite のときと同様にはできないようなので、要整理
     pub fn order_query(&self) -> &'static str {
         match self {
             Self::Genre => "genre_order",
