@@ -9,11 +9,15 @@ export const GroupListLayout: React.FC<{
   error: unknown;
   isLoading: boolean;
 
+  /** リストの空文字列値の代わりに表示するテキスト */
+  emptyItemText: string;
+
   onItemClick: (item: GroupListItemData) => unknown;
 }> = ({
   list_data,
   error,
   isLoading,
+  emptyItemText,
   onItemClick,
 }) => {
   return (
@@ -40,6 +44,7 @@ export const GroupListLayout: React.FC<{
             <GroupListItem
               key={index}
               item={item}
+              viewText={listItemViewText(item, emptyItemText)}
               onClick={onItemClick}
             />
           ))}
@@ -54,3 +59,16 @@ export const GroupListLayout: React.FC<{
     </Box>
   );
 };
+
+function listItemViewText(
+  item: GroupListItemData,
+  emptyItemText: string,
+): string | undefined {
+  const { name } = item;
+
+  if (name === "") {
+    return emptyItemText;
+  } else {
+    return name;
+  }
+}

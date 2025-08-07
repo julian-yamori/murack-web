@@ -27,7 +27,7 @@ export const ArtistListPage: React.FC<{
         <AlbumListPage filterParams={{ ...currentFilter, artist: item.name }} />
       ),
       navigationMenuKey: undefined,
-      breadCrumb: item.name,
+      breadCrumb: nextBreadCrumb(item),
     });
   };
 
@@ -36,7 +36,19 @@ export const ArtistListPage: React.FC<{
       list_data={data?.data}
       error={error}
       isLoading={isLoading}
+      emptyItemText={UNKNOWN_ARTIST}
       onItemClick={handleItemClick}
     />
   );
 };
+
+const UNKNOWN_ARTIST = "不明なアーティスト";
+
+/** リスト要素が選択されて次画面に遷移するときの、パンくずリストに表示する名前 */
+function nextBreadCrumb(item: GroupListItemData): string | undefined {
+  if (item.name === "") {
+    return UNKNOWN_ARTIST;
+  } else {
+    return item.name;
+  }
+}

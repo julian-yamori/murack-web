@@ -10,9 +10,11 @@ import { API_BASE_URL } from "../api_base_url.ts";
 
 export const GroupListItem: React.FC<{
   item: GroupListItemData;
+  viewText?: string;
   onClick?: (item: GroupListItemData) => unknown;
 }> = ({
   item,
+  viewText,
   onClick,
 }) => {
   return (
@@ -40,7 +42,7 @@ export const GroupListItem: React.FC<{
       <ListItemText
         primary={
           <Typography variant="h6" component="div">
-            {item.name}
+            {viewText ?? item.name}
           </Typography>
         }
       />

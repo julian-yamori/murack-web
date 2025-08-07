@@ -29,7 +29,7 @@ export const AlbumListPage: React.FC<{
         />
       ),
       navigationMenuKey: undefined,
-      breadCrumb: item.name,
+      breadCrumb: nextBreadCrumb(item),
     });
   };
 
@@ -38,7 +38,19 @@ export const AlbumListPage: React.FC<{
       list_data={data?.data}
       error={error}
       isLoading={isLoading}
+      emptyItemText={UNKNOWN_ALBUM}
       onItemClick={handleItemClick}
     />
   );
 };
+
+const UNKNOWN_ALBUM = "不明なアルバム";
+
+/** リスト要素が選択されて次画面に遷移するときの、パンくずリストに表示する名前 */
+function nextBreadCrumb(item: GroupListItemData): string | undefined {
+  if (item.name === "") {
+    return UNKNOWN_ALBUM;
+  } else {
+    return item.name;
+  }
+}
