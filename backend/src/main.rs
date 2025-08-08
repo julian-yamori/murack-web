@@ -1,6 +1,5 @@
 mod artwork;
 mod database;
-mod db_utils;
 mod error_handling;
 mod group_list;
 mod test_tag_group;

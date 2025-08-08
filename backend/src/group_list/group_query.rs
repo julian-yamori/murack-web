@@ -1,7 +1,8 @@
+use murack_core_domain::db_utils::escs;
 use serde::{Deserialize, Serialize};
 use utoipa::IntoParams;
 
-use crate::{db_utils::escs, group_list::GroupColumn};
+use crate::group_list::GroupColumn;
 
 /// グループ選択による曲の検索条件
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, IntoParams)]
