@@ -8,6 +8,7 @@ anyhow = "1.0.98"
 axum = "0.8"
 chrono = { version = "0.4", features = ["serde"] }
 dotenvy = "0.15"
+murack-core-domain = { path = "../../murack-core/domain" } 
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 sqlx = { version = "0.8", features = ["postgres", "runtime-tokio-rustls", "migrate", "chrono"] }
