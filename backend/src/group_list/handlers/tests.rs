@@ -4,7 +4,7 @@ use axum::{
 };
 use sqlx::PgPool;
 
-use super::{GroupListItem, get_album_list, get_artist_list, get_genre_list};
+use super::{GroupListItem, get_album_list, get_artist_list, get_genre_list, get_track_list};
 use crate::{error_handling::ApiResult, group_list::GroupQuery};
 
 fn list_item(name: &str, artwork_id: Option<i32>) -> GroupListItem {
@@ -319,6 +319,179 @@ mod test_order_alternate {
             list_item("あいう", None),
         ];
         assert_eq!(artists, expected);
+        Ok(())
+    }
+}
+
+mod test_track_list {
+    use std::ops::Deref;
+
+    use super::*;
+
+    use murack_core_domain::SortType;
+
+    use crate::{group_list::handlers::GetTrackListParams, track_list::TrackListItem};
+
+    /// Vec<TrackListItem> の全ての曲名を取得
+    ///  
+    /// TrackListItem の全要素を取得できてるかの確認は `全曲取得` のテストのみ。
+    /// それ以外では簡素化のため、曲名だけを比較する。
+    fn track_titles(tracks: &[TrackListItem]) -> Vec<&str> {
+        tracks.iter().map(|item| item.title.deref()).collect()
+    }
+
+    #[sqlx::test(migrator = "crate::MIGRATOR", fixtures("empty"))]
+    async fn 空のデータベース(pool: PgPool) -> ApiResult<()> {
+        let params = GetTrackListParams {
+            genre: None,
+            artist: None,
+            album: None,
+            sort_type: SortType::Artist,
+            sort_desc: false,
+            limit: None,
+            offset: None,
+        };
+
+        let result = get_track_list(Query(params), State(pool)).await?;
+        let Json(tracks) = result;
+
+        assert_eq!(tracks, Vec::new());
+        Ok(())
+    }
+
+    #[sqlx::test(migrator = "crate::MIGRATOR", fixtures("track_list"))]
+    async fn 全曲検索(pool: PgPool) -> ApiResult<()> {
+        let params = GetTrackListParams {
+            genre: None,
+            artist: None,
+            album: None,
+            sort_type: SortType::Artist,
+            sort_desc: false,
+            limit: None,
+            offset: None,
+        };
+
+        let result = get_track_list(Query(params), State(pool)).await?;
+        let Json(tracks) = result;
+
+        assert_eq!(
+            tracks,
+            vec![
+                TrackListItem {
+                    id: 1,
+                    title: "Track 1-1".to_string(),
+                    artwork_id: Some(1),
+                    duration: 180
+                },
+                TrackListItem {
+                    id: 2,
+                    title: "Track 1-2".to_string(),
+                    artwork_id: Some(1),
+                    duration: 170
+                },
+                TrackListItem {
+                    id: 3,
+                    title: "Track 2-1".to_string(),
+                    artwork_id: None,
+                    duration: 240
+                },
+                TrackListItem {
+                    id: 4,
+                    title: "Track 2-2".to_string(),
+                    artwork_id: None,
+                    duration: 230
+                },
+                TrackListItem {
+                    id: 7,
+                    title: "Track 4-1".to_string(),
+                    artwork_id: Some(4),
+                    duration: 280
+                },
+                TrackListItem {
+                    id: 8,
+                    title: "Track 4-2".to_string(),
+                    artwork_id: Some(4),
+                    duration: 270
+                },
+                TrackListItem {
+                    id: 5,
+                    title: "Track 3-1".to_string(),
+                    artwork_id: Some(3),
+                    duration: 200
+                },
+                TrackListItem {
+                    id: 6,
+                    title: "Track 3-2".to_string(),
+                    artwork_id: Some(3),
+                    duration: 190
+                },
+            ]
+        );
+        Ok(())
+    }
+
+    #[sqlx::test(migrator = "crate::MIGRATOR", fixtures("track_list"))]
+    async fn アルバム指定・アーティスト降順(pool: PgPool) -> ApiResult<()> {
+        let params = GetTrackListParams {
+            genre: None,
+            artist: None,
+            album: Some("Album 2".to_string()),
+            sort_type: SortType::Artist,
+            sort_desc: true,
+            limit: None,
+            offset: None,
+        };
+
+        let result = get_track_list(Query(params), State(pool)).await?;
+        let Json(tracks) = result;
+
+        assert_eq!(track_titles(&tracks), vec!["Track 2-2", "Track 2-1"]);
+        Ok(())
+    }
+
+    #[sqlx::test(migrator = "crate::MIGRATOR", fixtures("track_list"))]
+    async fn アーティストとジャンル指定・再生時間昇順(
+        pool: PgPool,
+    ) -> ApiResult<()> {
+        let params = GetTrackListParams {
+            genre: Some("Rock".to_string()),
+            artist: Some("Artist A".to_string()),
+            album: None,
+            sort_type: SortType::Duration,
+            sort_desc: false,
+            limit: None,
+            offset: None,
+        };
+
+        let result = get_track_list(Query(params), State(pool)).await?;
+        let Json(tracks) = result;
+
+        assert_eq!(
+            track_titles(&tracks),
+            vec!["Track 1-2", "Track 1-1", "Track 4-2", "Track 4-1"]
+        );
+        Ok(())
+    }
+
+    #[sqlx::test(migrator = "crate::MIGRATOR", fixtures("track_list"))]
+    async fn アーティストとlimitとoffset指定(pool: PgPool) -> ApiResult<()> {
+        let params = GetTrackListParams {
+            genre: None,
+            artist: Some("Artist A".to_string()),
+            album: None,
+            sort_type: SortType::Album,
+            sort_desc: false,
+            limit: Some(3),
+            offset: Some(1),
+        };
+
+        let result = get_track_list(Query(params), State(pool)).await?;
+        let Json(tracks) = result;
+
+        assert_eq!(
+            track_titles(&tracks),
+            vec!["Track 1-2", "Track 2-1", "Track 2-2"]
+        );
         Ok(())
     }
 }

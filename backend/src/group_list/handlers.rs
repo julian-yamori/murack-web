@@ -6,13 +6,15 @@ use axum::{
     Json,
     extract::{Query, State},
 };
-use serde::Serialize;
+use murack_core_domain::SortType;
+use serde::{Deserialize, Serialize};
 use sqlx::{PgPool, Row, postgres::PgRow};
-use utoipa::ToSchema;
+use utoipa::{IntoParams, ToSchema};
 
 use crate::{
     error_handling::ApiResult,
-    group_list::{GroupColumn, GroupQuery},
+    group_list::{GroupColumn, GroupQuery, group_query::GroupQueryValue},
+    track_list::TrackListItem,
 };
 
 /// グループ選択画面のリスト要素
@@ -191,4 +193,90 @@ async fn get_artwork_id(pool: &PgPool, group_query: &GroupQuery) -> anyhow::Resu
     let image_id: Option<i32> = sqlx::query_scalar(&sql).fetch_optional(pool).await?;
 
     Ok(image_id)
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Deserialize, IntoParams)]
+pub struct GetTrackListParams {
+    #[param(value_type = Option<String>)]
+    pub artist: GroupQueryValue,
+
+    #[param(value_type = Option<String>)]
+    pub album: GroupQueryValue,
+
+    #[param(value_type = Option<String>)]
+    pub genre: GroupQueryValue,
+
+    pub sort_type: SortType,
+
+    pub sort_desc: bool,
+
+    pub limit: Option<u32>,
+    pub offset: Option<u32>,
+}
+
+/// グループ選択に応じた曲リストを取得
+#[utoipa::path(
+    get,
+    path = "/api/group_list/track_list",
+    params(
+        GetTrackListParams
+    ),
+    responses(
+        (status = 200, body = Vec<TrackListItem>)
+    )
+)]
+pub async fn get_track_list(
+    Query(params): Query<GetTrackListParams>,
+    State(pool): State<PgPool>,
+) -> ApiResult<Json<Vec<TrackListItem>>> {
+    let GetTrackListParams {
+        artist,
+        album,
+        genre,
+        sort_type,
+        sort_desc,
+        limit,
+        offset,
+    } = params;
+
+    let group_query = GroupQuery {
+        artist,
+        album,
+        genre,
+    };
+
+    // tracks テーブルの値と、曲ごとに紐づく最初のアートワークの ID を取得
+    let mut sql = "
+        SELECT
+            tracks.id,
+            title,
+            (
+                SELECT artwork_id
+                FROM track_artworks
+                WHERE track_id = tracks.id AND order_index = 0
+            ) AS artwork_id,
+            duration
+        FROM tracks"
+        .to_string();
+
+    if let Some(where_query) = group_query.where_query() {
+        sql.push_str(" WHERE ");
+        sql.push_str(&where_query);
+    }
+
+    sql.push_str(" ORDER BY ");
+    sql.push_str(&sort_type.order_query(sort_desc));
+
+    if let Some(limit) = limit {
+        sql.push_str(" LIMIT ");
+        sql.push_str(&limit.to_string());
+    }
+    if let Some(offset) = offset {
+        sql.push_str(" OFFSET ");
+        sql.push_str(&offset.to_string());
+    }
+
+    let items: Vec<TrackListItem> = sqlx::query_as(&sql).fetch_all(&pool).await?;
+
+    Ok(Json(items))
 }

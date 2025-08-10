@@ -3,6 +3,7 @@ mod database;
 mod error_handling;
 mod group_list;
 mod test_tag_group;
+mod track_list;
 
 use std::env;
 
@@ -14,15 +15,17 @@ use tower_http::cors::{Any, CorsLayer};
 use utoipa::OpenApi;
 
 use crate::{
-    error_handling::error_handler_middleware, group_list::handlers::*, test_tag_group::handlers::*,
+    error_handling::error_handler_middleware, group_list::handlers as group_handlers,
+    test_tag_group::handlers::*,
 };
 
 #[derive(OpenApi)]
 #[openapi(paths(
     artwork::get_mini_artwork,
-    get_genre_list,
-    get_artist_list,
-    get_album_list,
+    group_handlers::get_genre_list,
+    group_handlers::get_artist_list,
+    group_handlers::get_album_list,
+    group_handlers::get_track_list,
     get_tag_groups,
     create_tag_group,
     update_tag_group,
@@ -56,9 +59,22 @@ async fn main() -> anyhow::Result<()> {
     // Build our application with routes
     let app = Router::new()
         .route("/api/artworks/{id}/mini", get(artwork::get_mini_artwork))
-        .route("/api/group_list/genre_list", get(get_genre_list))
-        .route("/api/group_list/artist_list", get(get_artist_list))
-        .route("/api/group_list/album_list", get(get_album_list))
+        .route(
+            "/api/group_list/genre_list",
+            get(group_handlers::get_genre_list),
+        )
+        .route(
+            "/api/group_list/artist_list",
+            get(group_handlers::get_artist_list),
+        )
+        .route(
+            "/api/group_list/album_list",
+            get(group_handlers::get_album_list),
+        )
+        .route(
+            "/api/group_list/track_list",
+            get(group_handlers::get_track_list),
+        )
         .route(
             "/api/tag_groups",
             get(get_tag_groups).post(create_tag_group),
