@@ -58,6 +58,43 @@ export const getGenreListResponseItem = zod.object({
 }).describe("グループ選択画面のリスト要素");
 export const getGenreListResponse = zod.array(getGenreListResponseItem);
 
+/**
+ * @summary グループ選択に応じた曲リストを取得
+ */
+export const getTrackListQueryLimitMin = 0;
+export const getTrackListQueryOffsetMin = 0;
+
+export const getTrackListQueryParams = zod.object({
+  "artist": zod.string().nullish(),
+  "album": zod.string().nullish(),
+  "genre": zod.string().nullish(),
+  "sort_type": zod.enum([
+    "track_name",
+    "artist",
+    "album",
+    "genre",
+    "composer",
+    "duration",
+    "track_index",
+    "disc_index",
+    "release_date",
+    "rating",
+    "entry_date",
+    "path",
+  ]),
+  "sort_desc": zod.boolean(),
+  "limit": zod.number().min(getTrackListQueryLimitMin).nullish(),
+  "offset": zod.number().min(getTrackListQueryOffsetMin).nullish(),
+});
+
+export const getTrackListResponseItem = zod.object({
+  "artwork_id": zod.number().nullish(),
+  "duration": zod.number().describe("再生時間 (ミリ秒)"),
+  "id": zod.number().describe("曲の ID"),
+  "title": zod.string().describe("曲名"),
+}).describe("曲リスト画面に返すリスト要素データ");
+export const getTrackListResponse = zod.array(getTrackListResponseItem);
+
 export const getTagGroupsResponseItem = zod.object({
   "created_at": zod.string().datetime({}),
   "description": zod.string(),

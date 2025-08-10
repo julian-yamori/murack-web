@@ -11,6 +11,7 @@ use axum::{
     Router, middleware,
     routing::{get, put},
 };
+use murack_core_domain::SortType;
 use tower_http::cors::{Any, CorsLayer};
 use utoipa::OpenApi;
 
@@ -20,17 +21,20 @@ use crate::{
 };
 
 #[derive(OpenApi)]
-#[openapi(paths(
-    artwork::get_mini_artwork,
-    group_handlers::get_genre_list,
-    group_handlers::get_artist_list,
-    group_handlers::get_album_list,
-    group_handlers::get_track_list,
-    get_tag_groups,
-    create_tag_group,
-    update_tag_group,
-    delete_tag_group
-))]
+#[openapi(
+    paths(
+        artwork::get_mini_artwork,
+        group_handlers::get_genre_list,
+        group_handlers::get_artist_list,
+        group_handlers::get_album_list,
+        group_handlers::get_track_list,
+        get_tag_groups,
+        create_tag_group,
+        update_tag_group,
+        delete_tag_group
+    ),
+    components(schemas(SortType))
+)]
 struct ApiDoc;
 
 #[tokio::main]

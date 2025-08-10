@@ -28,12 +28,48 @@ export interface GroupListItem {
   name: string;
 }
 
+/**
+ * 曲のソートの種類
+ */
+export type SortType = typeof SortType[keyof typeof SortType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const SortType = {
+  track_name: "track_name",
+  artist: "artist",
+  album: "album",
+  genre: "genre",
+  composer: "composer",
+  duration: "duration",
+  track_index: "track_index",
+  disc_index: "disc_index",
+  release_date: "release_date",
+  rating: "rating",
+  entry_date: "entry_date",
+  path: "path",
+} as const;
+
 export interface TagGroup {
   created_at: string;
   description: string;
   id: number;
   name: string;
   order_index: number;
+}
+
+export type TrackListItemArtworkId = number | null;
+
+/**
+ * 曲リスト画面に返すリスト要素データ
+ */
+export interface TrackListItem {
+  artwork_id?: TrackListItemArtworkId;
+  /** 再生時間 (ミリ秒) */
+  duration: number;
+  /** 曲の ID */
+  id: number;
+  /** 曲名 */
+  title: string;
 }
 
 export type UpdateTagGroupRequestDescription = string | null;
@@ -64,6 +100,22 @@ export type GetGenreListParams = {
   artist?: string | null;
   album?: string | null;
   genre?: string | null;
+};
+
+export type GetTrackListParams = {
+  artist?: string | null;
+  album?: string | null;
+  genre?: string | null;
+  sort_type: SortType;
+  sort_desc: boolean;
+  /**
+   * @minimum 0
+   */
+  limit?: number | null;
+  /**
+   * @minimum 0
+   */
+  offset?: number | null;
 };
 
 type AwaitedInput<T> = PromiseLike<T> | T;
@@ -372,6 +424,86 @@ export const useGetGenreList = <TError = unknown>(
   const swrKey = swrOptions?.swrKey ??
     (() => isEnabled ? getGetGenreListKey(params) : null);
   const swrFn = () => getGenreList(params, requestOptions);
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
+    swrKey,
+    swrFn,
+    swrOptions,
+  );
+
+  return {
+    swrKey,
+    ...query,
+  };
+};
+
+/**
+ * @summary グループ選択に応じた曲リストを取得
+ */
+export type getTrackListResponse200 = {
+  data: TrackListItem[];
+  status: 200;
+};
+
+export type getTrackListResponseComposite = getTrackListResponse200;
+
+export type getTrackListResponse = getTrackListResponseComposite & {
+  headers: Headers;
+};
+
+export const getGetTrackListUrl = (params: GetTrackListParams) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? "null" : value.toString());
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0
+    ? `/api/group_list/track_list?${stringifiedParams}`
+    : `/api/group_list/track_list`;
+};
+
+export const getTrackList = async (
+  params: GetTrackListParams,
+  options?: RequestInit,
+): Promise<getTrackListResponse> => {
+  return customFetch<getTrackListResponse>(getGetTrackListUrl(params), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getGetTrackListKey = (params: GetTrackListParams) =>
+  [`/api/group_list/track_list`, ...(params ? [params] : [])] as const;
+
+export type GetTrackListQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getTrackList>>
+>;
+export type GetTrackListQueryError = unknown;
+
+/**
+ * @summary グループ選択に応じた曲リストを取得
+ */
+export const useGetTrackList = <TError = unknown>(
+  params: GetTrackListParams,
+  options?: {
+    swr?: SWRConfiguration<Awaited<ReturnType<typeof getTrackList>>, TError> & {
+      swrKey?: Key;
+      enabled?: boolean;
+    };
+    request?: SecondParameter<typeof customFetch>;
+  },
+) => {
+  const { swr: swrOptions, request: requestOptions } = options ?? {};
+
+  const isEnabled = swrOptions?.enabled !== false;
+  const swrKey = swrOptions?.swrKey ??
+    (() => isEnabled ? getGetTrackListKey(params) : null);
+  const swrFn = () => getTrackList(params, requestOptions);
 
   const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
     swrKey,
