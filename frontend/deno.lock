@@ -7,10 +7,12 @@
     "npm:@fontsource/roboto@^5.2.6": "5.2.6",
     "npm:@mui/icons-material@^7.2.0": "7.2.0_@mui+material@7.2.0__@emotion+react@11.14.0___react@19.1.0__@emotion+styled@11.14.1___@emotion+react@11.14.0____react@19.1.0___react@19.1.0__@types+react@19.1.8__react@19.1.0__react-dom@19.1.0___react@19.1.0_@types+react@19.1.8_react@19.1.0_@emotion+react@11.14.0__react@19.1.0_@emotion+styled@11.14.1__@emotion+react@11.14.0___react@19.1.0__react@19.1.0_react-dom@19.1.0__react@19.1.0",
     "npm:@mui/material@^7.2.0": "7.2.0_@emotion+react@11.14.0__react@19.1.0_@emotion+styled@11.14.1__@emotion+react@11.14.0___react@19.1.0__react@19.1.0_@types+react@19.1.8_react@19.1.0_react-dom@19.1.0__react@19.1.0",
+    "npm:@types/js-cookie@^3.0.6": "3.0.6",
     "npm:@types/node@*": "22.12.0",
     "npm:@types/react-dom@^19.1.6": "19.1.6_@types+react@19.1.8",
     "npm:@types/react@^19.1.8": "19.1.8",
     "npm:@vitejs/plugin-react@^4.6.0": "4.6.0_vite@7.0.4__picomatch@4.0.2_@babel+core@7.28.0_@types+node@22.12.0",
+    "npm:js-cookie@^3.0.5": "3.0.5",
     "npm:orval@*": "7.10.0_typescript@5.8.3_typedoc@0.28.7__typescript@5.8.3",
     "npm:orval@^7.10.0": "7.10.0_typescript@5.8.3_typedoc@0.28.7__typescript@5.8.3",
     "npm:react-dom@^19.1.0": "19.1.0_react@19.1.0",
@@ -978,6 +980,9 @@
         "@types/unist"
       ]
     },
+    "@types/js-cookie@3.0.6": {
+      "integrity": "sha512-wkw9yd1kEXOPnvEeEV1Go1MmxtBJL0RR79aOTAApecWFVu7w0NNXNqhcWgvw2YgZDYadliXkl14pa3WXw5jlCQ=="
+    },
     "@types/json-schema@7.0.15": {
       "integrity": "sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA=="
     },
@@ -1905,6 +1910,9 @@
     },
     "isexe@2.0.0": {
       "integrity": "sha512-RHxMLp9lnKHGHRng9QFhRCMbYAcVpn69smSGcq3f36xjgVVWThj4qqLbTLlq7Ssj8B+fIQ1EuCEGI2lKsyQeIw=="
+    },
+    "js-cookie@3.0.5": {
+      "integrity": "sha512-cEiJEAEoIbWfCZYKWhVwFuvPX1gETRYPw6LlaTKoxD3s2AkXzkCjnp6h0V77ozyqj0jakteJ4YqDJT830+lVGw=="
     },
     "js-tokens@4.0.0": {
       "integrity": "sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ=="
@@ -2944,9 +2952,11 @@
       "npm:@fontsource/roboto@^5.2.6",
       "npm:@mui/icons-material@^7.2.0",
       "npm:@mui/material@^7.2.0",
+      "npm:@types/js-cookie@^3.0.6",
       "npm:@types/react-dom@^19.1.6",
       "npm:@types/react@^19.1.8",
       "npm:@vitejs/plugin-react@^4.6.0",
+      "npm:js-cookie@^3.0.5",
       "npm:orval@^7.10.0",
       "npm:react-dom@^19.1.0",
       "npm:react@^19.1.0",
