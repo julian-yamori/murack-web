@@ -1,5 +1,4 @@
 import {
-  Avatar,
   Divider,
   ListItem,
   ListItemAvatar,
@@ -7,7 +6,7 @@ import {
   Typography,
 } from "@mui/material";
 import type { GroupListItem as GroupListItemData } from "../gen/backend_api.ts";
-import { API_BASE_URL } from "../api_base_url.ts";
+import { ListArtwork } from "../common_components/ListArtwork.tsx";
 
 /** グループ選択画面のリスト要素 (検索結果から取得した値) */
 export const GroupListItem: React.FC<{
@@ -22,7 +21,7 @@ export const GroupListItem: React.FC<{
   return (
     <GroupListItemView
       text={viewText ?? item.name}
-      thumbSrc={getArtworkSrc(item.artwork_id)}
+      artworkId={item.artwork_id}
       onClick={onClick !== undefined ? () => onClick(item) : undefined}
     />
   );
@@ -39,7 +38,7 @@ export const GroupListItemAll: React.FC<{
   return (
     <GroupListItemView
       text={text}
-      thumbSrc="/artwork_none.png"
+      artworkId={undefined}
       onClick={onClick}
     />
   );
@@ -48,11 +47,11 @@ export const GroupListItemAll: React.FC<{
 /** グループ選択画面のリスト要素 (共通の表示用コンポーネント) */
 export const GroupListItemView: React.FC<{
   text: string;
-  thumbSrc: string;
+  artworkId: number | null | undefined;
   onClick?: () => unknown;
 }> = ({
   text,
-  thumbSrc,
+  artworkId,
   onClick,
 }) => {
   return (
@@ -69,15 +68,7 @@ export const GroupListItemView: React.FC<{
         }}
       >
         <ListItemAvatar>
-          <Avatar
-            src={thumbSrc}
-            variant="rounded"
-            sx={{
-              width: 56,
-              height: 56,
-              mr: 2,
-            }}
-          />
+          <ListArtwork artworkId={artworkId} size={56} />
         </ListItemAvatar>
         <ListItemText
           primary={
@@ -90,10 +81,3 @@ export const GroupListItemView: React.FC<{
     </>
   );
 };
-
-function getArtworkSrc(artworkId: number | null | undefined): string {
-  if (artworkId === null || artworkId === undefined) {
-    return "/artwork_none.png";
-  }
-  return `${API_BASE_URL}/api/artworks/${artworkId}/mini`;
-}
