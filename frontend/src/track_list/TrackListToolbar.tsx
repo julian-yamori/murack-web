@@ -18,6 +18,7 @@ import {
   Settings,
 } from "@mui/icons-material";
 import { SortType } from "../gen/backend_api.ts";
+import { sortTypeSchema } from "../backend_types.ts";
 
 /** ソート種類の表示名マッピング */
 const SORT_TYPE_LABELS: Record<SortType, string> = {
@@ -67,7 +68,8 @@ export const TrackListToolbar: React.FC<{
   onAllTracksPropsClick,
 }) => {
   const handleSortTypeChange = (event: SelectChangeEvent<SortType>) => {
-    onSortTypeChange(event.target.value as SortType);
+    const newValue = sortTypeSchema.parse(event.target.value);
+    onSortTypeChange(newValue);
   };
 
   const handleSortDirectionToggle = () => {
