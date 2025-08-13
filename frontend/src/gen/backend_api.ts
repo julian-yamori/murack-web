@@ -29,6 +29,11 @@ export interface GroupListItem {
 }
 
 /**
+ * アートワークの、リスト表示などに使用する縮小版画像データ
+ */
+export type MiniImage = number[];
+
+/**
  * 曲のソートの種類
  */
 export type SortType = typeof SortType[keyof typeof SortType];
@@ -128,7 +133,7 @@ type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
  * @summary リスト用の mini サイズのアートワークを取得
  */
 export type getMiniArtworkResponse200 = {
-  data: number[];
+  data: MiniImage;
   status: 200;
 };
 

@@ -13,6 +13,13 @@ export const getMiniArtworkParams = zod.object({
   "id": zod.number().describe("Artwork ID"),
 });
 
+export const getMiniArtworkResponseMin = 0;
+
+export const getMiniArtworkResponseItem = zod.number().min(
+  getMiniArtworkResponseMin,
+);
+export const getMiniArtworkResponse = zod.array(getMiniArtworkResponseItem);
+
 /**
  * @summary グループ選択画面用にアルバムのリストを検索
  */

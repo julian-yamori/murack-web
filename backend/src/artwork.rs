@@ -3,6 +3,7 @@ use axum::{
     http::{StatusCode, header},
     response::{IntoResponse, Response},
 };
+use murack_core_domain::artwork::MiniImage;
 use sqlx::PgPool;
 
 use crate::error_handling::ApiResult;
@@ -15,7 +16,7 @@ use crate::error_handling::ApiResult;
         ("id", description = "Artwork ID")
     ),
     responses(
-        (status = 200, content_type = "image/jpeg", body = Vec<u8>),
+        (status = 200, body = MiniImage),
         (status = 404, description = "Artwork not found")
     )
 )]
@@ -31,7 +32,7 @@ pub async fn get_mini_artwork(
         Some(image) => {
             let response = Response::builder()
                 .status(StatusCode::OK)
-                .header(header::CONTENT_TYPE, "image/jpeg")
+                .header(header::CONTENT_TYPE, MiniImage::MIME_TYPE)
                 .body(image.into())?;
 
             Ok(response)
