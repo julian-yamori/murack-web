@@ -36,6 +36,9 @@
     "zod": "npm:zod@^3.25.74"
   },
   "lint": {
+    "rules": {
+      "tags": ["recommended", "react"]
+    },
     "exclude": [
       // await が無い関数に async が付く対策
       "src/gen/backend_api.ts"
