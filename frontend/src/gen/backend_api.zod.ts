@@ -102,6 +102,59 @@ export const getTrackListResponseItem = zod.object({
 }).describe("曲リスト画面に返すリスト要素データ");
 export const getTrackListResponse = zod.array(getTrackListResponseItem);
 
+/**
+ * @summary プレイリスト一覧画面のためのリスト要素を取得
+ */
+export const getPlaylistListQueryParams = zod.object({
+  "parentId": zod.number().optional().describe(
+    "検索対象リストの親プレイリスト ID。null の場合は最上位のプレイリストのみを検索",
+  ),
+});
+
+export const getPlaylistListResponseItem = zod.object({
+  "id": zod.number().describe("プレイリストID"),
+  "name": zod.string(),
+  "playlist_type": zod.enum(["Normal", "Filter", "Folder"]).describe(
+    "プレイリストの種類",
+  ),
+}).describe("プレイリスト一覧画面のリスト要素");
+export const getPlaylistListResponse = zod.array(getPlaylistListResponseItem);
+
+/**
+ * @summary プレイリスト一つの詳細情報を取得
+ */
+export const getPlaylistDetailsParams = zod.object({
+  "id": zod.number().describe("Playlist ID"),
+});
+
+export const getPlaylistDetailsResponse = zod.object({
+  "id": zod.number().describe("プレイリストID"),
+  "name": zod.string(),
+  "parent_id": zod.number().nullish().describe("親プレイリストID"),
+  "playlist_type": zod.enum(["Normal", "Filter", "Folder"]).describe(
+    "プレイリストの種類",
+  ),
+  "save_dap": zod.boolean().describe("DAPにこのプレイリストを保存するか"),
+  "sort_desc": zod.boolean().describe("ソートが降順か"),
+  "sort_type": zod.enum([
+    "playlist",
+    "track_name",
+    "artist",
+    "album",
+    "genre",
+    "composer",
+    "duration",
+    "track_index",
+    "disc_index",
+    "release_date",
+    "rating",
+    "entry_date",
+    "path",
+  ]).describe("曲のソートの種類 (プレイリスト順付き)"),
+}).describe(
+  "プレイリストの、プレイリスト一覧・曲一覧画面で利用する情報のみを抽出した詳細情報",
+);
+
 export const getTagGroupsResponseItem = zod.object({
   "created_at": zod.string().datetime({}),
   "description": zod.string(),

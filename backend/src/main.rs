@@ -2,6 +2,7 @@ mod artwork;
 mod database;
 mod error_handling;
 mod group_list;
+mod playlist;
 mod test_tag_group;
 mod track_list;
 
@@ -17,7 +18,7 @@ use utoipa::OpenApi;
 
 use crate::{
     error_handling::error_handler_middleware, group_list::handlers as group_handlers,
-    test_tag_group::handlers::*,
+    playlist::get_handlers as plist_gets, test_tag_group::handlers::*,
 };
 
 #[derive(OpenApi)]
@@ -28,6 +29,8 @@ use crate::{
         group_handlers::get_artist_list,
         group_handlers::get_album_list,
         group_handlers::get_track_list,
+        plist_gets::get_playlist_list,
+        plist_gets::get_playlist_details,
         get_tag_groups,
         create_tag_group,
         update_tag_group,
@@ -79,6 +82,8 @@ async fn main() -> anyhow::Result<()> {
             "/api/group_list/track_list",
             get(group_handlers::get_track_list),
         )
+        .route("/api/playlists/list", get(plist_gets::get_playlist_list))
+        .route("/api/playlists/{id}", get(plist_gets::get_playlist_details))
         .route(
             "/api/tag_groups",
             get(get_tag_groups).post(create_tag_group),

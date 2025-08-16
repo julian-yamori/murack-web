@@ -33,13 +33,90 @@ export interface GroupListItem {
  */
 export type MiniImage = number[];
 
+export type NonEmptyString = string;
+
+/**
+ * 親プレイリストID
+ */
+export type PlaylistDetailsParentId = number | null;
+
+/**
+ * プレイリストの、プレイリスト一覧・曲一覧画面で利用する情報のみを抽出した詳細情報
+ */
+export interface PlaylistDetails {
+  /** プレイリストID */
+  id: number;
+  /** プレイリスト名 */
+  name: NonEmptyString;
+  /** 親プレイリストID */
+  parent_id?: PlaylistDetailsParentId;
+  /** プレイリストの種類 */
+  playlist_type: PlaylistType;
+  /** DAPにこのプレイリストを保存するか */
+  save_dap: boolean;
+  /** ソートが降順か */
+  sort_desc: boolean;
+  /** ソート対象 */
+  sort_type: SortTypeWithPlaylist;
+}
+
+/**
+ * プレイリスト一覧画面のリスト要素
+ */
+export interface PlaylistListItem {
+  /** プレイリストID */
+  id: number;
+  /** プレイリスト名 */
+  name: NonEmptyString;
+  /** プレイリストの種類 */
+  playlist_type: PlaylistType;
+}
+
+/**
+ * プレイリストの種類
+ */
+export type PlaylistType = typeof PlaylistType[keyof typeof PlaylistType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const PlaylistType = {
+  Normal: "Normal",
+  Filter: "Filter",
+  Folder: "Folder",
+} as const;
+
 /**
  * 曲のソートの種類
+
+SortTypeWithPlaylist では SortType 定義を流用しているが、ToSchema 実装では文字列の配列を直接指定している。
+SortType の種類を増やす際は注意！
  */
 export type SortType = typeof SortType[keyof typeof SortType];
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const SortType = {
+  track_name: "track_name",
+  artist: "artist",
+  album: "album",
+  genre: "genre",
+  composer: "composer",
+  duration: "duration",
+  track_index: "track_index",
+  disc_index: "disc_index",
+  release_date: "release_date",
+  rating: "rating",
+  entry_date: "entry_date",
+  path: "path",
+} as const;
+
+/**
+ * 曲のソートの種類 (プレイリスト順付き)
+ */
+export type SortTypeWithPlaylist =
+  typeof SortTypeWithPlaylist[keyof typeof SortTypeWithPlaylist];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const SortTypeWithPlaylist = {
+  playlist: "playlist",
   track_name: "track_name",
   artist: "artist",
   album: "album",
@@ -121,6 +198,13 @@ export type GetTrackListParams = {
    * @minimum 0
    */
   offset?: number | null;
+};
+
+export type GetPlaylistListParams = {
+  /**
+   * 検索対象リストの親プレイリスト ID。null の場合は最上位のプレイリストのみを検索
+   */
+  parentId?: number;
 };
 
 type AwaitedInput<T> = PromiseLike<T> | T;
@@ -509,6 +593,152 @@ export const useGetTrackList = <TError = unknown>(
   const swrKey = swrOptions?.swrKey ??
     (() => isEnabled ? getGetTrackListKey(params) : null);
   const swrFn = () => getTrackList(params, requestOptions);
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
+    swrKey,
+    swrFn,
+    swrOptions,
+  );
+
+  return {
+    swrKey,
+    ...query,
+  };
+};
+
+/**
+ * @summary プレイリスト一覧画面のためのリスト要素を取得
+ */
+export type getPlaylistListResponse200 = {
+  data: PlaylistListItem[];
+  status: 200;
+};
+
+export type getPlaylistListResponseComposite = getPlaylistListResponse200;
+
+export type getPlaylistListResponse = getPlaylistListResponseComposite & {
+  headers: Headers;
+};
+
+export const getGetPlaylistListUrl = (params?: GetPlaylistListParams) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? "null" : value.toString());
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0
+    ? `/api/playlists/list?${stringifiedParams}`
+    : `/api/playlists/list`;
+};
+
+export const getPlaylistList = async (
+  params?: GetPlaylistListParams,
+  options?: RequestInit,
+): Promise<getPlaylistListResponse> => {
+  return customFetch<getPlaylistListResponse>(getGetPlaylistListUrl(params), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getGetPlaylistListKey = (params?: GetPlaylistListParams) =>
+  [`/api/playlists/list`, ...(params ? [params] : [])] as const;
+
+export type GetPlaylistListQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getPlaylistList>>
+>;
+export type GetPlaylistListQueryError = unknown;
+
+/**
+ * @summary プレイリスト一覧画面のためのリスト要素を取得
+ */
+export const useGetPlaylistList = <TError = unknown>(
+  params?: GetPlaylistListParams,
+  options?: {
+    swr?:
+      & SWRConfiguration<Awaited<ReturnType<typeof getPlaylistList>>, TError>
+      & { swrKey?: Key; enabled?: boolean };
+    request?: SecondParameter<typeof customFetch>;
+  },
+) => {
+  const { swr: swrOptions, request: requestOptions } = options ?? {};
+
+  const isEnabled = swrOptions?.enabled !== false;
+  const swrKey = swrOptions?.swrKey ??
+    (() => isEnabled ? getGetPlaylistListKey(params) : null);
+  const swrFn = () => getPlaylistList(params, requestOptions);
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
+    swrKey,
+    swrFn,
+    swrOptions,
+  );
+
+  return {
+    swrKey,
+    ...query,
+  };
+};
+
+/**
+ * @summary プレイリスト一つの詳細情報を取得
+ */
+export type getPlaylistDetailsResponse200 = {
+  data: PlaylistDetails;
+  status: 200;
+};
+
+export type getPlaylistDetailsResponseComposite = getPlaylistDetailsResponse200;
+
+export type getPlaylistDetailsResponse = getPlaylistDetailsResponseComposite & {
+  headers: Headers;
+};
+
+export const getGetPlaylistDetailsUrl = (id: number) => {
+  return `/api/playlists/${id}`;
+};
+
+export const getPlaylistDetails = async (
+  id: number,
+  options?: RequestInit,
+): Promise<getPlaylistDetailsResponse> => {
+  return customFetch<getPlaylistDetailsResponse>(getGetPlaylistDetailsUrl(id), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getGetPlaylistDetailsKey = (id: number) =>
+  [`/api/playlists/${id}`] as const;
+
+export type GetPlaylistDetailsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getPlaylistDetails>>
+>;
+export type GetPlaylistDetailsQueryError = unknown;
+
+/**
+ * @summary プレイリスト一つの詳細情報を取得
+ */
+export const useGetPlaylistDetails = <TError = unknown>(
+  id: number,
+  options?: {
+    swr?:
+      & SWRConfiguration<Awaited<ReturnType<typeof getPlaylistDetails>>, TError>
+      & { swrKey?: Key; enabled?: boolean };
+    request?: SecondParameter<typeof customFetch>;
+  },
+) => {
+  const { swr: swrOptions, request: requestOptions } = options ?? {};
+
+  const isEnabled = swrOptions?.enabled !== false && !!id;
+  const swrKey = swrOptions?.swrKey ??
+    (() => isEnabled ? getGetPlaylistDetailsKey(id) : null);
+  const swrFn = () => getPlaylistDetails(id, requestOptions);
 
   const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
     swrKey,
