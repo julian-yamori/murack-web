@@ -6,10 +6,9 @@ use axum::{
 };
 use murack_core_domain::{NonEmptyString, SortTypeWithPlaylist, playlist::PlaylistType};
 use serde::Serialize;
-use sqlx::PgPool;
 use utoipa::ToSchema;
 
-use crate::error_handling::ApiResult;
+use crate::{AppState, error_handling::ApiResult};
 
 /// プレイリスト一覧画面のリスト要素
 #[derive(Debug, PartialEq, Eq, Serialize, ToSchema)]
@@ -37,7 +36,7 @@ pub struct PlaylistListItem {
 )]
 pub async fn get_playlist_list(
     Query(parent_id): Query<Option<i32>>,
-    State(pool): State<PgPool>,
+    State(pool): State<AppState>,
 ) -> ApiResult<Json<Vec<PlaylistListItem>>> {
     let items = sqlx::query_as!(
         PlaylistListItem,
@@ -96,7 +95,7 @@ pub struct PlaylistDetails {
 )]
 pub async fn get_playlist_details(
     Path(id): Path<i32>,
-    State(pool): State<PgPool>,
+    State(pool): State<AppState>,
 ) -> ApiResult<Json<PlaylistDetails>> {
     let plist = sqlx::query_as!(
         PlaylistDetails,

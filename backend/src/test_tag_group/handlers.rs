@@ -2,9 +2,9 @@ use axum::{
     extract::{Path, State},
     response::Json,
 };
-use sqlx::PgPool;
 
 use crate::{
+    AppState,
     error_handling::{ApiError, ApiResult},
     test_tag_group::models::{CreateTagGroupRequest, TagGroup, UpdateTagGroupRequest},
 };
@@ -16,7 +16,7 @@ use crate::{
         (status = 200, description = "List all tag groups", body = [TagGroup])
     )
 )]
-pub async fn get_tag_groups(State(pool): State<PgPool>) -> ApiResult<Json<Vec<TagGroup>>> {
+pub async fn get_tag_groups(State(pool): State<AppState>) -> ApiResult<Json<Vec<TagGroup>>> {
     let tag_groups = sqlx::query_as!(
         TagGroup,
         "SELECT id, name, order_index, description, created_at FROM tag_groups ORDER BY order_index ASC",
@@ -35,7 +35,7 @@ pub async fn get_tag_groups(State(pool): State<PgPool>) -> ApiResult<Json<Vec<Ta
     )
 )]
 pub async fn create_tag_group(
-    State(pool): State<PgPool>,
+    State(pool): State<AppState>,
     Json(request): Json<CreateTagGroupRequest>,
 ) -> ApiResult<Json<TagGroup>> {
     let tag_group = sqlx::query_as!(TagGroup,
@@ -62,7 +62,7 @@ pub async fn create_tag_group(
 )]
 pub async fn update_tag_group(
     Path(id): Path<i32>,
-    State(pool): State<PgPool>,
+    State(pool): State<AppState>,
     Json(request): Json<UpdateTagGroupRequest>,
 ) -> ApiResult<Json<TagGroup>> {
     // First check if group exists
@@ -102,7 +102,7 @@ pub async fn update_tag_group(
         (status = 200, description = "Tag group deleted successfully")
     )
 )]
-pub async fn delete_tag_group(Path(id): Path<i32>, State(pool): State<PgPool>) -> ApiResult<()> {
+pub async fn delete_tag_group(Path(id): Path<i32>, State(pool): State<AppState>) -> ApiResult<()> {
     let result = sqlx::query!("DELETE FROM tag_groups WHERE id = $1", id)
         .execute(&pool)
         .await?;

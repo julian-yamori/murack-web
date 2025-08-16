@@ -12,6 +12,7 @@ use sqlx::{PgPool, Row, postgres::PgRow};
 use utoipa::{IntoParams, ToSchema};
 
 use crate::{
+    AppState,
     error_handling::ApiResult,
     group_list::{GroupColumn, GroupQuery, group_query::GroupQueryValue},
     track_list::TrackListItem,
@@ -39,7 +40,7 @@ pub struct GroupListItem {
 )]
 pub async fn get_genre_list(
     Query(mut group_query): Query<GroupQuery>,
-    State(pool): State<PgPool>,
+    State(pool): State<AppState>,
 ) -> ApiResult<Json<Vec<GroupListItem>>> {
     let names = get_names_generic(GroupColumn::Genre, &group_query, &pool).await?;
 
@@ -73,7 +74,7 @@ pub async fn get_genre_list(
 )]
 pub async fn get_artist_list(
     Query(mut group_query): Query<GroupQuery>,
-    State(pool): State<PgPool>,
+    State(pool): State<AppState>,
 ) -> ApiResult<Json<Vec<GroupListItem>>> {
     let names = get_names_generic(GroupColumn::Artist, &group_query, &pool).await?;
 
@@ -107,7 +108,7 @@ pub async fn get_artist_list(
 )]
 pub async fn get_album_list(
     Query(mut group_query): Query<GroupQuery>,
-    State(pool): State<PgPool>,
+    State(pool): State<AppState>,
 ) -> ApiResult<Json<Vec<GroupListItem>>> {
     // アルバム名のリストを取得
     let names = get_names_generic(GroupColumn::Album, &group_query, &pool).await?;
@@ -227,7 +228,7 @@ pub struct GetTrackListParams {
 )]
 pub async fn get_track_list(
     Query(params): Query<GetTrackListParams>,
-    State(pool): State<PgPool>,
+    State(pool): State<AppState>,
 ) -> ApiResult<Json<Vec<TrackListItem>>> {
     let GetTrackListParams {
         artist,

@@ -10,13 +10,13 @@ mod track_list;
 use std::env;
 
 use axum::{Router, middleware};
-use sqlx::{Pool, Postgres};
+use sqlx::PgPool;
 use tower_http::cors::{Any, CorsLayer};
 use utoipa::OpenApi;
 
 use crate::{api_define::ApiDoc, error_handling::error_handler_middleware};
 
-type AppState = Pool<Postgres>;
+type AppState = PgPool;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
