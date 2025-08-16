@@ -5,8 +5,8 @@ use axum::{
     extract::{Path, Query, State},
 };
 use murack_core_domain::{NonEmptyString, SortTypeWithPlaylist, playlist::PlaylistType};
-use serde::Serialize;
-use utoipa::ToSchema;
+use serde::{Deserialize, Serialize};
+use utoipa::{IntoParams, ToSchema};
 
 use crate::{AppState, error_handling::ApiResult};
 
@@ -23,19 +23,25 @@ pub struct PlaylistListItem {
     pub name: NonEmptyString,
 }
 
+#[derive(Debug, Deserialize, IntoParams)]
+pub struct PlaylistListQuery {
+    /// 検索対象リストの親プレイリスト ID。指定しない場合は最上位のプレイリストのみを検索
+    pub parent_id: Option<i32>,
+}
+
 /// プレイリスト一覧画面のためのリスト要素を取得
 #[utoipa::path(
     get,
     path = "/api/playlists/list",
     params(
-        ("parentId" = Option<i32>, Query, description = "検索対象リストの親プレイリスト ID。null の場合は最上位のプレイリストのみを検索")
+        PlaylistListQuery
     ),
     responses(
         (status = 200, body = Vec<PlaylistListItem>, description = "parentId で指定されたプレイリストの、子プレイリストのリスト要素")
     )
 )]
 pub async fn get_playlist_list(
-    Query(parent_id): Query<Option<i32>>,
+    Query(query): Query<PlaylistListQuery>,
     State(pool): State<AppState>,
 ) -> ApiResult<Json<Vec<PlaylistListItem>>> {
     let items = sqlx::query_as!(
@@ -49,7 +55,7 @@ pub async fn get_playlist_list(
         WHERE parent_id IS NOT DISTINCT FROM $1
         ORDER BY in_folder_order
         "#,
-        parent_id
+        query.parent_id
     )
     .fetch_all(&pool)
     .await?;

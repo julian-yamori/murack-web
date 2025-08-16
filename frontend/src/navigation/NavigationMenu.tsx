@@ -8,9 +8,15 @@ import { ArtistListPage } from "../group_list/ArtistListPage.tsx";
 import { TestTagGroupPage } from "../test_tag_group/TestTagGroupPage.tsx";
 import { AlbumListPage } from "../group_list/AlbumListPage.tsx";
 import { GenreListPage } from "../group_list/GenreListPage.tsx";
+import { RootListPage } from "../playlist/RootListPage.tsx";
 
 /** ナビゲーションメニューで、どの項目が選択されているかを判別するためのキー */
-export type NavigationMenuKey = "artist" | "album" | "genre" | "test-tag-group";
+export type NavigationMenuKey =
+  | "playlist"
+  | "artist"
+  | "album"
+  | "genre"
+  | "test-tag-group";
 
 /// AppBar から呼び出す、最上位の各種ページに遷移するメニュー
 export const NavigationMenu: React.FC<{
@@ -34,6 +40,16 @@ export const NavigationMenu: React.FC<{
 
   return (
     <MenuList>
+      <PageItem
+        text="プレイリスト"
+        selected={currentPage?.navigationMenuKey === "playlist"}
+        onClick={() =>
+          changeRootPage({
+            render: () => <RootListPage />,
+            navigationMenuKey: "playlist",
+            breadCrumb: "プレイリスト",
+          })}
+      />
       <PageItem
         text="アーティスト"
         selected={currentPage?.navigationMenuKey === "artist"}

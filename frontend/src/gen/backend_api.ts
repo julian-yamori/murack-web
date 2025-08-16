@@ -202,9 +202,9 @@ export type GetTrackListParams = {
 
 export type GetPlaylistListParams = {
   /**
-   * 検索対象リストの親プレイリスト ID。null の場合は最上位のプレイリストのみを検索
+   * 検索対象リストの親プレイリスト ID。指定しない場合は最上位のプレイリストのみを検索
    */
-  parentId?: number;
+  parent_id?: number | null;
 };
 
 type AwaitedInput<T> = PromiseLike<T> | T;

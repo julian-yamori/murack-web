@@ -106,8 +106,8 @@ export const getTrackListResponse = zod.array(getTrackListResponseItem);
  * @summary プレイリスト一覧画面のためのリスト要素を取得
  */
 export const getPlaylistListQueryParams = zod.object({
-  "parentId": zod.number().optional().describe(
-    "検索対象リストの親プレイリスト ID。null の場合は最上位のプレイリストのみを検索",
+  "parent_id": zod.number().nullish().describe(
+    "検索対象リストの親プレイリスト ID。指定しない場合は最上位のプレイリストのみを検索",
   ),
 });
 
