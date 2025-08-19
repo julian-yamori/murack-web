@@ -96,7 +96,6 @@ export const getTrackListQueryParams = zod.object({
 
 export const getTrackListResponseItem = zod.object({
   "artwork_id": zod.number().nullish(),
-  "duration": zod.number().describe("再生時間 (ミリ秒)"),
   "id": zod.number().describe("曲の ID"),
   "title": zod.string().describe("曲名"),
 }).describe("曲リスト画面に返すリスト要素データ");
@@ -153,6 +152,22 @@ export const getPlaylistDetailsResponse = zod.object({
   ]).describe("曲のソートの種類 (プレイリスト順付き)"),
 }).describe(
   "プレイリストの、プレイリスト一覧・曲一覧画面で利用する情報のみを抽出した詳細情報",
+);
+
+/**
+ * @summary プレイリストの曲リストを取得
+ */
+export const getPlaylistTracksParams = zod.object({
+  "id": zod.number().describe("Playlist ID"),
+});
+
+export const getPlaylistTracksResponseItem = zod.object({
+  "artwork_id": zod.number().nullish(),
+  "id": zod.number().describe("曲の ID"),
+  "title": zod.string().describe("曲名"),
+}).describe("曲リスト画面に返すリスト要素データ");
+export const getPlaylistTracksResponse = zod.array(
+  getPlaylistTracksResponseItem,
 );
 
 export const getTagGroupsResponseItem = zod.object({

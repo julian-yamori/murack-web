@@ -12,7 +12,4 @@ pub struct TrackListItem {
     pub title: String,
 
     pub artwork_id: Option<i32>,
-
-    /// 再生時間 (ミリ秒)
-    pub duration: i32,
 }

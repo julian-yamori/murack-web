@@ -146,8 +146,6 @@ export type TrackListItemArtworkId = number | null;
  */
 export interface TrackListItem {
   artwork_id?: TrackListItemArtworkId;
-  /** 再生時間 (ミリ秒) */
-  duration: number;
   /** 曲の ID */
   id: number;
   /** 曲名 */
@@ -739,6 +737,73 @@ export const useGetPlaylistDetails = <TError = unknown>(
   const swrKey = swrOptions?.swrKey ??
     (() => isEnabled ? getGetPlaylistDetailsKey(id) : null);
   const swrFn = () => getPlaylistDetails(id, requestOptions);
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
+    swrKey,
+    swrFn,
+    swrOptions,
+  );
+
+  return {
+    swrKey,
+    ...query,
+  };
+};
+
+/**
+ * @summary プレイリストの曲リストを取得
+ */
+export type getPlaylistTracksResponse200 = {
+  data: TrackListItem[];
+  status: 200;
+};
+
+export type getPlaylistTracksResponseComposite = getPlaylistTracksResponse200;
+
+export type getPlaylistTracksResponse = getPlaylistTracksResponseComposite & {
+  headers: Headers;
+};
+
+export const getGetPlaylistTracksUrl = (id: number) => {
+  return `/api/playlists/${id}/tracks`;
+};
+
+export const getPlaylistTracks = async (
+  id: number,
+  options?: RequestInit,
+): Promise<getPlaylistTracksResponse> => {
+  return customFetch<getPlaylistTracksResponse>(getGetPlaylistTracksUrl(id), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getGetPlaylistTracksKey = (id: number) =>
+  [`/api/playlists/${id}/tracks`] as const;
+
+export type GetPlaylistTracksQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getPlaylistTracks>>
+>;
+export type GetPlaylistTracksQueryError = unknown;
+
+/**
+ * @summary プレイリストの曲リストを取得
+ */
+export const useGetPlaylistTracks = <TError = unknown>(
+  id: number,
+  options?: {
+    swr?:
+      & SWRConfiguration<Awaited<ReturnType<typeof getPlaylistTracks>>, TError>
+      & { swrKey?: Key; enabled?: boolean };
+    request?: SecondParameter<typeof customFetch>;
+  },
+) => {
+  const { swr: swrOptions, request: requestOptions } = options ?? {};
+
+  const isEnabled = swrOptions?.enabled !== false && !!id;
+  const swrKey = swrOptions?.swrKey ??
+    (() => isEnabled ? getGetPlaylistTracksKey(id) : null);
+  const swrFn = () => getPlaylistTracks(id, requestOptions);
 
   const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
     swrKey,

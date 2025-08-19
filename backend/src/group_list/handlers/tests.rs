@@ -381,49 +381,41 @@ mod test_track_list {
                     id: 1,
                     title: "Track 1-1".to_string(),
                     artwork_id: Some(1),
-                    duration: 180
                 },
                 TrackListItem {
                     id: 2,
                     title: "Track 1-2".to_string(),
                     artwork_id: Some(1),
-                    duration: 170
                 },
                 TrackListItem {
                     id: 3,
                     title: "Track 2-1".to_string(),
                     artwork_id: None,
-                    duration: 240
                 },
                 TrackListItem {
                     id: 4,
                     title: "Track 2-2".to_string(),
                     artwork_id: None,
-                    duration: 230
                 },
                 TrackListItem {
                     id: 7,
                     title: "Track 4-1".to_string(),
                     artwork_id: Some(4),
-                    duration: 280
                 },
                 TrackListItem {
                     id: 8,
                     title: "Track 4-2".to_string(),
                     artwork_id: Some(4),
-                    duration: 270
                 },
                 TrackListItem {
                     id: 5,
                     title: "Track 3-1".to_string(),
                     artwork_id: Some(3),
-                    duration: 200
                 },
                 TrackListItem {
                     id: 6,
                     title: "Track 3-2".to_string(),
                     artwork_id: Some(3),
-                    duration: 190
                 },
             ]
         );

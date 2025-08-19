@@ -22,6 +22,7 @@ use crate::{
         group_handlers::get_track_list,
         plist_gets::get_playlist_list,
         plist_gets::get_playlist_details,
+        plist_gets::get_playlist_tracks,
         get_tag_groups,
         create_tag_group,
         update_tag_group,
@@ -57,7 +58,11 @@ pub fn api_routing(mut router: Router<AppState>) -> Router<AppState> {
     // playlists
     router = router
         .route("/api/playlists/list", get(plist_gets::get_playlist_list))
-        .route("/api/playlists/{id}", get(plist_gets::get_playlist_details));
+        .route("/api/playlists/{id}", get(plist_gets::get_playlist_details))
+        .route(
+            "/api/playlists/{id}/tracks",
+            get(plist_gets::get_playlist_tracks),
+        );
 
     // tag_groups (プロトタイプ用)
     router = router

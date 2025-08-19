@@ -255,8 +255,7 @@ pub async fn get_track_list(
                 SELECT artwork_id
                 FROM track_artworks
                 WHERE track_id = tracks.id AND order_index = 0
-            ) AS artwork_id,
-            duration
+            ) AS artwork_id
         FROM tracks"
         .to_string();
 

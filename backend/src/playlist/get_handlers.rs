@@ -4,11 +4,16 @@ use axum::{
     Json,
     extract::{Path, Query, State},
 };
-use murack_core_domain::{NonEmptyString, SortTypeWithPlaylist, playlist::PlaylistType};
+use murack_core_domain::{
+    NonEmptyString, SortTypeWithPlaylist,
+    playlist::PlaylistType,
+    track_query::{SelectColumn, playlist_query::PlaylistQueryBuilder},
+};
 use serde::{Deserialize, Serialize};
+use sqlx::{FromRow, postgres::PgRow};
 use utoipa::{IntoParams, ToSchema};
 
-use crate::{AppState, error_handling::ApiResult};
+use crate::{AppState, error_handling::ApiResult, track_list::TrackListItem};
 
 /// プレイリスト一覧画面のリスト要素
 #[derive(Debug, PartialEq, Eq, Serialize, ToSchema)]
@@ -123,4 +128,37 @@ pub async fn get_playlist_details(
     .await?;
 
     Ok(Json(plist))
+}
+
+/// プレイリストの曲リストを取得
+#[utoipa::path(
+    get,
+    path = "/api/playlists/{id}/tracks",
+    params(
+        ("id", description = "Playlist ID")
+    ),
+    responses(
+        (status = 200, body = Vec<TrackListItem>)
+    )
+)]
+pub async fn get_playlist_tracks(
+    Path(id): Path<i32>,
+    State(pool): State<AppState>,
+) -> ApiResult<Json<Vec<TrackListItem>>> {
+    let query = PlaylistQueryBuilder::new(id)
+        .column(SelectColumn::Id)
+        .column(SelectColumn::Title)
+        .column(SelectColumn::ArtworkId)
+        .build();
+
+    let mut tx = pool.begin().await?;
+    let rows = query.fetch(&mut tx).await?;
+    tx.commit().await?;
+
+    let tracks = rows
+        .iter()
+        .map(|row: &PgRow| TrackListItem::from_row(row))
+        .collect::<Result<Vec<_>, _>>()?;
+
+    Ok(Json(tracks))
 }
