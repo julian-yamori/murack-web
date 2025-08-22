@@ -80,6 +80,10 @@ export const SortInputWithPlaylist: React.FC<{
   sortType: SortTypeWithPlaylist;
   /** ソート降順フラグ */
   sortDesc: boolean;
+
+  /**「プレイリスト順」を使用するかどうか */
+  enablePlaylist: boolean;
+
   /** ソート種類変更コールバック */
   onTypeChange: (sortType: SortTypeWithPlaylist) => unknown;
   /** ソート方向変更コールバック */
@@ -87,6 +91,7 @@ export const SortInputWithPlaylist: React.FC<{
 }> = ({
   sortType,
   sortDesc,
+  enablePlaylist,
   onTypeChange,
   onDescChange,
 }) => {
@@ -99,7 +104,7 @@ export const SortInputWithPlaylist: React.FC<{
     <>
       <TypeSelect
         sortType={sortType}
-        labelMapping={TYPE_LABELS_WP}
+        labelMapping={enablePlaylist ? TYPE_LABELS_WP : TYPE_LABELS}
         onChange={handleTypeChange}
       />
 

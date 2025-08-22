@@ -88,6 +88,7 @@ export const PlaylistTracksPage: React.FC<{ playlistId: number }> = (
               <SortInputWithPlaylist
                 sortType={playlist.sort_type}
                 sortDesc={playlist.sort_desc}
+                enablePlaylist={playlist.playlist_type === "Normal"}
                 onTypeChange={handleSortTypeChange}
                 onDescChange={handleSortDescChange}
               />
