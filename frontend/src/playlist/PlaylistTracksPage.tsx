@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   Box,
   Button,
@@ -7,42 +6,47 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
-import { Settings } from "@mui/icons-material";
-import { NavBreadcrumbs } from "../navigation/NavBreadcrumbs.tsx";
-import { GroupFilterParams } from "./group_filter_params.ts";
-import { TrackListView } from "../track_list/TrackListView.tsx";
 import {
+  SortTypeWithPlaylist,
   TrackListItem as TrackListItemData,
-  useGetTrackList,
+  useGetPlaylistDetails,
+  useGetPlaylistTracks,
 } from "../gen/backend_api.ts";
-import { useGeneralSortDesc, useGeneralSortType } from "../preferences.ts";
+import { NavBreadcrumbs } from "../navigation/NavBreadcrumbs.tsx";
+import { TrackListView } from "../track_list/TrackListView.tsx";
 import { TrackSelectionButtons } from "../track_list/track_selection.tsx";
-import { SortInput } from "../track_list/SortInput.tsx";
+import { SortInputWithPlaylist } from "../track_list/SortInput.tsx";
+import { Settings } from "@mui/icons-material";
+import { useState } from "react";
 
-/** グループ選択の検索条件に該当する曲リストを表示するページ */
-export const GroupTrackListPage: React.FC<{
-  filterParams: GroupFilterParams;
-}> = ({ filterParams }) => {
-  // ソート設定（preferencesから取得・保存）
-  const [sortType, setSortType] = useGeneralSortType();
-  const [sortDesc, setSortDesc] = useGeneralSortDesc();
+/** プレイリストの曲リストを表示するページ */
+export const PlaylistTracksPage: React.FC<{ playlistId: number }> = (
+  { playlistId },
+) => {
+  const { data: plistResponse, error: plistError } = useGetPlaylistDetails(
+    playlistId,
+  );
+  const { data: tracksResponse, error: tracksError } = useGetPlaylistTracks(
+    playlistId,
+  );
 
-  // 楽曲データ取得
-  const { artist, album, genre } = filterParams;
-  const { data: tracksResponse, error } = useGetTrackList({
-    artist: artist ?? undefined,
-    album: album ?? undefined,
-    genre: genre ?? undefined,
-    sort_type: sortType,
-    sort_desc: sortDesc,
-  });
-
-  const tracks = tracksResponse?.data ?? [];
+  const tracks = tracksResponse?.data;
+  const playlist = plistResponse?.data;
 
   // 選択状態管理 (選択モードでなければ undefined)
   const [selectedTrackIds, setSelectedTrackIds] = useState<
     ReadonlySet<number> | undefined
   >();
+
+  const handleSortTypeChange = (sortType: SortTypeWithPlaylist) => {
+    // TODO
+    console.log(`sort type changed: ${sortType}`);
+  };
+
+  const handleSortDescChange = (sortDesc: boolean) => {
+    // TODO
+    console.log(`sort desc changed: ${sortDesc}`);
+  };
 
   const handleAllTracksPropsClick = () => {
     console.log("全曲プロパティクリック");
@@ -54,6 +58,7 @@ export const GroupTrackListPage: React.FC<{
     // TODO: 楽曲プロパティ画面への遷移
   };
 
+  const error = plistError ?? tracksError;
   if (error) {
     return (
       <Box sx={{ p: 2, textAlign: "center" }}>
@@ -67,8 +72,7 @@ export const GroupTrackListPage: React.FC<{
   return (
     <Box component="main">
       <NavBreadcrumbs />
-
-      {tracks === undefined
+      {tracks === undefined || playlist === undefined
         ? (
           <Box sx={{ p: 4, textAlign: "center" }}>
             <CircularProgress />
@@ -81,11 +85,11 @@ export const GroupTrackListPage: React.FC<{
           <Paper>
             {/* ツールバー */}
             <Toolbar variant="dense" sx={{ gap: 1, minHeight: 48 }}>
-              <SortInput
-                sortType={sortType}
-                sortDesc={sortDesc}
-                onTypeChange={setSortType}
-                onDescChange={setSortDesc}
+              <SortInputWithPlaylist
+                sortType={playlist.sort_type}
+                sortDesc={playlist.sort_desc}
+                onTypeChange={handleSortTypeChange}
+                onDescChange={handleSortDescChange}
               />
 
               <Box sx={{ flexGrow: 1 }} />

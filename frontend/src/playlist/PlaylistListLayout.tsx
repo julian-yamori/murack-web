@@ -7,6 +7,7 @@ import { NavBreadcrumbs } from "../navigation/NavBreadcrumbs.tsx";
 import { PlaylistListItem } from "./PlaylistListItem.tsx";
 import { usePushPage } from "../navigation/navigation_hooks.ts";
 import { ChildListPage } from "./ChildListPage.tsx";
+import { PlaylistTracksPage } from "./PlaylistTracksPage.tsx";
 
 /** プレイリスト一覧画面の共通画面レイアウト */
 export const PlaylistListLayout: React.FC<{
@@ -31,12 +32,11 @@ export const PlaylistListLayout: React.FC<{
     } else {
       // それ以外なら、このプレイリストの曲一覧画面へ
 
-      //TODO: プレイリストの曲一覧画面を実装
-      // pushPage({
-      //   render: () => <PlaylistTrackListPage playlistId={item.id} />,
-      //   navigationMenuKey: undefined,
-      //   breadCrumb: item.name,
-      // });
+      pushPage({
+        render: () => <PlaylistTracksPage playlistId={item.id} />,
+        navigationMenuKey: undefined,
+        breadCrumb: item.name,
+      });
     }
   };
 
