@@ -9,7 +9,8 @@ use utoipa::OpenApi;
 
 use crate::{
     AppState, artwork, group_list::handlers as group_handlers,
-    playlist::get_handlers as plist_gets, test_tag_group::handlers::*,
+    playlist::get_handlers as plist_gets, playlist::update_handlers as plist_updates,
+    test_tag_group::handlers::*,
 };
 
 #[derive(OpenApi)]
@@ -23,6 +24,8 @@ use crate::{
         plist_gets::get_playlist_list,
         plist_gets::get_playlist_details,
         plist_gets::get_playlist_tracks,
+        plist_updates::update_playlist_sort_type,
+        plist_updates::update_playlist_sort_desc,
         get_tag_groups,
         create_tag_group,
         update_tag_group,
@@ -62,6 +65,14 @@ pub fn api_routing(mut router: Router<AppState>) -> Router<AppState> {
         .route(
             "/api/playlists/{id}/tracks",
             get(plist_gets::get_playlist_tracks),
+        )
+        .route(
+            "/api/playlists/{id}/sort-type",
+            put(plist_updates::update_playlist_sort_type),
+        )
+        .route(
+            "/api/playlists/{id}/sort-desc",
+            put(plist_updates::update_playlist_sort_desc),
         );
 
     // tag_groups (プロトタイプ用)

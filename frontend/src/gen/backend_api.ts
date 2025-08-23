@@ -152,6 +152,10 @@ export interface TrackListItem {
   title: string;
 }
 
+export interface UpdateSortDescRequest {
+  sort_desc: boolean;
+}
+
 export type UpdateTagGroupRequestDescription = string | null;
 
 export type UpdateTagGroupRequestName = string | null;
@@ -743,6 +747,172 @@ export const useGetPlaylistDetails = <TError = unknown>(
     swrFn,
     swrOptions,
   );
+
+  return {
+    swrKey,
+    ...query,
+  };
+};
+
+export type updatePlaylistSortDescResponseDefault = {
+  data: unknown;
+  status: number;
+};
+
+export type updatePlaylistSortDescResponseComposite =
+  updatePlaylistSortDescResponseDefault;
+
+export type updatePlaylistSortDescResponse =
+  & updatePlaylistSortDescResponseComposite
+  & {
+    headers: Headers;
+  };
+
+export const getUpdatePlaylistSortDescUrl = (id: number) => {
+  return `/api/playlists/${id}/sort-desc`;
+};
+
+export const updatePlaylistSortDesc = async (
+  id: number,
+  updateSortDescRequest: UpdateSortDescRequest,
+  options?: RequestInit,
+): Promise<updatePlaylistSortDescResponse> => {
+  return customFetch<updatePlaylistSortDescResponse>(
+    getUpdatePlaylistSortDescUrl(id),
+    {
+      ...options,
+      method: "PUT",
+      headers: { "Content-Type": "application/json", ...options?.headers },
+      body: JSON.stringify(
+        updateSortDescRequest,
+      ),
+    },
+  );
+};
+
+export const getUpdatePlaylistSortDescMutationFetcher = (
+  id: number,
+  options?: SecondParameter<typeof customFetch>,
+) => {
+  return (
+    _: Key,
+    { arg }: { arg: UpdateSortDescRequest },
+  ): Promise<updatePlaylistSortDescResponse> => {
+    return updatePlaylistSortDesc(id, arg, options);
+  };
+};
+export const getUpdatePlaylistSortDescMutationKey = (id: number) =>
+  [`/api/playlists/${id}/sort-desc`] as const;
+
+export type UpdatePlaylistSortDescMutationResult = NonNullable<
+  Awaited<ReturnType<typeof updatePlaylistSortDesc>>
+>;
+export type UpdatePlaylistSortDescMutationError = unknown;
+
+export const useUpdatePlaylistSortDesc = <TError = unknown>(
+  id: number,
+  options?: {
+    swr?:
+      & SWRMutationConfiguration<
+        Awaited<ReturnType<typeof updatePlaylistSortDesc>>,
+        TError,
+        Key,
+        UpdateSortDescRequest,
+        Awaited<ReturnType<typeof updatePlaylistSortDesc>>
+      >
+      & { swrKey?: string };
+    request?: SecondParameter<typeof customFetch>;
+  },
+) => {
+  const { swr: swrOptions, request: requestOptions } = options ?? {};
+
+  const swrKey = swrOptions?.swrKey ?? getUpdatePlaylistSortDescMutationKey(id);
+  const swrFn = getUpdatePlaylistSortDescMutationFetcher(id, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions);
+
+  return {
+    swrKey,
+    ...query,
+  };
+};
+
+export type updatePlaylistSortTypeResponseDefault = {
+  data: unknown;
+  status: number;
+};
+
+export type updatePlaylistSortTypeResponseComposite =
+  updatePlaylistSortTypeResponseDefault;
+
+export type updatePlaylistSortTypeResponse =
+  & updatePlaylistSortTypeResponseComposite
+  & {
+    headers: Headers;
+  };
+
+export const getUpdatePlaylistSortTypeUrl = (id: number) => {
+  return `/api/playlists/${id}/sort-type`;
+};
+
+export const updatePlaylistSortType = async (
+  id: number,
+  sortTypeWithPlaylist: SortTypeWithPlaylist,
+  options?: RequestInit,
+): Promise<updatePlaylistSortTypeResponse> => {
+  return customFetch<updatePlaylistSortTypeResponse>(
+    getUpdatePlaylistSortTypeUrl(id),
+    {
+      ...options,
+      method: "PUT",
+      headers: { "Content-Type": "application/json", ...options?.headers },
+      body: JSON.stringify(
+        sortTypeWithPlaylist,
+      ),
+    },
+  );
+};
+
+export const getUpdatePlaylistSortTypeMutationFetcher = (
+  id: number,
+  options?: SecondParameter<typeof customFetch>,
+) => {
+  return (
+    _: Key,
+    { arg }: { arg: SortTypeWithPlaylist },
+  ): Promise<updatePlaylistSortTypeResponse> => {
+    return updatePlaylistSortType(id, arg, options);
+  };
+};
+export const getUpdatePlaylistSortTypeMutationKey = (id: number) =>
+  [`/api/playlists/${id}/sort-type`] as const;
+
+export type UpdatePlaylistSortTypeMutationResult = NonNullable<
+  Awaited<ReturnType<typeof updatePlaylistSortType>>
+>;
+export type UpdatePlaylistSortTypeMutationError = unknown;
+
+export const useUpdatePlaylistSortType = <TError = unknown>(
+  id: number,
+  options?: {
+    swr?:
+      & SWRMutationConfiguration<
+        Awaited<ReturnType<typeof updatePlaylistSortType>>,
+        TError,
+        Key,
+        SortTypeWithPlaylist,
+        Awaited<ReturnType<typeof updatePlaylistSortType>>
+      >
+      & { swrKey?: string };
+    request?: SecondParameter<typeof customFetch>;
+  },
+) => {
+  const { swr: swrOptions, request: requestOptions } = options ?? {};
+
+  const swrKey = swrOptions?.swrKey ?? getUpdatePlaylistSortTypeMutationKey(id);
+  const swrFn = getUpdatePlaylistSortTypeMutationFetcher(id, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions);
 
   return {
     swrKey,

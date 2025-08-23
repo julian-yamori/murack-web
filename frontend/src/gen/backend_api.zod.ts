@@ -154,6 +154,34 @@ export const getPlaylistDetailsResponse = zod.object({
   "プレイリストの、プレイリスト一覧・曲一覧画面で利用する情報のみを抽出した詳細情報",
 );
 
+export const updatePlaylistSortDescParams = zod.object({
+  "id": zod.number().describe("Playlist ID"),
+});
+
+export const updatePlaylistSortDescBody = zod.object({
+  "sort_desc": zod.boolean(),
+});
+
+export const updatePlaylistSortTypeParams = zod.object({
+  "id": zod.number().describe("Playlist ID"),
+});
+
+export const updatePlaylistSortTypeBody = zod.enum([
+  "playlist",
+  "track_name",
+  "artist",
+  "album",
+  "genre",
+  "composer",
+  "duration",
+  "track_index",
+  "disc_index",
+  "release_date",
+  "rating",
+  "entry_date",
+  "path",
+]).describe("曲のソートの種類 (プレイリスト順付き)");
+
 /**
  * @summary プレイリストの曲リストを取得
  */
