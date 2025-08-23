@@ -8,6 +8,10 @@ export async function customFetch<T>(
 
   const response = await fetch(requestUrl, options);
 
+  if (!response.ok) {
+    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+  }
+
   return {
     ...response,
     data: await getBody(response),

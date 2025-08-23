@@ -31,6 +31,7 @@
     "orval": "npm:orval@^7.10.0",
     "react": "npm:react@^19.1.0",
     "react-dom": "npm:react-dom@^19.1.0",
+    "react-toastify": "npm:react-toastify@^11.0.5",
     "swr": "npm:swr@^2.3.4",
     "vite": "npm:vite@^7.0.0",
     "zod": "npm:zod@^3.25.74"

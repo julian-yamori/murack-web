@@ -16,6 +16,7 @@
     "npm:orval@*": "7.10.0_typescript@5.8.3_typedoc@0.28.7__typescript@5.8.3",
     "npm:orval@^7.10.0": "7.10.0_typescript@5.8.3_typedoc@0.28.7__typescript@5.8.3",
     "npm:react-dom@^19.1.0": "19.1.0_react@19.1.0",
+    "npm:react-toastify@^11.0.5": "11.0.5_react@19.1.0_react-dom@19.1.0__react@19.1.0",
     "npm:react@^19.1.0": "19.1.0",
     "npm:swr@^2.3.4": "2.3.4_react@19.1.0",
     "npm:vite@*": "7.0.4_picomatch@4.0.2_@types+node@22.12.0",
@@ -2329,6 +2330,14 @@
     "react-refresh@0.17.0": {
       "integrity": "sha512-z6F7K9bV85EfseRCp2bzrpyQ0Gkw1uLoCel9XBVWPg/TjRj94SkJzUTGfOa4bs7iJvBWtQG0Wq7wnI0syw3EBQ=="
     },
+    "react-toastify@11.0.5_react@19.1.0_react-dom@19.1.0__react@19.1.0": {
+      "integrity": "sha512-EpqHBGvnSTtHYhCPLxML05NLY2ZX0JURbAdNYa6BUkk+amz4wbKBQvoKQAB0ardvSarUBuY4Q4s1sluAzZwkmA==",
+      "dependencies": [
+        "clsx",
+        "react",
+        "react-dom"
+      ]
+    },
     "react-transition-group@4.4.5_react@19.1.0_react-dom@19.1.0__react@19.1.0": {
       "integrity": "sha512-pZcd1MCJoiKiBR2NRxeCRg13uCXbydPnmB4EOeRrY7480qNWO8IIgQG6zlDkm6uRMsURXPuKq0GWtiM59a5Q6g==",
       "dependencies": [
@@ -2959,6 +2968,7 @@
       "npm:js-cookie@^3.0.5",
       "npm:orval@^7.10.0",
       "npm:react-dom@^19.1.0",
+      "npm:react-toastify@^11.0.5",
       "npm:react@^19.1.0",
       "npm:swr@^2.3.4",
       "npm:vite@7",
