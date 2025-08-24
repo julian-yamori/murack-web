@@ -1,4 +1,4 @@
-import { Alert, Box, CircularProgress, List, Typography } from "@mui/material";
+import { Box, CircularProgress, List, Typography } from "@mui/material";
 import {
   PlaylistDetails,
   PlaylistListItem as PlaylistListItemData,
@@ -7,6 +7,7 @@ import { PlaylistListItem } from "./PlaylistListItem.tsx";
 import { usePushPage } from "../navigation/navigation_hooks.ts";
 import { ChildListPage } from "./ChildListPage.tsx";
 import { PlaylistTracksPage } from "./PlaylistTracksPage.tsx";
+import { LoadingErrorAlert } from "../common_components/LoadingErrorAlert.tsx";
 
 /** プレイリスト一覧画面の共通画面レイアウト */
 export const PlaylistListLayout: React.FC<{
@@ -39,11 +40,7 @@ export const PlaylistListLayout: React.FC<{
   };
 
   if (error) {
-    return (
-      <Alert severity="error" sx={{ mb: 2 }}>
-        データの読み込みに失敗しました
-      </Alert>
-    );
+    return <LoadingErrorAlert error={error} />;
   }
 
   if (listData === undefined) {

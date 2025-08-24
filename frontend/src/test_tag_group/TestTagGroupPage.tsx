@@ -1,9 +1,10 @@
 import { useMemo, useState } from "react";
-import { Alert, Box, Button, Container } from "@mui/material";
+import { Box, Button, Container } from "@mui/material";
 import { TagGroupList } from "./TagGroupList.tsx";
 import { TagGroupForm } from "./TagGroupForm.tsx";
 import { TagGroup, useGetTagGroups } from "../gen/backend_api.ts";
 import { getTagGroupsResponse } from "../gen/backend_api.zod.ts";
+import { LoadingErrorAlert } from "../common_components/LoadingErrorAlert.tsx";
 
 /**
  * タググループリストのページ (プロトタイプ用)
@@ -44,7 +45,7 @@ export const TestTagGroupPage: React.FC = () => {
     console.error(error);
     return (
       <Container maxWidth="lg" sx={{ py: 4 }}>
-        <Alert severity="error">Error loading data</Alert>
+        <LoadingErrorAlert error={error} />
       </Container>
     );
   }

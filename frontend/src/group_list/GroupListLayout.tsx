@@ -1,6 +1,7 @@
-import { Alert, Box, CircularProgress, List, Typography } from "@mui/material";
+import { Box, CircularProgress, List, Typography } from "@mui/material";
 import { GroupListItem, GroupListItemAll } from "./GroupListItem.tsx";
 import type { GroupListItem as GroupListItemData } from "../gen/backend_api.ts";
+import { LoadingErrorAlert } from "../common_components/LoadingErrorAlert.tsx";
 
 /** 各グループ選択画面の共通画面レイアウト */
 export const GroupListLayout: React.FC<{
@@ -22,11 +23,7 @@ export const GroupListLayout: React.FC<{
   onItemClick,
 }) => {
   if (error) {
-    return (
-      <Alert severity="error" sx={{ mb: 2 }}>
-        データの読み込みに失敗しました
-      </Alert>
-    );
+    return <LoadingErrorAlert error={error} />;
   }
 
   if (list_data === undefined) {
