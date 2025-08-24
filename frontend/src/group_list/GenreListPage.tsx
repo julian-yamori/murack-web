@@ -12,7 +12,7 @@ export const GenreListPage: React.FC<{
 }> = ({
   filterParams,
 }) => {
-  const { data, error, isLoading } = useGetGenreList(filterParams);
+  const { data, error } = useGetGenreList(filterParams);
   const pushPage = usePushPage();
 
   const handleItemClick = (item: GroupListItemData | "all") => {
@@ -43,7 +43,6 @@ export const GenreListPage: React.FC<{
     <GroupListLayout
       list_data={data?.data}
       error={error}
-      isLoading={isLoading}
       // NavigationMenu の直下でなければ「全ての XX」を表示
       allItemText={is_empty_params(filterParams) ? undefined : ALL_GENRE}
       emptyItemText={UNKNOWN_GENRE}

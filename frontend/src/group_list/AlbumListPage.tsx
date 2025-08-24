@@ -16,7 +16,7 @@ export const AlbumListPage: React.FC<{
 }> = ({
   filterParams,
 }) => {
-  const { data, error, isLoading } = useGetAlbumList(filterParams);
+  const { data, error } = useGetAlbumList(filterParams);
   const pushPage = usePushPage();
 
   const handleItemClick = (item: GroupListItemData | "all") => {
@@ -47,7 +47,6 @@ export const AlbumListPage: React.FC<{
     <GroupListLayout
       list_data={data?.data}
       error={error}
-      isLoading={isLoading}
       // NavigationMenu の直下でなければ「全ての XX」を表示
       allItemText={is_empty_params(filterParams) ? undefined : ALL_ALBUM}
       emptyItemText={UNKNOWN_ALBUM}

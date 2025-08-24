@@ -16,8 +16,7 @@ export const PlaylistListLayout: React.FC<{
   parentPlaylist: PlaylistDetails | undefined;
 
   error: unknown;
-  isLoading: boolean;
-}> = ({ listData, error, isLoading }) => {
+}> = ({ listData, error }) => {
   const pushPage = usePushPage();
 
   const handleItemClick = (item: PlaylistListItemData) => {
@@ -39,39 +38,39 @@ export const PlaylistListLayout: React.FC<{
     }
   };
 
+  if (error) {
+    return (
+      <Alert severity="error" sx={{ mb: 2 }}>
+        データの読み込みに失敗しました
+      </Alert>
+    );
+  }
+
+  if (listData === undefined) {
+    return (
+      <Box display="flex" justifyContent="center" sx={{ py: 4 }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (listData.length === 0) {
+    return (
+      <Typography variant="body1" sx={{ textAlign: "center", py: 4 }}>
+        データがありません
+      </Typography>
+    );
+  }
+
   return (
-    <>
-      {isLoading && (
-        <Box display="flex" justifyContent="center" sx={{ py: 4 }}>
-          <CircularProgress />
-        </Box>
-      )}
-
-      {error
-        ? (
-          <Alert severity="error" sx={{ mb: 2 }}>
-            データの読み込みに失敗しました
-          </Alert>
-        )
-        : null}
-
-      {listData && (
-        <List>
-          {listData.map((item: PlaylistListItemData) => (
-            <PlaylistListItem
-              key={item.id}
-              item={item}
-              onClick={handleItemClick}
-            />
-          ))}
-        </List>
-      )}
-
-      {listData && listData.length === 0 && !isLoading && (
-        <Typography variant="body1" sx={{ textAlign: "center", py: 4 }}>
-          データがありません
-        </Typography>
-      )}
-    </>
+    <List>
+      {listData.map((item: PlaylistListItemData) => (
+        <PlaylistListItem
+          key={item.id}
+          item={item}
+          onClick={handleItemClick}
+        />
+      ))}
+    </List>
   );
 };
