@@ -1,7 +1,8 @@
-import { Box, CircularProgress, List, Typography } from "@mui/material";
+import { List, Typography } from "@mui/material";
 import { GroupListItem, GroupListItemAll } from "./GroupListItem.tsx";
 import type { GroupListItem as GroupListItemData } from "../gen/backend_api.ts";
 import { LoadingErrorAlert } from "../common_components/LoadingErrorAlert.tsx";
+import { LoadingView } from "../common_components/LoadingView.tsx";
 
 /** 各グループ選択画面の共通画面レイアウト */
 export const GroupListLayout: React.FC<{
@@ -27,11 +28,7 @@ export const GroupListLayout: React.FC<{
   }
 
   if (list_data === undefined) {
-    return (
-      <Box display="flex" justifyContent="center" sx={{ py: 4 }}>
-        <CircularProgress />
-      </Box>
-    );
+    return <LoadingView />;
   }
 
   if (list_data.length === 0) {

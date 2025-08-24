@@ -1,4 +1,4 @@
-import { Box, CircularProgress, List, Typography } from "@mui/material";
+import { List, Typography } from "@mui/material";
 import {
   PlaylistDetails,
   PlaylistListItem as PlaylistListItemData,
@@ -8,6 +8,7 @@ import { usePushPage } from "../navigation/navigation_hooks.ts";
 import { ChildListPage } from "./ChildListPage.tsx";
 import { PlaylistTracksPage } from "./PlaylistTracksPage.tsx";
 import { LoadingErrorAlert } from "../common_components/LoadingErrorAlert.tsx";
+import { LoadingView } from "../common_components/LoadingView.tsx";
 
 /** プレイリスト一覧画面の共通画面レイアウト */
 export const PlaylistListLayout: React.FC<{
@@ -42,13 +43,8 @@ export const PlaylistListLayout: React.FC<{
   if (error) {
     return <LoadingErrorAlert error={error} />;
   }
-
   if (listData === undefined) {
-    return (
-      <Box display="flex" justifyContent="center" sx={{ py: 4 }}>
-        <CircularProgress />
-      </Box>
-    );
+    return <LoadingView />;
   }
 
   if (listData.length === 0) {

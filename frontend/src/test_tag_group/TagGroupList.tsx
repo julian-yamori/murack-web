@@ -8,7 +8,6 @@ import { mutate } from "swr";
 import {
   Box,
   Button,
-  CircularProgress,
   Paper,
   Table,
   TableBody,
@@ -18,6 +17,7 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
+import { LoadingView } from "../common_components/LoadingView.tsx";
 
 export const TagGroupList: React.FC<{
   groups: TagGroup[] | undefined;
@@ -29,11 +29,7 @@ export const TagGroupList: React.FC<{
   onDeleted,
 }) => {
   if (!groups) {
-    return (
-      <Box sx={{ display: "flex", justifyContent: "center", p: 2 }}>
-        <CircularProgress />
-      </Box>
-    );
+    return <LoadingView />;
   }
 
   if (groups.length === 0) {

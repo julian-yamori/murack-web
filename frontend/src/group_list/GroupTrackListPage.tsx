@@ -1,12 +1,5 @@
 import { useState } from "react";
-import {
-  Box,
-  Button,
-  CircularProgress,
-  Paper,
-  Toolbar,
-  Typography,
-} from "@mui/material";
+import { Box, Button, Paper, Toolbar, Typography } from "@mui/material";
 import { Settings } from "@mui/icons-material";
 import { GroupFilterParams } from "./group_filter_params.ts";
 import { TrackListView } from "../track_list/TrackListView.tsx";
@@ -17,6 +10,7 @@ import {
 import { useGeneralSortDesc, useGeneralSortType } from "../preferences.ts";
 import { TrackSelectionButtons } from "../track_list/track_selection.tsx";
 import { SortInput } from "../track_list/SortInput.tsx";
+import { LoadingView } from "../common_components/LoadingView.tsx";
 
 /** グループ選択の検索条件に該当する曲リストを表示するページ */
 export const GroupTrackListPage: React.FC<{
@@ -64,14 +58,7 @@ export const GroupTrackListPage: React.FC<{
   }
 
   if (tracks === undefined) {
-    return (
-      <Box sx={{ p: 4, textAlign: "center" }}>
-        <CircularProgress />
-        <Typography variant="body2" sx={{ mt: 1 }}>
-          読み込み中...
-        </Typography>
-      </Box>
-    );
+    return <LoadingView />;
   }
 
   return (

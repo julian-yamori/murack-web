@@ -1,11 +1,4 @@
-import {
-  Box,
-  Button,
-  CircularProgress,
-  Paper,
-  Toolbar,
-  Typography,
-} from "@mui/material";
+import { Box, Button, Paper, Toolbar, Typography } from "@mui/material";
 import {
   getGetPlaylistDetailsKey,
   getGetPlaylistTracksKey,
@@ -26,6 +19,7 @@ import {
   ScreenLockBackdrop,
   useScreenLock,
 } from "../common_components/screen_lock.tsx";
+import { LoadingView } from "../common_components/LoadingView.tsx";
 
 /** プレイリストの曲リストを表示するページ */
 export const PlaylistTracksPage: React.FC<{ playlistId: number }> = (
@@ -94,14 +88,7 @@ export const PlaylistTracksPage: React.FC<{ playlistId: number }> = (
   }
 
   if (tracks === undefined || playlist === undefined) {
-    return (
-      <Box sx={{ p: 4, textAlign: "center" }}>
-        <CircularProgress />
-        <Typography variant="body2" sx={{ mt: 1 }}>
-          読み込み中...
-        </Typography>
-      </Box>
-    );
+    return <LoadingView />;
   }
 
   return (
