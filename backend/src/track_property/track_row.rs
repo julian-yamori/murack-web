@@ -41,7 +41,7 @@ pub struct TrackRow {
     pub release_date: Option<NaiveDate>,
 
     /// レート (好み)
-    pub rating: i32,
+    pub rating: i16,
     /// 原曲
     pub original_track: String,
     /// メモ

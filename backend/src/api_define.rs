@@ -31,7 +31,8 @@ use crate::{
         create_tag_group,
         update_tag_group,
         delete_tag_group,
-        track_prop::get_single_track_prop
+        track_prop::get_single_track_prop,
+        track_prop::update_single_track_props
     ),
     components(schemas(SortType))
 )]
@@ -96,7 +97,7 @@ pub fn api_routing(mut router: Router<AppState>) -> Router<AppState> {
     // 曲プロパティ
     router = router.route(
         "/api/tracks/{id}/props",
-        get(track_prop::get_single_track_prop),
+        get(track_prop::get_single_track_prop).put(track_prop::update_single_track_props),
     );
 
     router
