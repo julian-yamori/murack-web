@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Box, Button, Paper, Toolbar, Typography } from "@mui/material";
+import { Box, Button, Paper, Toolbar } from "@mui/material";
 import { Settings } from "@mui/icons-material";
 import { GroupFilterParams } from "./group_filter_params.ts";
 import { TrackListView } from "../track_list/TrackListView.tsx";
@@ -11,6 +11,7 @@ import { useGeneralSortDesc, useGeneralSortType } from "../preferences.ts";
 import { TrackSelectionButtons } from "../track_list/track_selection.tsx";
 import { SortInput } from "../track_list/SortInput.tsx";
 import { LoadingView } from "../common_components/LoadingView.tsx";
+import { LoadingErrorAlert } from "../common_components/LoadingErrorAlert.tsx";
 
 /** グループ選択の検索条件に該当する曲リストを表示するページ */
 export const GroupTrackListPage: React.FC<{
@@ -48,15 +49,8 @@ export const GroupTrackListPage: React.FC<{
   };
 
   if (error) {
-    return (
-      <Box sx={{ p: 2, textAlign: "center" }}>
-        <Typography color="error">
-          エラーが発生しました: {String(error)}
-        </Typography>
-      </Box>
-    );
+    return <LoadingErrorAlert error={error} />;
   }
-
   if (tracks === undefined) {
     return <LoadingView />;
   }

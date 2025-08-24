@@ -1,4 +1,4 @@
-import { Box, Button, Paper, Toolbar, Typography } from "@mui/material";
+import { Box, Button, Paper, Toolbar } from "@mui/material";
 import {
   getGetPlaylistDetailsKey,
   getGetPlaylistTracksKey,
@@ -20,6 +20,7 @@ import {
   useScreenLock,
 } from "../common_components/screen_lock.tsx";
 import { LoadingView } from "../common_components/LoadingView.tsx";
+import { LoadingErrorAlert } from "../common_components/LoadingErrorAlert.tsx";
 
 /** プレイリストの曲リストを表示するページ */
 export const PlaylistTracksPage: React.FC<{ playlistId: number }> = (
@@ -78,15 +79,8 @@ export const PlaylistTracksPage: React.FC<{ playlistId: number }> = (
 
   const error = plistError ?? tracksError;
   if (error) {
-    return (
-      <Box sx={{ p: 2, textAlign: "center" }}>
-        <Typography color="error">
-          エラーが発生しました: {String(error)}
-        </Typography>
-      </Box>
-    );
+    return <LoadingErrorAlert error={error} />;
   }
-
   if (tracks === undefined || playlist === undefined) {
     return <LoadingView />;
   }
