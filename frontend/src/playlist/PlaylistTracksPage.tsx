@@ -16,7 +16,6 @@ import {
   useGetPlaylistDetails,
   useGetPlaylistTracks,
 } from "../gen/backend_api.ts";
-import { NavBreadcrumbs } from "../navigation/NavBreadcrumbs.tsx";
 import { TrackListView } from "../track_list/TrackListView.tsx";
 import { TrackSelectionButtons } from "../track_list/track_selection.tsx";
 import { SortInputWithPlaylist } from "../track_list/SortInput.tsx";
@@ -94,61 +93,58 @@ export const PlaylistTracksPage: React.FC<{ playlistId: number }> = (
     );
   }
 
+  if (tracks === undefined || playlist === undefined) {
+    return (
+      <Box sx={{ p: 4, textAlign: "center" }}>
+        <CircularProgress />
+        <Typography variant="body2" sx={{ mt: 1 }}>
+          読み込み中...
+        </Typography>
+      </Box>
+    );
+  }
+
   return (
-    <Box component="main">
-      <NavBreadcrumbs />
-      {tracks === undefined || playlist === undefined
-        ? (
-          <Box sx={{ p: 4, textAlign: "center" }}>
-            <CircularProgress />
-            <Typography variant="body2" sx={{ mt: 1 }}>
-              読み込み中...
-            </Typography>
-          </Box>
-        )
-        : (
-          <Paper>
-            <ScreenLockBackdrop isLocked={isLocked} />
+    <Paper>
+      <ScreenLockBackdrop isLocked={isLocked} />
 
-            {/* ツールバー */}
-            <Toolbar variant="dense" sx={{ gap: 1, minHeight: 48 }}>
-              <SortInputWithPlaylist
-                sortType={playlist.sort_type}
-                sortDesc={playlist.sort_desc}
-                enablePlaylist={playlist.playlist_type === "Normal"}
-                onTypeChange={handleSortTypeChange}
-                onDescChange={handleSortDescChange}
-              />
+      {/* ツールバー */}
+      <Toolbar variant="dense" sx={{ gap: 1, minHeight: 48 }}>
+        <SortInputWithPlaylist
+          sortType={playlist.sort_type}
+          sortDesc={playlist.sort_desc}
+          enablePlaylist={playlist.playlist_type === "Normal"}
+          onTypeChange={handleSortTypeChange}
+          onDescChange={handleSortDescChange}
+        />
 
-              <Box sx={{ flexGrow: 1 }} />
+        <Box sx={{ flexGrow: 1 }} />
 
-              <TrackSelectionButtons
-                selectedTrackIds={selectedTrackIds}
-                allIds={tracks.map((track) => track.id)}
-                setSelectedTrackIds={setSelectedTrackIds}
-              />
+        <TrackSelectionButtons
+          selectedTrackIds={selectedTrackIds}
+          allIds={tracks.map((track) => track.id)}
+          setSelectedTrackIds={setSelectedTrackIds}
+        />
 
-              {/* 全曲プロパティボタン */}
-              <Button
-                startIcon={<Settings />}
-                onClick={handleAllTracksPropsClick}
-                variant="outlined"
-                size="small"
-                disabled
-              >
-                全曲プロパティ
-              </Button>
-            </Toolbar>
+        {/* 全曲プロパティボタン */}
+        <Button
+          startIcon={<Settings />}
+          onClick={handleAllTracksPropsClick}
+          variant="outlined"
+          size="small"
+          disabled
+        >
+          全曲プロパティ
+        </Button>
+      </Toolbar>
 
-            {/* 楽曲リスト */}
-            <TrackListView
-              tracks={tracks}
-              selectedTrackIds={selectedTrackIds}
-              onTrackClick={handleListTrackClick}
-              setSelectedTrackIds={setSelectedTrackIds}
-            />
-          </Paper>
-        )}
-    </Box>
+      {/* 楽曲リスト */}
+      <TrackListView
+        tracks={tracks}
+        selectedTrackIds={selectedTrackIds}
+        onTrackClick={handleListTrackClick}
+        setSelectedTrackIds={setSelectedTrackIds}
+      />
+    </Paper>
   );
 };

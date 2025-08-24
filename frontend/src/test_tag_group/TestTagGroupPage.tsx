@@ -4,7 +4,6 @@ import { TagGroupList } from "./TagGroupList.tsx";
 import { TagGroupForm } from "./TagGroupForm.tsx";
 import { TagGroup, useGetTagGroups } from "../gen/backend_api.ts";
 import { getTagGroupsResponse } from "../gen/backend_api.zod.ts";
-import { NavBreadcrumbs } from "../navigation/NavBreadcrumbs.tsx";
 
 /**
  * タググループリストのページ (プロトタイプ用)
@@ -51,9 +50,7 @@ export const TestTagGroupPage: React.FC = () => {
   }
 
   return (
-    <Box component="main">
-      <NavBreadcrumbs />
-
+    <>
       <Box sx={{ mb: 2 }}>
         <Button variant="contained" onClick={handleAddNew}>
           新しい楽曲を追加
@@ -72,6 +69,6 @@ export const TestTagGroupPage: React.FC = () => {
         startEdit={handleStartEdit}
         onDeleted={handleDeleted}
       />
-    </Box>
+    </>
   );
 };

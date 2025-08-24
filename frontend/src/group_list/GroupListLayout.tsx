@@ -1,5 +1,4 @@
 import { Alert, Box, CircularProgress, List, Typography } from "@mui/material";
-import { NavBreadcrumbs } from "../navigation/NavBreadcrumbs.tsx";
 import { GroupListItem, GroupListItemAll } from "./GroupListItem.tsx";
 import type { GroupListItem as GroupListItemData } from "../gen/backend_api.ts";
 
@@ -25,9 +24,7 @@ export const GroupListLayout: React.FC<{
   onItemClick,
 }) => {
   return (
-    <Box component="main">
-      <NavBreadcrumbs />
-
+    <>
       {isLoading && (
         <Box display="flex" justifyContent="center" sx={{ py: 4 }}>
           <CircularProgress />
@@ -68,7 +65,7 @@ export const GroupListLayout: React.FC<{
           データがありません
         </Typography>
       )}
-    </Box>
+    </>
   );
 };
 

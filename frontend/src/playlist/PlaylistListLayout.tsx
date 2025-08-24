@@ -3,7 +3,6 @@ import {
   PlaylistDetails,
   PlaylistListItem as PlaylistListItemData,
 } from "../gen/backend_api.ts";
-import { NavBreadcrumbs } from "../navigation/NavBreadcrumbs.tsx";
 import { PlaylistListItem } from "./PlaylistListItem.tsx";
 import { usePushPage } from "../navigation/navigation_hooks.ts";
 import { ChildListPage } from "./ChildListPage.tsx";
@@ -41,9 +40,7 @@ export const PlaylistListLayout: React.FC<{
   };
 
   return (
-    <Box component="main">
-      <NavBreadcrumbs />
-
+    <>
       {isLoading && (
         <Box display="flex" justifyContent="center" sx={{ py: 4 }}>
           <CircularProgress />
@@ -75,6 +72,6 @@ export const PlaylistListLayout: React.FC<{
           データがありません
         </Typography>
       )}
-    </Box>
+    </>
   );
 };

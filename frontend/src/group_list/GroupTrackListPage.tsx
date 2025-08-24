@@ -8,7 +8,6 @@ import {
   Typography,
 } from "@mui/material";
 import { Settings } from "@mui/icons-material";
-import { NavBreadcrumbs } from "../navigation/NavBreadcrumbs.tsx";
 import { GroupFilterParams } from "./group_filter_params.ts";
 import { TrackListView } from "../track_list/TrackListView.tsx";
 import {
@@ -64,59 +63,55 @@ export const GroupTrackListPage: React.FC<{
     );
   }
 
+  if (tracks === undefined) {
+    return (
+      <Box sx={{ p: 4, textAlign: "center" }}>
+        <CircularProgress />
+        <Typography variant="body2" sx={{ mt: 1 }}>
+          読み込み中...
+        </Typography>
+      </Box>
+    );
+  }
+
   return (
-    <Box component="main">
-      <NavBreadcrumbs />
+    <Paper>
+      {/* ツールバー */}
+      <Toolbar variant="dense" sx={{ gap: 1, minHeight: 48 }}>
+        <SortInput
+          sortType={sortType}
+          sortDesc={sortDesc}
+          onTypeChange={setSortType}
+          onDescChange={setSortDesc}
+        />
 
-      {tracks === undefined
-        ? (
-          <Box sx={{ p: 4, textAlign: "center" }}>
-            <CircularProgress />
-            <Typography variant="body2" sx={{ mt: 1 }}>
-              読み込み中...
-            </Typography>
-          </Box>
-        )
-        : (
-          <Paper>
-            {/* ツールバー */}
-            <Toolbar variant="dense" sx={{ gap: 1, minHeight: 48 }}>
-              <SortInput
-                sortType={sortType}
-                sortDesc={sortDesc}
-                onTypeChange={setSortType}
-                onDescChange={setSortDesc}
-              />
+        <Box sx={{ flexGrow: 1 }} />
 
-              <Box sx={{ flexGrow: 1 }} />
+        <TrackSelectionButtons
+          selectedTrackIds={selectedTrackIds}
+          allIds={tracks.map((track) => track.id)}
+          setSelectedTrackIds={setSelectedTrackIds}
+        />
 
-              <TrackSelectionButtons
-                selectedTrackIds={selectedTrackIds}
-                allIds={tracks.map((track) => track.id)}
-                setSelectedTrackIds={setSelectedTrackIds}
-              />
+        {/* 全曲プロパティボタン */}
+        <Button
+          startIcon={<Settings />}
+          onClick={handleAllTracksPropsClick}
+          variant="outlined"
+          size="small"
+          disabled
+        >
+          全曲プロパティ
+        </Button>
+      </Toolbar>
 
-              {/* 全曲プロパティボタン */}
-              <Button
-                startIcon={<Settings />}
-                onClick={handleAllTracksPropsClick}
-                variant="outlined"
-                size="small"
-                disabled
-              >
-                全曲プロパティ
-              </Button>
-            </Toolbar>
-
-            {/* 楽曲リスト */}
-            <TrackListView
-              tracks={tracks}
-              selectedTrackIds={selectedTrackIds}
-              onTrackClick={handleListTrackClick}
-              setSelectedTrackIds={setSelectedTrackIds}
-            />
-          </Paper>
-        )}
-    </Box>
+      {/* 楽曲リスト */}
+      <TrackListView
+        tracks={tracks}
+        selectedTrackIds={selectedTrackIds}
+        onTrackClick={handleListTrackClick}
+        setSelectedTrackIds={setSelectedTrackIds}
+      />
+    </Paper>
   );
 };

@@ -1,5 +1,7 @@
 import React from "react";
+import { Box } from "@mui/material";
 import { useNavigationState } from "./navigation_state.tsx";
+import { NavBreadcrumbs } from "./NavBreadcrumbs.tsx";
 
 export const NavigationView: React.FC = () => {
   const navigationState = useNavigationState();
@@ -11,5 +13,11 @@ export const NavigationView: React.FC = () => {
     return null;
   }
 
-  return <currentPage.render />;
+  return (
+    <Box component="main">
+      <NavBreadcrumbs />
+
+      <currentPage.render />
+    </Box>
+  );
 };
