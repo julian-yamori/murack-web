@@ -22,20 +22,24 @@ import { TrackSelectionButtons } from "../track_list/track_selection.tsx";
 import { SortInputWithPlaylist } from "../track_list/SortInput.tsx";
 import { Settings } from "@mui/icons-material";
 import { useState } from "react";
-import { mutate } from "swr/_internal";
+import { mutate } from "swr";
+import {
+  ScreenLockBackdrop,
+  useScreenLock,
+} from "../common_components/screen_lock.tsx";
 
 /** プレイリストの曲リストを表示するページ */
 export const PlaylistTracksPage: React.FC<{ playlistId: number }> = (
   { playlistId },
 ) => {
-  const { data: plistResponse, isLoading: detailsLoading, error: plistError } =
-    useGetPlaylistDetails(
-      playlistId,
-    );
-  const { data: tracksResponse, isLoading: listLoading, error: tracksError } =
-    useGetPlaylistTracks(
-      playlistId,
-    );
+  const { isLocked, lockScreen } = useScreenLock();
+
+  const { data: plistResponse, error: plistError } = useGetPlaylistDetails(
+    playlistId,
+  );
+  const { data: tracksResponse, error: tracksError } = useGetPlaylistTracks(
+    playlistId,
+  );
 
   const tracks = tracksResponse?.data;
   const playlist = plistResponse?.data;
@@ -45,20 +49,28 @@ export const PlaylistTracksPage: React.FC<{ playlistId: number }> = (
     ReadonlySet<number> | undefined
   >();
 
-  const handleSortTypeChange = async (sortType: SortTypeWithPlaylist) => {
-    await updatePlaylistSortType(playlistId, sortType);
-    await Promise.all([
-      mutate(getGetPlaylistDetailsKey(playlistId)),
-      mutate(getGetPlaylistTracksKey(playlistId)),
-    ]);
+  // ソート種別の変更イベント
+  const handleSortTypeChange = (sortType: SortTypeWithPlaylist) => {
+    lockScreen(async () => {
+      await updatePlaylistSortType(playlistId, sortType);
+
+      await Promise.all([
+        mutate(getGetPlaylistDetailsKey(playlistId)),
+        mutate(getGetPlaylistTracksKey(playlistId)),
+      ]);
+    });
   };
 
-  const handleSortDescChange = async (sort_desc: boolean) => {
-    await updatePlaylistSortDesc(playlistId, { sort_desc });
-    await Promise.all([
-      mutate(getGetPlaylistDetailsKey(playlistId)),
-      mutate(getGetPlaylistTracksKey(playlistId)),
-    ]);
+  // ソート降順フラグの変更イベント
+  const handleSortDescChange = (sort_desc: boolean) => {
+    lockScreen(async () => {
+      await updatePlaylistSortDesc(playlistId, { sort_desc });
+
+      await Promise.all([
+        mutate(getGetPlaylistDetailsKey(playlistId)),
+        mutate(getGetPlaylistTracksKey(playlistId)),
+      ]);
+    });
   };
 
   const handleAllTracksPropsClick = () => {
@@ -82,12 +94,10 @@ export const PlaylistTracksPage: React.FC<{ playlistId: number }> = (
     );
   }
 
-  const loading = detailsLoading || listLoading;
-
   return (
     <Box component="main">
       <NavBreadcrumbs />
-      {loading || tracks === undefined || playlist === undefined
+      {tracks === undefined || playlist === undefined
         ? (
           <Box sx={{ p: 4, textAlign: "center" }}>
             <CircularProgress />
@@ -98,6 +108,8 @@ export const PlaylistTracksPage: React.FC<{ playlistId: number }> = (
         )
         : (
           <Paper>
+            <ScreenLockBackdrop isLocked={isLocked} />
+
             {/* ツールバー */}
             <Toolbar variant="dense" sx={{ gap: 1, minHeight: 48 }}>
               <SortInputWithPlaylist
