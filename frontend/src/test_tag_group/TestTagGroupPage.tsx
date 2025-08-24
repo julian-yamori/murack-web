@@ -5,6 +5,7 @@ import { TagGroupForm } from "./TagGroupForm.tsx";
 import { TagGroup, useGetTagGroups } from "../gen/backend_api.ts";
 import { getTagGroupsResponse } from "../gen/backend_api.zod.ts";
 import { LoadingErrorAlert } from "../common_components/LoadingErrorAlert.tsx";
+import { LoadingView } from "../common_components/LoadingView.tsx";
 
 /**
  * タググループリストのページ (プロトタイプ用)
@@ -48,6 +49,9 @@ export const TestTagGroupPage: React.FC = () => {
         <LoadingErrorAlert error={error} />
       </Container>
     );
+  }
+  if (groups === undefined) {
+    return <LoadingView />;
   }
 
   return (

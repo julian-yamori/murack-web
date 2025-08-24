@@ -6,6 +6,8 @@ import {
 import { usePushPage } from "../navigation/navigation_hooks.ts";
 import { GroupTrackListPage } from "./GroupTrackListPage.tsx";
 import { is_empty_params } from "./group_filter_params.ts";
+import { LoadingErrorAlert } from "../common_components/LoadingErrorAlert.tsx";
+import { LoadingView } from "../common_components/LoadingView.tsx";
 
 export const AlbumListPage: React.FC<{
   filterParams?: {
@@ -43,10 +45,16 @@ export const AlbumListPage: React.FC<{
     }
   };
 
+  if (error) {
+    return <LoadingErrorAlert error={error} />;
+  }
+  if (data === undefined) {
+    return <LoadingView />;
+  }
+
   return (
     <GroupListLayout
-      list_data={data?.data}
-      error={error}
+      list_data={data.data}
       // NavigationMenu の直下でなければ「全ての XX」を表示
       allItemText={is_empty_params(filterParams) ? undefined : ALL_ALBUM}
       emptyItemText={UNKNOWN_ALBUM}

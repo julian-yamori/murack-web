@@ -17,10 +17,9 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import { LoadingView } from "../common_components/LoadingView.tsx";
 
 export const TagGroupList: React.FC<{
-  groups: TagGroup[] | undefined;
+  groups: TagGroup[];
   startEdit: (group: TagGroup) => void;
   onDeleted: () => void;
 }> = ({
@@ -28,10 +27,6 @@ export const TagGroupList: React.FC<{
   startEdit,
   onDeleted,
 }) => {
-  if (!groups) {
-    return <LoadingView />;
-  }
-
   if (groups.length === 0) {
     return (
       <Typography variant="body1" sx={{ textAlign: "center", p: 2 }}>

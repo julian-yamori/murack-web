@@ -7,18 +7,14 @@ import { PlaylistListItem } from "./PlaylistListItem.tsx";
 import { usePushPage } from "../navigation/navigation_hooks.ts";
 import { ChildListPage } from "./ChildListPage.tsx";
 import { PlaylistTracksPage } from "./PlaylistTracksPage.tsx";
-import { LoadingErrorAlert } from "../common_components/LoadingErrorAlert.tsx";
-import { LoadingView } from "../common_components/LoadingView.tsx";
 
 /** プレイリスト一覧画面の共通画面レイアウト */
 export const PlaylistListLayout: React.FC<{
-  listData: PlaylistListItemData[] | undefined;
+  listData: PlaylistListItemData[];
 
   /** 親プレイリスト (最上位プレイリストを表示する場合は undefined) */
   parentPlaylist: PlaylistDetails | undefined;
-
-  error: unknown;
-}> = ({ listData, error }) => {
+}> = ({ listData }) => {
   const pushPage = usePushPage();
 
   const handleItemClick = (item: PlaylistListItemData) => {
@@ -39,13 +35,6 @@ export const PlaylistListLayout: React.FC<{
       });
     }
   };
-
-  if (error) {
-    return <LoadingErrorAlert error={error} />;
-  }
-  if (listData === undefined) {
-    return <LoadingView />;
-  }
 
   if (listData.length === 0) {
     return (

@@ -1,13 +1,10 @@
 import { List, Typography } from "@mui/material";
 import { GroupListItem, GroupListItemAll } from "./GroupListItem.tsx";
 import type { GroupListItem as GroupListItemData } from "../gen/backend_api.ts";
-import { LoadingErrorAlert } from "../common_components/LoadingErrorAlert.tsx";
-import { LoadingView } from "../common_components/LoadingView.tsx";
 
 /** 各グループ選択画面の共通画面レイアウト */
 export const GroupListLayout: React.FC<{
-  list_data: GroupListItemData[] | undefined;
-  error: unknown;
+  list_data: GroupListItemData[];
 
   /** `全てのXX` のリスト要素の項目名 */
   allItemText?: string;
@@ -18,19 +15,10 @@ export const GroupListLayout: React.FC<{
   onItemClick: (item: GroupListItemData | "all") => unknown;
 }> = ({
   list_data,
-  error,
   emptyItemText,
   allItemText,
   onItemClick,
 }) => {
-  if (error) {
-    return <LoadingErrorAlert error={error} />;
-  }
-
-  if (list_data === undefined) {
-    return <LoadingView />;
-  }
-
   if (list_data.length === 0) {
     return (
       <Typography variant="body1" sx={{ textAlign: "center", py: 4 }}>
