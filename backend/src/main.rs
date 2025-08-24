@@ -1,11 +1,14 @@
 mod api_define;
+mod api_track_duration;
 mod artwork;
 mod database;
 mod error_handling;
 mod group_list;
 mod playlist;
+mod tag;
 mod test_tag_group;
 mod track_list;
+mod track_property;
 
 use std::env;
 

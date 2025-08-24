@@ -10,13 +10,14 @@ use utoipa::OpenApi;
 use crate::{
     AppState, artwork, group_list::handlers as group_handlers,
     playlist::get_handlers as plist_gets, playlist::update_handlers as plist_updates,
-    test_tag_group::handlers::*,
+    test_tag_group::handlers::*, track_property::handlers as track_prop,
 };
 
 #[derive(OpenApi)]
 #[openapi(
     paths(
         artwork::get_mini_artwork,
+        artwork::get_original_artwork,
         group_handlers::get_genre_list,
         group_handlers::get_artist_list,
         group_handlers::get_album_list,
@@ -29,7 +30,8 @@ use crate::{
         get_tag_groups,
         create_tag_group,
         update_tag_group,
-        delete_tag_group
+        delete_tag_group,
+        track_prop::get_single_track_prop
     ),
     components(schemas(SortType))
 )]
@@ -37,7 +39,12 @@ pub struct ApiDoc;
 
 pub fn api_routing(mut router: Router<AppState>) -> Router<AppState> {
     // artworks
-    router = router.route("/api/artworks/{id}/mini", get(artwork::get_mini_artwork));
+    router = router
+        .route("/api/artworks/{id}/mini", get(artwork::get_mini_artwork))
+        .route(
+            "/api/artworks/{id}/original",
+            get(artwork::get_original_artwork),
+        );
 
     // group_list
     router = router
@@ -85,6 +92,12 @@ pub fn api_routing(mut router: Router<AppState>) -> Router<AppState> {
             "/api/tag_groups/{id}",
             put(update_tag_group).delete(delete_tag_group),
         );
+
+    // 曲プロパティ
+    router = router.route(
+        "/api/tracks/{id}/props",
+        get(track_prop::get_single_track_prop),
+    );
 
     router
 }

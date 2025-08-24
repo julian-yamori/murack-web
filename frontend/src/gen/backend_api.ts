@@ -11,6 +11,11 @@ import useSWRMutation from "swr/mutation";
 import type { SWRMutationConfiguration } from "swr/mutation";
 
 import { customFetch } from "../custom_fetch.ts";
+/**
+ * 曲の再生時間 (ミリ秒単位)
+ */
+export type ApiTrackDuration = number;
+
 export interface CreateTagGroupRequest {
   description: string;
   name: string;
@@ -27,6 +32,17 @@ export interface GroupListItem {
   /** アーティスト名などの値 */
   name: string;
 }
+
+/**
+ * ライブラリ内の曲ファイルの位置を示すパス
+
+例えばPC内の場合、
+configの`base_root`のパスから見て
+どの位置にファイルがあるかを示す。
+
+また、DBの`track.path`に保存する値。
+ */
+export type LibraryTrackPath = NonEmptyString;
 
 /**
  * アートワークの、リスト表示などに使用する縮小版画像データ
@@ -85,6 +101,78 @@ export const PlaylistType = {
 } as const;
 
 /**
+ * ディスク番号(最大)
+ */
+export type SingleTrackPropertyDiscMax = number | null;
+
+/**
+ * ディスク番号
+ */
+export type SingleTrackPropertyDiscNumber = number | null;
+
+/**
+ * リリース日
+ */
+export type SingleTrackPropertyReleaseDate = string | null;
+
+/**
+ * トラック最大数
+ */
+export type SingleTrackPropertyTrackMax = number | null;
+
+/**
+ * トラック番号
+ */
+export type SingleTrackPropertyTrackNumber = number | null;
+
+/**
+ * 曲のプロパティ情報 (単曲プロパティ画面用)
+ */
+export interface SingleTrackProperty {
+  /** アルバム */
+  album: string;
+  /** アルバムアーティスト */
+  album_artist: string;
+  /** アーティスト */
+  artist: string;
+  artworks: TrackArtwork[];
+  /** 作曲者 */
+  composer: string;
+  /** 曲の DB への追加日時 */
+  created_at: string;
+  /** ディスク番号(最大) */
+  disc_max?: SingleTrackPropertyDiscMax;
+  /** ディスク番号 */
+  disc_number?: SingleTrackPropertyDiscNumber;
+  duration: ApiTrackDuration;
+  /** ジャンル */
+  genre: string;
+  id: number;
+  /** 歌詞 */
+  lyrics: string;
+  /** メモ */
+  memo: string;
+  /** 管理メモ */
+  memo_manage: string;
+  /** 原曲 */
+  original_track: string;
+  path: NonEmptyString;
+  /** レート (好み) */
+  rating: number;
+  /** リリース日 */
+  release_date?: SingleTrackPropertyReleaseDate;
+  /** サジェスト対象フラグ */
+  suggest_target: boolean;
+  tags: TagIdAndName[];
+  /** 曲名 */
+  title: string;
+  /** トラック最大数 */
+  track_max?: SingleTrackPropertyTrackMax;
+  /** トラック番号 */
+  track_number?: SingleTrackPropertyTrackNumber;
+}
+
+/**
  * 曲のソートの種類
 
 SortTypeWithPlaylist では SortType 定義を流用しているが、ToSchema 実装では文字列の配列を直接指定している。
@@ -137,6 +225,27 @@ export interface TagGroup {
   id: number;
   name: string;
   order_index: number;
+}
+
+/**
+ * タグの id と名前をまとめた構造体
+ */
+export interface TagIdAndName {
+  id: number;
+  name: NonEmptyString;
+}
+
+/**
+ * 曲のプロパティ画面で使用する、アートワーク一つの曲との紐付き情報
+ */
+export interface TrackArtwork {
+  artwork_id: number;
+  /** 画像の説明 */
+  description: string;
+  /** 画像タイプ
+
+FLACやID3で定義された、0〜20の値 */
+  picture_type: number;
 }
 
 export type TrackListItemArtworkId = number | null;
@@ -276,6 +385,80 @@ export const useGetMiniArtwork = <TError = void>(
   const swrKey = swrOptions?.swrKey ??
     (() => isEnabled ? getGetMiniArtworkKey(id) : null);
   const swrFn = () => getMiniArtwork(id, requestOptions);
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
+    swrKey,
+    swrFn,
+    swrOptions,
+  );
+
+  return {
+    swrKey,
+    ...query,
+  };
+};
+
+/**
+ * @summary 原寸サイズのアートワークを取得
+ */
+export type getOriginalArtworkResponse200 = {
+  data: number[];
+  status: 200;
+};
+
+export type getOriginalArtworkResponse404 = {
+  data: void;
+  status: 404;
+};
+
+export type getOriginalArtworkResponseComposite =
+  | getOriginalArtworkResponse200
+  | getOriginalArtworkResponse404;
+
+export type getOriginalArtworkResponse = getOriginalArtworkResponseComposite & {
+  headers: Headers;
+};
+
+export const getGetOriginalArtworkUrl = (id: number) => {
+  return `/api/artworks/${id}/original`;
+};
+
+export const getOriginalArtwork = async (
+  id: number,
+  options?: RequestInit,
+): Promise<getOriginalArtworkResponse> => {
+  return customFetch<getOriginalArtworkResponse>(getGetOriginalArtworkUrl(id), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getGetOriginalArtworkKey = (id: number) =>
+  [`/api/artworks/${id}/original`] as const;
+
+export type GetOriginalArtworkQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getOriginalArtwork>>
+>;
+export type GetOriginalArtworkQueryError = void;
+
+/**
+ * @summary 原寸サイズのアートワークを取得
+ */
+export const useGetOriginalArtwork = <TError = void>(
+  id: number,
+  options?: {
+    swr?:
+      & SWRConfiguration<Awaited<ReturnType<typeof getOriginalArtwork>>, TError>
+      & { swrKey?: Key; enabled?: boolean };
+    request?: SecondParameter<typeof customFetch>;
+  },
+) => {
+  const { swr: swrOptions, request: requestOptions } = options ?? {};
+
+  const isEnabled = swrOptions?.enabled !== false && !!id;
+  const swrKey = swrOptions?.swrKey ??
+    (() => isEnabled ? getGetOriginalArtworkKey(id) : null);
+  const swrFn = () => getOriginalArtwork(id, requestOptions);
 
   const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
     swrKey,
@@ -1258,6 +1441,73 @@ export const useDeleteTagGroup = <TError = unknown>(
   const swrFn = getDeleteTagGroupMutationFetcher(id, requestOptions);
 
   const query = useSWRMutation(swrKey, swrFn, swrOptions);
+
+  return {
+    swrKey,
+    ...query,
+  };
+};
+
+/**
+ * @summary 単曲プロパティ画面の情報を取得
+ */
+export type getSingleTrackPropResponse200 = {
+  data: SingleTrackProperty;
+  status: 200;
+};
+
+export type getSingleTrackPropResponseComposite = getSingleTrackPropResponse200;
+
+export type getSingleTrackPropResponse = getSingleTrackPropResponseComposite & {
+  headers: Headers;
+};
+
+export const getGetSingleTrackPropUrl = (id: number) => {
+  return `/api/tracks/${id}/props`;
+};
+
+export const getSingleTrackProp = async (
+  id: number,
+  options?: RequestInit,
+): Promise<getSingleTrackPropResponse> => {
+  return customFetch<getSingleTrackPropResponse>(getGetSingleTrackPropUrl(id), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getGetSingleTrackPropKey = (id: number) =>
+  [`/api/tracks/${id}/props`] as const;
+
+export type GetSingleTrackPropQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getSingleTrackProp>>
+>;
+export type GetSingleTrackPropQueryError = unknown;
+
+/**
+ * @summary 単曲プロパティ画面の情報を取得
+ */
+export const useGetSingleTrackProp = <TError = unknown>(
+  id: number,
+  options?: {
+    swr?:
+      & SWRConfiguration<Awaited<ReturnType<typeof getSingleTrackProp>>, TError>
+      & { swrKey?: Key; enabled?: boolean };
+    request?: SecondParameter<typeof customFetch>;
+  },
+) => {
+  const { swr: swrOptions, request: requestOptions } = options ?? {};
+
+  const isEnabled = swrOptions?.enabled !== false && !!id;
+  const swrKey = swrOptions?.swrKey ??
+    (() => isEnabled ? getGetSingleTrackPropKey(id) : null);
+  const swrFn = () => getSingleTrackProp(id, requestOptions);
+
+  const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
+    swrKey,
+    swrFn,
+    swrOptions,
+  );
 
   return {
     swrKey,

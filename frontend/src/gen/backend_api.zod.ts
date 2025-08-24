@@ -21,6 +21,13 @@ export const getMiniArtworkResponseItem = zod.number().min(
 export const getMiniArtworkResponse = zod.array(getMiniArtworkResponseItem);
 
 /**
+ * @summary 原寸サイズのアートワークを取得
+ */
+export const getOriginalArtworkParams = zod.object({
+  "id": zod.number().describe("Artwork ID"),
+});
+
+/**
  * @summary グループ選択画面用にアルバムのリストを検索
  */
 export const getAlbumListQueryParams = zod.object({
@@ -242,3 +249,51 @@ export const updateTagGroupResponse = zod.object({
 export const deleteTagGroupParams = zod.object({
   "id": zod.number().describe("Tag group ID"),
 });
+
+/**
+ * @summary 単曲プロパティ画面の情報を取得
+ */
+export const getSingleTrackPropParams = zod.object({
+  "id": zod.number().describe("Track ID"),
+});
+
+export const getSingleTrackPropResponse = zod.object({
+  "album": zod.string().describe("アルバム"),
+  "album_artist": zod.string().describe("アルバムアーティスト"),
+  "artist": zod.string().describe("アーティスト"),
+  "artworks": zod.array(
+    zod.object({
+      "artwork_id": zod.number(),
+      "description": zod.string().describe("画像の説明"),
+      "picture_type": zod.number().describe(
+        "画像タイプ\n\nFLACやID3で定義された、0〜20の値",
+      ),
+    }).describe(
+      "曲のプロパティ画面で使用する、アートワーク一つの曲との紐付き情報",
+    ),
+  ),
+  "composer": zod.string().describe("作曲者"),
+  "created_at": zod.string().datetime({}).describe("曲の DB への追加日時"),
+  "disc_max": zod.number().nullish().describe("ディスク番号(最大)"),
+  "disc_number": zod.number().nullish().describe("ディスク番号"),
+  "duration": zod.number().describe("曲の再生時間 (ミリ秒単位)"),
+  "genre": zod.string().describe("ジャンル"),
+  "id": zod.number(),
+  "lyrics": zod.string().describe("歌詞"),
+  "memo": zod.string().describe("メモ"),
+  "memo_manage": zod.string().describe("管理メモ"),
+  "original_track": zod.string().describe("原曲"),
+  "path": zod.string(),
+  "rating": zod.number().describe("レート (好み)"),
+  "release_date": zod.string().date().nullish().describe("リリース日"),
+  "suggest_target": zod.boolean().describe("サジェスト対象フラグ"),
+  "tags": zod.array(
+    zod.object({
+      "id": zod.number(),
+      "name": zod.string(),
+    }).describe("タグの id と名前をまとめた構造体"),
+  ),
+  "title": zod.string().describe("曲名"),
+  "track_max": zod.number().nullish().describe("トラック最大数"),
+  "track_number": zod.number().nullish().describe("トラック番号"),
+}).describe("曲のプロパティ情報 (単曲プロパティ画面用)");
