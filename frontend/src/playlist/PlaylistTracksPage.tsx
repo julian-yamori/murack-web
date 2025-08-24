@@ -1,7 +1,5 @@
 import { Box, Button, Paper, Toolbar } from "@mui/material";
 import {
-  getGetPlaylistDetailsKey,
-  getGetPlaylistTracksKey,
   SortTypeWithPlaylist,
   TrackListItem as TrackListItemData,
   updatePlaylistSortDesc,
@@ -14,7 +12,6 @@ import { TrackSelectionButtons } from "../track_list/track_selection.tsx";
 import { SortInputWithPlaylist } from "../track_list/SortInput.tsx";
 import { Settings } from "@mui/icons-material";
 import { useState } from "react";
-import { mutate } from "swr";
 import {
   ScreenLockBackdrop,
   useScreenLock,
@@ -28,12 +25,16 @@ export const PlaylistTracksPage: React.FC<{ playlistId: number }> = (
 ) => {
   const { isLocked, lockScreen } = useScreenLock();
 
-  const { data: plistResponse, error: plistError } = useGetPlaylistDetails(
-    playlistId,
-  );
-  const { data: tracksResponse, error: tracksError } = useGetPlaylistTracks(
-    playlistId,
-  );
+  const {
+    data: plistResponse,
+    error: plistError,
+    mutate: mutatePlaylist,
+  } = useGetPlaylistDetails(playlistId);
+  const {
+    data: tracksResponse,
+    error: tracksError,
+    mutate: mutateTracks,
+  } = useGetPlaylistTracks(playlistId);
 
   const tracks = tracksResponse?.data;
   const playlist = plistResponse?.data;
@@ -49,8 +50,8 @@ export const PlaylistTracksPage: React.FC<{ playlistId: number }> = (
       await updatePlaylistSortType(playlistId, sortType);
 
       await Promise.all([
-        mutate(getGetPlaylistDetailsKey(playlistId)),
-        mutate(getGetPlaylistTracksKey(playlistId)),
+        mutatePlaylist(),
+        mutateTracks(),
       ]);
     });
   };
@@ -61,8 +62,8 @@ export const PlaylistTracksPage: React.FC<{ playlistId: number }> = (
       await updatePlaylistSortDesc(playlistId, { sort_desc });
 
       await Promise.all([
-        mutate(getGetPlaylistDetailsKey(playlistId)),
-        mutate(getGetPlaylistTracksKey(playlistId)),
+        mutatePlaylist(),
+        mutateTracks(),
       ]);
     });
   };
