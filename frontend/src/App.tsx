@@ -4,6 +4,7 @@ import { AppBar } from "./navigation/AppBar.tsx";
 import { NavigationStateProvider } from "./navigation/navigation_state.tsx";
 import { NavigationView } from "./navigation/NavigationView.tsx";
 import { useEffect } from "react";
+import { ErrorBoundary } from "./common_components/ErrorBoundary.tsx";
 
 export const App: React.FC = () => {
   // イベント等でエラーが発生したら Toast で表示
@@ -29,13 +30,15 @@ export const App: React.FC = () => {
   }, []);
 
   return (
-    <NavigationStateProvider>
-      <AppBar />
-      <Container maxWidth="lg" sx={{ py: 1 }}>
-        <NavigationView />
-      </Container>
-      <ToastContainer />
-    </NavigationStateProvider>
+    <ErrorBoundary>
+      <NavigationStateProvider>
+        <AppBar />
+        <Container maxWidth="lg" sx={{ py: 1 }}>
+          <NavigationView />
+        </Container>
+        <ToastContainer />
+      </NavigationStateProvider>
+    </ErrorBoundary>
   );
 };
 
