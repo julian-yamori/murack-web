@@ -8,7 +8,7 @@ export const TrackListView: React.FC<{
   /** 表示する楽曲のリスト */
   tracks: ReadonlyArray<TrackListItemData>;
   selectedTrackIds: SelectedTrackIds;
-  onTrackClick: (item: TrackListItemData) => unknown;
+  onTrackClick: (item: TrackListItemData, index: number) => unknown;
   setSelectedTrackIds: (value: SelectedTrackIds) => unknown;
 }> = ({
   tracks,
@@ -39,10 +39,11 @@ export const TrackListView: React.FC<{
         )
         : (
           <List sx={{ maxHeight: 600, overflow: "auto" }}>
-            {tracks.map((track) => (
+            {tracks.map((track, i) => (
               <TrackListItem
                 key={track.id}
                 track={track}
+                index={i}
                 selected={selectedTrackIds?.has(track.id) === true}
                 selectionMode={selectedTrackIds !== undefined}
                 onSelectionChange={handleSelectionChange}

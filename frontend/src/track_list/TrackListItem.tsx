@@ -13,6 +13,8 @@ import { ListArtwork } from "../common_components/ListArtwork.tsx";
 export const TrackListItem: React.FC<{
   /** 楽曲データ */
   track: TrackListItemData;
+  /** リストで何番目の要素か */
+  index: number;
   /** 選択されているかどうか */
   selected: boolean;
   /** 選択モードかどうか */
@@ -20,9 +22,10 @@ export const TrackListItem: React.FC<{
   /** 選択状態変更コールバック */
   onSelectionChange: (trackId: number, selected: boolean) => void;
   /** 楽曲クリックコールバック */
-  onTrackClick: (track: TrackListItemData) => void;
+  onTrackClick: (track: TrackListItemData, index: number) => void;
 }> = ({
   track,
+  index,
   selected,
   selectionMode,
   onSelectionChange,
@@ -32,7 +35,7 @@ export const TrackListItem: React.FC<{
     if (selectionMode) {
       onSelectionChange(track.id, !selected);
     } else {
-      onTrackClick(track);
+      onTrackClick(track, index);
     }
   };
 

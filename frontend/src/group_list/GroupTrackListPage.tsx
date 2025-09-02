@@ -12,6 +12,8 @@ import { TrackSelectionButtons } from "../track_list/track_selection.tsx";
 import { SortInput } from "../track_list/SortInput.tsx";
 import { LoadingView } from "../common_components/LoadingView.tsx";
 import { LoadingErrorAlert } from "../common_components/LoadingErrorAlert.tsx";
+import { useSingleTrackModal } from "../track_property/single/use_single_track_modal.tsx";
+import { SingleTrackModal } from "../track_property/single/SingleTrackModal.tsx";
 
 /** グループ選択の検索条件に該当する曲リストを表示するページ */
 export const GroupTrackListPage: React.FC<{
@@ -23,13 +25,20 @@ export const GroupTrackListPage: React.FC<{
 
   // 楽曲データ取得
   const { artist, album, genre } = filterParams;
-  const { data: tracksResponse, error } = useGetTrackList({
-    artist: artist ?? undefined,
-    album: album ?? undefined,
-    genre: genre ?? undefined,
-    sort_type: sortType,
-    sort_desc: sortDesc,
-  });
+  const { data: tracksResponse, error, mutate: mutateTracks } = useGetTrackList(
+    {
+      artist: artist ?? undefined,
+      album: album ?? undefined,
+      genre: genre ?? undefined,
+      sort_type: sortType,
+      sort_desc: sortDesc,
+    },
+  );
+
+  const {
+    modalState: singleTrackModalState,
+    open: openSingleTrackModal,
+  } = useSingleTrackModal();
 
   const tracks = tracksResponse?.data ?? [];
 
@@ -43,9 +52,19 @@ export const GroupTrackListPage: React.FC<{
     // TODO: 全曲プロパティ画面への遷移
   };
 
-  const handleListTrackClick = (track: TrackListItemData) => {
-    console.log("楽曲クリック:", track);
-    // TODO: 楽曲プロパティ画面への遷移
+  /** リストの曲をクリック時 */
+  const handleListTrackClick = (_track: TrackListItemData, index: number) => {
+    // 単曲プロパティの Modal を開く
+    openSingleTrackModal({
+      trackIds: tracks.map((t) => t.id),
+      defaultIndex: index,
+      onClosed: (modified) => {
+        // 編集されていたらリストを再読込
+        if (modified) {
+          void mutateTracks();
+        }
+      },
+    });
   };
 
   if (error) {
@@ -93,6 +112,8 @@ export const GroupTrackListPage: React.FC<{
         onTrackClick={handleListTrackClick}
         setSelectedTrackIds={setSelectedTrackIds}
       />
+
+      <SingleTrackModal modalState={singleTrackModalState} />
     </Paper>
   );
 };
