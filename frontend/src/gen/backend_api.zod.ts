@@ -297,3 +297,28 @@ export const getSingleTrackPropResponse = zod.object({
   "track_max": zod.number().nullish().describe("トラック最大数"),
   "track_number": zod.number().nullish().describe("トラック番号"),
 }).describe("曲のプロパティ情報 (単曲プロパティ画面用)");
+
+export const updateSingleTrackPropsParams = zod.object({
+  "id": zod.number().describe("Track ID"),
+});
+
+export const updateSingleTrackPropsBody = zod.object({
+  "album": zod.string().describe("アルバム"),
+  "album_artist": zod.string().describe("アルバムアーティスト"),
+  "artist": zod.string().describe("アーティスト"),
+  "composer": zod.string().describe("作曲者"),
+  "disc_max": zod.number().nullish().describe("ディスク番号(最大)"),
+  "disc_number": zod.number().nullish().describe("ディスク番号"),
+  "genre": zod.string().describe("ジャンル"),
+  "lyrics": zod.string().describe("歌詞"),
+  "memo": zod.string().describe("メモ"),
+  "memo_manage": zod.string().describe("管理メモ"),
+  "original_track": zod.string().describe("原曲"),
+  "rating": zod.number().describe("レート (好み)"),
+  "release_date": zod.string().date().nullish().describe("リリース日"),
+  "suggest_target": zod.boolean().describe("サジェスト対象フラグ"),
+  "tag_ids": zod.array(zod.number()).describe("タグ ID"),
+  "title": zod.string().describe("曲名"),
+  "track_max": zod.number().nullish().describe("トラック最大数"),
+  "track_number": zod.number().nullish().describe("トラック番号"),
+});

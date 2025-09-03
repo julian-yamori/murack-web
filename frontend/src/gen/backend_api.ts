@@ -261,6 +261,70 @@ export interface TrackListItem {
   title: string;
 }
 
+/**
+ * ディスク番号(最大)
+ */
+export type UpdateSingleTrackPropsRequestDiscMax = number | null;
+
+/**
+ * ディスク番号
+ */
+export type UpdateSingleTrackPropsRequestDiscNumber = number | null;
+
+/**
+ * リリース日
+ */
+export type UpdateSingleTrackPropsRequestReleaseDate = string | null;
+
+/**
+ * トラック最大数
+ */
+export type UpdateSingleTrackPropsRequestTrackMax = number | null;
+
+/**
+ * トラック番号
+ */
+export type UpdateSingleTrackPropsRequestTrackNumber = number | null;
+
+export interface UpdateSingleTrackPropsRequest {
+  /** アルバム */
+  album: string;
+  /** アルバムアーティスト */
+  album_artist: string;
+  /** アーティスト */
+  artist: string;
+  /** 作曲者 */
+  composer: string;
+  /** ディスク番号(最大) */
+  disc_max?: UpdateSingleTrackPropsRequestDiscMax;
+  /** ディスク番号 */
+  disc_number?: UpdateSingleTrackPropsRequestDiscNumber;
+  /** ジャンル */
+  genre: string;
+  /** 歌詞 */
+  lyrics: string;
+  /** メモ */
+  memo: string;
+  /** 管理メモ */
+  memo_manage: string;
+  /** 原曲 */
+  original_track: string;
+  /** レート (好み) */
+  rating: number;
+  /** リリース日 */
+  release_date?: UpdateSingleTrackPropsRequestReleaseDate;
+  /** サジェスト対象フラグ */
+  suggest_target: boolean;
+  /** タグ ID */
+  tag_ids: number[];
+  /** 曲名 */
+  title: string;
+  /** トラック最大数 */
+  track_max?: UpdateSingleTrackPropsRequestTrackMax;
+  /** トラック番号 */
+  track_number?: UpdateSingleTrackPropsRequestTrackNumber;
+}
+
 export interface UpdateSortDescRequest {
   sort_desc: boolean;
 }
@@ -1508,6 +1572,89 @@ export const useGetSingleTrackProp = <TError = unknown>(
     swrFn,
     swrOptions,
   );
+
+  return {
+    swrKey,
+    ...query,
+  };
+};
+
+export type updateSingleTrackPropsResponseDefault = {
+  data: unknown;
+  status: number;
+};
+
+export type updateSingleTrackPropsResponseComposite =
+  updateSingleTrackPropsResponseDefault;
+
+export type updateSingleTrackPropsResponse =
+  & updateSingleTrackPropsResponseComposite
+  & {
+    headers: Headers;
+  };
+
+export const getUpdateSingleTrackPropsUrl = (id: number) => {
+  return `/api/tracks/${id}/props`;
+};
+
+export const updateSingleTrackProps = async (
+  id: number,
+  updateSingleTrackPropsRequest: UpdateSingleTrackPropsRequest,
+  options?: RequestInit,
+): Promise<updateSingleTrackPropsResponse> => {
+  return customFetch<updateSingleTrackPropsResponse>(
+    getUpdateSingleTrackPropsUrl(id),
+    {
+      ...options,
+      method: "PUT",
+      headers: { "Content-Type": "application/json", ...options?.headers },
+      body: JSON.stringify(
+        updateSingleTrackPropsRequest,
+      ),
+    },
+  );
+};
+
+export const getUpdateSingleTrackPropsMutationFetcher = (
+  id: number,
+  options?: SecondParameter<typeof customFetch>,
+) => {
+  return (
+    _: Key,
+    { arg }: { arg: UpdateSingleTrackPropsRequest },
+  ): Promise<updateSingleTrackPropsResponse> => {
+    return updateSingleTrackProps(id, arg, options);
+  };
+};
+export const getUpdateSingleTrackPropsMutationKey = (id: number) =>
+  [`/api/tracks/${id}/props`] as const;
+
+export type UpdateSingleTrackPropsMutationResult = NonNullable<
+  Awaited<ReturnType<typeof updateSingleTrackProps>>
+>;
+export type UpdateSingleTrackPropsMutationError = unknown;
+
+export const useUpdateSingleTrackProps = <TError = unknown>(
+  id: number,
+  options?: {
+    swr?:
+      & SWRMutationConfiguration<
+        Awaited<ReturnType<typeof updateSingleTrackProps>>,
+        TError,
+        Key,
+        UpdateSingleTrackPropsRequest,
+        Awaited<ReturnType<typeof updateSingleTrackProps>>
+      >
+      & { swrKey?: string };
+    request?: SecondParameter<typeof customFetch>;
+  },
+) => {
+  const { swr: swrOptions, request: requestOptions } = options ?? {};
+
+  const swrKey = swrOptions?.swrKey ?? getUpdateSingleTrackPropsMutationKey(id);
+  const swrFn = getUpdateSingleTrackPropsMutationFetcher(id, requestOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions);
 
   return {
     swrKey,
