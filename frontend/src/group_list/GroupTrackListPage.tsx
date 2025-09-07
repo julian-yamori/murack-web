@@ -36,7 +36,7 @@ export const GroupTrackListPage: React.FC<{
   );
 
   const {
-    modalState: singleTrackModalState,
+    modalArgs: singleTrackModalArgs,
     open: openSingleTrackModal,
   } = useSingleTrackModal();
 
@@ -113,7 +113,7 @@ export const GroupTrackListPage: React.FC<{
         setSelectedTrackIds={setSelectedTrackIds}
       />
 
-      <SingleTrackModal modalState={singleTrackModalState} />
+      <SingleTrackModal modalArgs={singleTrackModalArgs} />
     </Paper>
   );
 };

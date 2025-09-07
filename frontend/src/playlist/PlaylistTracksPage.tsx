@@ -39,7 +39,7 @@ export const PlaylistTracksPage: React.FC<{ playlistId: number }> = (
   } = useGetPlaylistTracks(playlistId);
 
   const {
-    modalState: singleTrackModalState,
+    modalArgs: singleTrackModalArgs,
     open: openSingleTrackModal,
   } = useSingleTrackModal();
 
@@ -149,7 +149,7 @@ export const PlaylistTracksPage: React.FC<{ playlistId: number }> = (
         setSelectedTrackIds={setSelectedTrackIds}
       />
 
-      <SingleTrackModal modalState={singleTrackModalState} />
+      <SingleTrackModal modalArgs={singleTrackModalArgs} />
     </Paper>
   );
 };

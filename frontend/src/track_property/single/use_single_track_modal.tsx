@@ -1,11 +1,11 @@
 import { useCallback, useState } from "react";
 
 /**
- * SingleTrackModal の状態
+ * SingleTrackModal に渡す引数
  *
  * このオブジェクトの中身は、SingleTrackModal 側で参照する想定
  */
-export type SingleTrackModalState = Readonly<{
+export type SingleTrackModalArgs = Readonly<{
   /** 前後ボタンで遷移可能な、全ての曲の ID */
   trackIds: ReadonlyArray<number>;
 
@@ -15,9 +15,9 @@ export type SingleTrackModalState = Readonly<{
   /**
    * Modal を閉じる関数
    *
-   * 曲情報が編集されて DB に保存された場合は、modified を true にする
+   * 曲情報が編集されて DB に保存された場合は、saved を true にする
    */
-  close: (modified: boolean) => void;
+  close: (saved: boolean) => void;
 }>;
 
 /**
@@ -33,9 +33,9 @@ export type OpenSingleTrackModalArgs = Readonly<{
   /**
    * Modal が閉じられたときの処理
    *
-   * 曲情報が編集されて DB に保存された場合は、modified が true になる
+   * 曲情報が編集されて DB に保存された場合は、saved が true になる
    */
-  onClosed?: (modified: boolean) => unknown;
+  onClosed?: (saved: boolean) => unknown;
 }>;
 
 /**
@@ -43,25 +43,25 @@ export type OpenSingleTrackModalArgs = Readonly<{
  */
 export function useSingleTrackModal(): {
   /** SingleTrackModal の状態。開いてない場合は undefined */
-  modalState: SingleTrackModalState | undefined;
+  modalArgs: SingleTrackModalArgs | undefined;
 
   /** SingleTrackModal を開く関数 */
   open: (args: OpenSingleTrackModalArgs) => void;
 } {
-  const [modalState, setModalState] = useState<
-    SingleTrackModalState | undefined
+  const [modalArgs, setModalArgs] = useState<
+    SingleTrackModalArgs | undefined
   >();
 
   const open = useCallback(
     ({ trackIds, defaultIndex, onClosed }: OpenSingleTrackModalArgs) => {
-      setModalState({
+      setModalArgs({
         trackIds,
         defaultIndex,
-        close: (modified: boolean) => {
-          setModalState(undefined);
+        close: (saved: boolean) => {
+          setModalArgs(undefined);
 
           if (onClosed) {
-            onClosed(modified);
+            onClosed(saved);
           }
         },
       });
@@ -69,5 +69,5 @@ export function useSingleTrackModal(): {
     [],
   );
 
-  return { modalState, open };
+  return { modalArgs, open };
 }

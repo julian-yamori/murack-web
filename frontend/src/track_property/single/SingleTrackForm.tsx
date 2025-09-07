@@ -20,22 +20,24 @@ import { BasicInfoTab } from "./BasicInfoTab.tsx";
 import { LyricsTab } from "./LyricsTab.tsx";
 import { ArtworkTab } from "./ArtworkTab.tsx";
 
-interface SingleTrackFormProps {
+export const SingleTrackForm: React.FC<{
   dbTrackProperty: SingleTrackProperty;
   currentIndex: number;
   totalCount: number;
-  onMoveToPrev: () => void;
-  onMoveToNext: () => void;
-  onClose: () => void;
-  onSaved: () => void;
-}
+  moveToPrevTrack: () => unknown;
+  moveToNextTrack: () => unknown;
 
-export const SingleTrackForm: React.FC<SingleTrackFormProps> = ({
+  /** ダイアログを閉じるボタンが押されたときに呼ばれる関数 */
+  onClose: () => unknown;
+
+  /** 曲情報がサーバーに保存されたときに呼ばれる関数 */
+  onSaved: () => unknown;
+}> = ({
   dbTrackProperty,
   currentIndex,
   totalCount,
-  onMoveToPrev,
-  onMoveToNext,
+  moveToPrevTrack,
+  moveToNextTrack,
   onClose,
   onSaved,
 }) => {
@@ -167,7 +169,7 @@ export const SingleTrackForm: React.FC<SingleTrackFormProps> = ({
       >
         <Box>
           <Button
-            onClick={() => executeWithSaveConfirm(onMoveToPrev)}
+            onClick={() => executeWithSaveConfirm(moveToPrevTrack)}
             disabled={currentIndex <= 0}
             variant="outlined"
             size="small"
@@ -176,7 +178,7 @@ export const SingleTrackForm: React.FC<SingleTrackFormProps> = ({
             前の曲
           </Button>
           <Button
-            onClick={() => executeWithSaveConfirm(onMoveToNext)}
+            onClick={() => executeWithSaveConfirm(moveToNextTrack)}
             disabled={currentIndex >= totalCount - 1}
             variant="outlined"
             size="small"
