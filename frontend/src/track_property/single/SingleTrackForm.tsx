@@ -13,6 +13,7 @@ import {
 } from "@mui/material";
 import {
   SingleTrackProperty,
+  UpdateSingleTrackPropsRequest,
   useUpdateSingleTrackProps,
 } from "../../gen/backend_api.ts";
 import { isFormEdited } from "./formUtils.ts";
@@ -52,6 +53,7 @@ export const SingleTrackForm: React.FC<{
     watch,
     reset,
     formState: { errors },
+    control,
   } = useForm<SingleTrackProperty>({
     defaultValues: dbTrackProperty,
   });
@@ -73,27 +75,7 @@ export const SingleTrackForm: React.FC<{
   const updateMutation = useUpdateSingleTrackProps(dbTrackProperty.id);
 
   const handleSave = async () => {
-    await updateMutation.trigger({
-      title: formData.title || "",
-      artist: formData.artist || "",
-      album_artist: formData.album_artist || "",
-      album: formData.album || "",
-      genre: formData.genre || "",
-      composer: formData.composer || "",
-      track_number: formData.track_number,
-      track_max: formData.track_max,
-      disc_number: formData.disc_number,
-      disc_max: formData.disc_max,
-      release_date: formData.release_date,
-      rating: formData.rating || 0,
-      original_track: formData.original_track || "",
-      memo: formData.memo || "",
-      memo_manage: formData.memo_manage || "",
-      suggest_target: formData.suggest_target || false,
-      lyrics: formData.lyrics || "",
-      tag_ids: formData.tags?.map((t) => t.id) || [],
-    });
-
+    await updateMutation.trigger(formDataToUpdate(formData));
     onSaved();
   };
 
@@ -149,7 +131,7 @@ export const SingleTrackForm: React.FC<{
       {/* タブコンテンツ */}
       <Box sx={{ flex: 1, overflow: "auto", p: 2 }}>
         {currentTab === 0 && (
-          <BasicInfoTab register={register} errors={errors} />
+          <BasicInfoTab register={register} errors={errors} control={control} />
         )}
         {currentTab === 1 && <LyricsTab register={register} />}
         {currentTab === 2 && (
@@ -233,3 +215,50 @@ export const SingleTrackForm: React.FC<{
     </Box>
   );
 };
+
+/** フォームの値を、サーバーへの保存リクエストの値に変換 */
+function formDataToUpdate(
+  formData: SingleTrackProperty,
+): UpdateSingleTrackPropsRequest {
+  const {
+    title,
+    artist,
+    album_artist,
+    album,
+    genre,
+    composer,
+    track_number,
+    track_max,
+    disc_number,
+    disc_max,
+    release_date,
+    rating,
+    original_track,
+    memo,
+    memo_manage,
+    suggest_target,
+    lyrics,
+    tags,
+  } = formData;
+
+  return {
+    title,
+    artist,
+    album_artist,
+    album,
+    genre,
+    composer,
+    track_number,
+    track_max,
+    disc_number,
+    disc_max,
+    release_date,
+    rating,
+    original_track,
+    memo,
+    memo_manage,
+    suggest_target,
+    lyrics,
+    tag_ids: tags.map((t) => t.id),
+  };
+}

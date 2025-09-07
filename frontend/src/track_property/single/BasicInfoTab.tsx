@@ -1,5 +1,10 @@
 import React from "react";
-import { FieldErrors, UseFormRegister } from "react-hook-form";
+import {
+  Control,
+  Controller,
+  FieldErrors,
+  UseFormRegister,
+} from "react-hook-form";
 import {
   Box,
   Button,
@@ -16,11 +21,13 @@ import { SingleTrackProperty } from "../../gen/backend_api.ts";
 interface BasicInfoTabProps {
   register: UseFormRegister<SingleTrackProperty>;
   errors: FieldErrors<SingleTrackProperty>;
+  control: Control<SingleTrackProperty>;
 }
 
 export const BasicInfoTab: React.FC<BasicInfoTabProps> = ({
   register,
   errors,
+  control,
 }) => {
   return (
     <Box>
@@ -31,10 +38,19 @@ export const BasicInfoTab: React.FC<BasicInfoTabProps> = ({
           <Typography variant="body2" sx={{ mb: 1 }}>
             レート
           </Typography>
-          <Rating
-            {...register("rating")}
-            max={5}
-            size="large"
+          <Controller
+            name="rating"
+            control={control}
+            defaultValue={0}
+            render={({ field }) => (
+              <Rating
+                {...field}
+                value={field.value ?? 0}
+                onChange={(_, value) => field.onChange(value ?? 0)}
+                max={5}
+                size="large"
+              />
+            )}
           />
         </Box>
 
