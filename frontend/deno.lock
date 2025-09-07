@@ -16,6 +16,7 @@
     "npm:orval@*": "7.10.0_typescript@5.8.3_typedoc@0.28.7__typescript@5.8.3",
     "npm:orval@^7.10.0": "7.10.0_typescript@5.8.3_typedoc@0.28.7__typescript@5.8.3",
     "npm:react-dom@^19.1.0": "19.1.0_react@19.1.0",
+    "npm:react-hook-form@^7.62.0": "7.62.0_react@19.1.0",
     "npm:react-toastify@^11.0.5": "11.0.5_react@19.1.0_react-dom@19.1.0__react@19.1.0",
     "npm:react@^19.1.0": "19.1.0",
     "npm:swr@^2.3.4": "2.3.4_react@19.1.0",
@@ -2321,6 +2322,12 @@
         "scheduler"
       ]
     },
+    "react-hook-form@7.62.0_react@19.1.0": {
+      "integrity": "sha512-7KWFejc98xqG/F4bAxpL41NB3o1nnvQO1RWZT3TqRZYL8RryQETGfEdVnJN2fy1crCiBLLjkRBVK05j24FxJGA==",
+      "dependencies": [
+        "react"
+      ]
+    },
     "react-is@16.13.1": {
       "integrity": "sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ=="
     },
@@ -2968,6 +2975,7 @@
       "npm:js-cookie@^3.0.5",
       "npm:orval@^7.10.0",
       "npm:react-dom@^19.1.0",
+      "npm:react-hook-form@^7.62.0",
       "npm:react-toastify@^11.0.5",
       "npm:react@^19.1.0",
       "npm:swr@^2.3.4",

@@ -1,8 +1,8 @@
-import React, { useMemo, useState } from "react";
-import { SingleTrackProperty } from "../../gen/backend_api.ts";
+import React, { useState } from "react";
 import { useTrackSelection } from "../single/use_track_selection.ts";
-import { Box, Button, Modal, Paper } from "@mui/material";
+import { Modal, Paper } from "@mui/material";
 import { SingleTrackModalState } from "./use_single_track_modal.tsx";
+import { SingleTrackForm } from "./SingleTrackForm.tsx";
 
 /**
  *  曲プロパティ (単曲) 画面の Modal
@@ -27,8 +27,6 @@ export const SingleTrackModal: React.FC<
 const ModalView: React.FC<{ modalState: SingleTrackModalState }> = (
   { modalState },
 ) => {
-  const [formState, setFormState] = useState<SingleTrackProperty>();
-
   const {
     dbTrackProperty,
     currentIndex,
@@ -37,15 +35,33 @@ const ModalView: React.FC<{ modalState: SingleTrackModalState }> = (
   } = useTrackSelection({
     trackIds: modalState.trackIds,
     defaultIndex: modalState.defaultIndex,
-    setFormState,
   });
 
-  // 仮で JSON を表示
-  const dataJson = useMemo(
-    () => JSON.stringify(formState, undefined, 2),
-    [formState],
-  );
-  const _ = dbTrackProperty;
+  const [modified, setModified] = useState(false);
+
+  const handleClose = () => {
+    modalState.close(modified);
+  };
+
+  const handleSaved = () => {
+    setModified(true);
+  };
+
+  if (!dbTrackProperty) {
+    return (
+      <Paper
+        sx={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          p: 2,
+        }}
+      >
+        読み込み中...
+      </Paper>
+    );
+  }
 
   return (
     <Paper
@@ -54,33 +70,23 @@ const ModalView: React.FC<{ modalState: SingleTrackModalState }> = (
         top: "50%",
         left: "50%",
         transform: "translate(-50%, -50%)",
-        maxHeight: "95%",
-        width: 600,
+        width: "90vw",
+        maxWidth: 800,
+        height: "90vh",
         bgcolor: "background.paper",
-        // border: "2px solid #000",
-        // boxShadow: 24,
-        p: 2,
+        display: "flex",
+        flexDirection: "column",
       }}
     >
-      <Box>
-        <Button
-          onClick={moveToPrevTrack}
-          size="small"
-          variant="outlined"
-          disabled={currentIndex <= 0}
-        >
-          前の曲へ
-        </Button>
-        <Button
-          onClick={moveToNextTrack}
-          size="small"
-          variant="outlined"
-          disabled={currentIndex >= modalState.trackIds.length - 1}
-        >
-          次の曲へ
-        </Button>
-      </Box>
-      <Box component="pre">{dataJson}</Box>
+      <SingleTrackForm
+        dbTrackProperty={dbTrackProperty}
+        currentIndex={currentIndex}
+        totalCount={modalState.trackIds.length}
+        onMoveToPrev={moveToPrevTrack}
+        onMoveToNext={moveToNextTrack}
+        onClose={handleClose}
+        onSaved={handleSaved}
+      />
     </Paper>
   );
 };

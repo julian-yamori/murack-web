@@ -13,7 +13,7 @@ export function useTrackSelection({ trackIds, defaultIndex, setFormState }: {
   defaultIndex: number;
 
   /** 画面の入力欄へ、読み込んだ曲プロパティの初期値を反映する関数 */
-  setFormState: (state: SingleTrackProperty) => unknown;
+  setFormState?: (state: SingleTrackProperty) => unknown;
 }): {
   /**
    * 現在の曲の、DB に保存されている初期値
@@ -67,7 +67,7 @@ export function useTrackSelection({ trackIds, defaultIndex, setFormState }: {
         });
 
         // 画面の入力欄にも反映
-        setFormState(response.data);
+        setFormState?.(response.data);
       }
     } catch (error) {
       if (abortController.signal.aborted) {
