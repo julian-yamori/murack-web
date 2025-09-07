@@ -1,16 +1,10 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
+import { Box, Button, Tab, Tabs, Typography } from "@mui/material";
 import {
-  Box,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  Tab,
-  Tabs,
-  Typography,
-} from "@mui/material";
+  UnsavedChangesDialog,
+  useUnsavedChangesDialog,
+} from "../../common_components/UnsavedChangesDialog.tsx";
 import {
   SingleTrackProperty,
   UpdateSingleTrackPropsRequest,
@@ -43,11 +37,6 @@ export const SingleTrackForm: React.FC<{
   onSaved,
 }) => {
   const [currentTab, setCurrentTab] = useState(0);
-  const [saveConfirmDialog, setSaveConfirmDialog] = useState<{
-    open: boolean;
-    action?: () => void;
-  }>({ open: false });
-
   const {
     register,
     watch,
@@ -79,27 +68,17 @@ export const SingleTrackForm: React.FC<{
     onSaved();
   };
 
-  // 保存確認付きのアクション実行
-  const executeWithSaveConfirm = (action: () => void) => {
+  const {
+    dialogArgs: unsavedDialogArgs,
+    open: openUnsavedDialog,
+  } = useUnsavedChangesDialog();
+
+  // 保存確認付きの画面遷移実行
+  const navigateWithSaveConfirm = (navigate: () => void) => {
     if (isEdited) {
-      setSaveConfirmDialog({ open: true, action });
+      openUnsavedDialog({ doSave: handleSave, doNavigate: navigate });
     } else {
-      action();
-    }
-  };
-
-  const handleSaveConfirmDialog = (choice: "save" | "discard" | "cancel") => {
-    const { action } = saveConfirmDialog;
-    setSaveConfirmDialog({ open: false });
-
-    if (choice === "cancel") {
-      return;
-    }
-
-    if (choice === "save" && action) {
-      handleSave().then(() => action());
-    } else if (choice === "discard" && action) {
-      action();
+      navigate();
     }
   };
 
@@ -151,7 +130,7 @@ export const SingleTrackForm: React.FC<{
       >
         <Box>
           <Button
-            onClick={() => executeWithSaveConfirm(moveToPrevTrack)}
+            onClick={() => navigateWithSaveConfirm(moveToPrevTrack)}
             disabled={currentIndex <= 0}
             variant="outlined"
             size="small"
@@ -160,7 +139,7 @@ export const SingleTrackForm: React.FC<{
             前の曲
           </Button>
           <Button
-            onClick={() => executeWithSaveConfirm(moveToNextTrack)}
+            onClick={() => navigateWithSaveConfirm(moveToNextTrack)}
             disabled={currentIndex >= totalCount - 1}
             variant="outlined"
             size="small"
@@ -171,7 +150,7 @@ export const SingleTrackForm: React.FC<{
 
         <Box>
           <Button
-            onClick={() => executeWithSaveConfirm(onClose)}
+            onClick={() => navigateWithSaveConfirm(onClose)}
             sx={{ mr: 1 }}
           >
             閉じる
@@ -187,31 +166,7 @@ export const SingleTrackForm: React.FC<{
       </Box>
 
       {/* 保存確認ダイアログ */}
-      <Dialog
-        open={saveConfirmDialog.open}
-        onClose={() => handleSaveConfirmDialog("cancel")}
-      >
-        <DialogTitle>未保存の変更があります</DialogTitle>
-        <DialogContent>
-          <Typography>
-            変更内容を保存しますか？
-          </Typography>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => handleSaveConfirmDialog("cancel")}>
-            編集を続ける
-          </Button>
-          <Button onClick={() => handleSaveConfirmDialog("discard")}>
-            保存しない
-          </Button>
-          <Button
-            onClick={() => handleSaveConfirmDialog("save")}
-            variant="contained"
-          >
-            保存する
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <UnsavedChangesDialog dialogArgs={unsavedDialogArgs} />
     </Box>
   );
 };
