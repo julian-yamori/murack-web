@@ -24,6 +24,14 @@ export type PageStackItem = Readonly<{
 
   /** パンくずリストでの表示名 */
   breadCrumb: string | undefined;
+
+  /**
+   * 画面ごとに固有で管理する状態値
+   *
+   * 子画面から戻った際に状態を復帰するために使用する。
+   * `useNavigationState` のフックで取得・設定する。
+   */
+  pageState?: unknown;
 }>;
 
 function defaultNavigationState(): NavigationState {
