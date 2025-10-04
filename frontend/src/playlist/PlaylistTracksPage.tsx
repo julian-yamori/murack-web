@@ -11,7 +11,7 @@ import { TrackListView } from "../track_list/TrackListView.tsx";
 import { TrackSelectionButtons } from "../track_list/track_selection.tsx";
 import { SortInputWithPlaylist } from "../track_list/SortInput.tsx";
 import { Settings } from "@mui/icons-material";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   ScreenLockBackdrop,
   useScreenLock,
@@ -19,7 +19,14 @@ import {
 import { LoadingView } from "../common_components/LoadingView.tsx";
 import { LoadingErrorAlert } from "../common_components/LoadingErrorAlert.tsx";
 import { SingleTrackPage } from "../track_property/single/SingleTrackPage.tsx";
-import { usePushPage } from "../navigation/navigation_hooks.ts";
+import { usePageState, usePushPage } from "../navigation/navigation_hooks.ts";
+
+/**
+ * 子画面から戻ってきたときの、リストのスクロール復帰位置
+ *
+ * pageState に保存する。
+ */
+type ScrollResume = number | undefined;
 
 /** プレイリストの曲リストを表示するページ */
 export const PlaylistTracksPage: React.FC<{ playlistId: number }> = (
@@ -27,6 +34,16 @@ export const PlaylistTracksPage: React.FC<{ playlistId: number }> = (
 ) => {
   const { isLocked, lockScreen } = useScreenLock();
   const pushPage = usePushPage();
+
+  // スクロール位置の保存・復帰管理
+  const [pageState, setPageState] = usePageState<ScrollResume>();
+  const scrollRef = useRef<HTMLUListElement>(null);
+  useEffect(() => {
+    if (pageState !== undefined) {
+      scrollRef.current?.scrollTo(0, pageState);
+      setPageState(undefined);
+    }
+  }, [pageState]);
 
   const {
     data: plistResponse,
@@ -140,6 +157,7 @@ export const PlaylistTracksPage: React.FC<{ playlistId: number }> = (
       <TrackListView
         tracks={tracks}
         selectedTrackIds={selectedTrackIds}
+        scrollRef={scrollRef}
         onTrackClick={handleListTrackClick}
         setSelectedTrackIds={setSelectedTrackIds}
       />

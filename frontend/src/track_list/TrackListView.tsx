@@ -2,17 +2,20 @@ import { Box, List, Typography } from "@mui/material";
 import { TrackListItem } from "./TrackListItem.tsx";
 import { TrackListItem as TrackListItemData } from "../gen/backend_api.ts";
 import { SelectedTrackIds } from "./track_selection.tsx";
+import { RefObject } from "react";
 
 /** 曲リストのコンポーネント */
 export const TrackListView: React.FC<{
   /** 表示する楽曲のリスト */
   tracks: ReadonlyArray<TrackListItemData>;
   selectedTrackIds: SelectedTrackIds;
+  scrollRef?: RefObject<HTMLUListElement | null>;
   onTrackClick: (item: TrackListItemData, index: number) => unknown;
   setSelectedTrackIds: (value: SelectedTrackIds) => unknown;
 }> = ({
   tracks,
   selectedTrackIds,
+  scrollRef,
   onTrackClick,
   setSelectedTrackIds,
 }) => {
@@ -38,7 +41,7 @@ export const TrackListView: React.FC<{
           </Box>
         )
         : (
-          <List sx={{ maxHeight: 600, overflow: "auto" }}>
+          <List sx={{ maxHeight: 600, overflow: "auto" }} ref={scrollRef}>
             {tracks.map((track, i) => (
               <TrackListItem
                 key={track.id}

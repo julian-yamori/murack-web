@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Box, Button, Paper, Toolbar } from "@mui/material";
 import { Settings } from "@mui/icons-material";
 import { GroupFilterParams } from "./group_filter_params.ts";
@@ -13,13 +13,30 @@ import { SortInput } from "../track_list/SortInput.tsx";
 import { LoadingView } from "../common_components/LoadingView.tsx";
 import { LoadingErrorAlert } from "../common_components/LoadingErrorAlert.tsx";
 import { SingleTrackPage } from "../track_property/single/SingleTrackPage.tsx";
-import { usePushPage } from "../navigation/navigation_hooks.ts";
+import { usePageState, usePushPage } from "../navigation/navigation_hooks.ts";
+
+/**
+ * 子画面から戻ってきたときの、リストのスクロール復帰位置
+ *
+ * pageState に保存する。
+ */
+type ScrollResume = number | undefined;
 
 /** グループ選択の検索条件に該当する曲リストを表示するページ */
 export const GroupTrackListPage: React.FC<{
   filterParams: GroupFilterParams;
 }> = ({ filterParams }) => {
   const pushPage = usePushPage();
+
+  // スクロール位置の保存・復帰管理
+  const [pageState, setPageState] = usePageState<ScrollResume>();
+  const scrollRef = useRef<HTMLUListElement>(null);
+  useEffect(() => {
+    if (pageState !== undefined) {
+      scrollRef.current?.scrollTo(0, pageState);
+      setPageState(undefined);
+    }
+  }, [pageState]);
 
   // ソート設定（preferencesから取得・保存）
   const [sortType, setSortType] = useGeneralSortType();
@@ -105,6 +122,7 @@ export const GroupTrackListPage: React.FC<{
       <TrackListView
         tracks={tracks}
         selectedTrackIds={selectedTrackIds}
+        scrollRef={scrollRef}
         onTrackClick={handleListTrackClick}
         setSelectedTrackIds={setSelectedTrackIds}
       />
