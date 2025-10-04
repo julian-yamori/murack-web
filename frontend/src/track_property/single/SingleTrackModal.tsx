@@ -38,6 +38,7 @@ export const SingleTrackModal: React.FC<
 
   return (
     <Modal open={modalArgs !== undefined} onClose={handleClose}>
+      {/* todo Modal の onClose でも保存確認ダイアログの表示が必要 */}
       {modalArgs !== undefined
         ? (
           <Paper
