@@ -14,6 +14,7 @@ import { isFormEdited } from "./formUtils.ts";
 import { BasicInfoTab } from "./BasicInfoTab.tsx";
 import { LyricsTab } from "./LyricsTab.tsx";
 import { ArtworkTab } from "./ArtworkTab.tsx";
+import { usePopPage } from "../../navigation/navigation_hooks.ts";
 
 export const SingleTrackForm: React.FC<{
   dbTrackProperty: SingleTrackProperty;
@@ -21,21 +22,15 @@ export const SingleTrackForm: React.FC<{
   totalCount: number;
   moveToPrevTrack: () => unknown;
   moveToNextTrack: () => unknown;
-
-  /** ダイアログを閉じるボタンが押されたときに呼ばれる関数 */
-  onClose: () => unknown;
-
-  /** 曲情報がサーバーに保存されたときに呼ばれる関数 */
-  onSaved: () => unknown;
 }> = ({
   dbTrackProperty,
   currentIndex,
   totalCount,
   moveToPrevTrack,
   moveToNextTrack,
-  onClose,
-  onSaved,
 }) => {
+  const popPage = usePopPage();
+
   const [currentTab, setCurrentTab] = useState(0);
   const {
     register,
@@ -65,7 +60,6 @@ export const SingleTrackForm: React.FC<{
 
   const handleSave = async () => {
     await updateMutation.trigger(formDataToUpdate(formData));
-    onSaved();
   };
 
   const {
@@ -150,7 +144,7 @@ export const SingleTrackForm: React.FC<{
 
         <Box>
           <Button
-            onClick={() => navigateWithSaveConfirm(onClose)}
+            onClick={() => navigateWithSaveConfirm(popPage)}
             sx={{ mr: 1 }}
           >
             閉じる

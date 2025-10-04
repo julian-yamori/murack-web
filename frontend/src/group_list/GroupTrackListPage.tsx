@@ -12,20 +12,22 @@ import { TrackSelectionButtons } from "../track_list/track_selection.tsx";
 import { SortInput } from "../track_list/SortInput.tsx";
 import { LoadingView } from "../common_components/LoadingView.tsx";
 import { LoadingErrorAlert } from "../common_components/LoadingErrorAlert.tsx";
-import { useSingleTrackModal } from "../track_property/single/use_single_track_modal.tsx";
-import { SingleTrackModal } from "../track_property/single/SingleTrackModal.tsx";
+import { SingleTrackPage } from "../track_property/single/SingleTrackPage.tsx";
+import { usePushPage } from "../navigation/navigation_hooks.ts";
 
 /** グループ選択の検索条件に該当する曲リストを表示するページ */
 export const GroupTrackListPage: React.FC<{
   filterParams: GroupFilterParams;
 }> = ({ filterParams }) => {
+  const pushPage = usePushPage();
+
   // ソート設定（preferencesから取得・保存）
   const [sortType, setSortType] = useGeneralSortType();
   const [sortDesc, setSortDesc] = useGeneralSortDesc();
 
   // 楽曲データ取得
   const { artist, album, genre } = filterParams;
-  const { data: tracksResponse, error, mutate: mutateTracks } = useGetTrackList(
+  const { data: tracksResponse, error } = useGetTrackList(
     {
       artist: artist ?? undefined,
       album: album ?? undefined,
@@ -34,11 +36,6 @@ export const GroupTrackListPage: React.FC<{
       sort_desc: sortDesc,
     },
   );
-
-  const {
-    modalArgs: singleTrackModalArgs,
-    open: openSingleTrackModal,
-  } = useSingleTrackModal();
 
   const tracks = tracksResponse?.data ?? [];
 
@@ -53,17 +50,16 @@ export const GroupTrackListPage: React.FC<{
   };
 
   /** リストの曲をクリック時 */
-  const handleListTrackClick = (_track: TrackListItemData, index: number) => {
-    // 単曲プロパティの Modal を開く
-    openSingleTrackModal({
-      trackIds: tracks.map((t) => t.id),
-      defaultIndex: index,
-      onClosed: (modified) => {
-        // 編集されていたらリストを再読込
-        if (modified) {
-          void mutateTracks();
-        }
-      },
+  const handleListTrackClick = (track: TrackListItemData, index: number) => {
+    const trackIds = tracks.map((t) => t.id);
+
+    // 単曲プロパティ画面を開く
+    pushPage({
+      render: () => (
+        <SingleTrackPage trackIds={trackIds} defaultIndex={index} />
+      ),
+      navigationMenuKey: undefined,
+      breadCrumb: track.title,
     });
   };
 
@@ -112,8 +108,6 @@ export const GroupTrackListPage: React.FC<{
         onTrackClick={handleListTrackClick}
         setSelectedTrackIds={setSelectedTrackIds}
       />
-
-      <SingleTrackModal modalArgs={singleTrackModalArgs} />
     </Paper>
   );
 };

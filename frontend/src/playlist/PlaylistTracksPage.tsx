@@ -18,14 +18,15 @@ import {
 } from "../common_components/screen_lock.tsx";
 import { LoadingView } from "../common_components/LoadingView.tsx";
 import { LoadingErrorAlert } from "../common_components/LoadingErrorAlert.tsx";
-import { useSingleTrackModal } from "../track_property/single/use_single_track_modal.tsx";
-import { SingleTrackModal } from "../track_property/single/SingleTrackModal.tsx";
+import { SingleTrackPage } from "../track_property/single/SingleTrackPage.tsx";
+import { usePushPage } from "../navigation/navigation_hooks.ts";
 
 /** プレイリストの曲リストを表示するページ */
 export const PlaylistTracksPage: React.FC<{ playlistId: number }> = (
   { playlistId },
 ) => {
   const { isLocked, lockScreen } = useScreenLock();
+  const pushPage = usePushPage();
 
   const {
     data: plistResponse,
@@ -37,11 +38,6 @@ export const PlaylistTracksPage: React.FC<{ playlistId: number }> = (
     error: tracksError,
     mutate: mutateTracks,
   } = useGetPlaylistTracks(playlistId);
-
-  const {
-    modalArgs: singleTrackModalArgs,
-    open: openSingleTrackModal,
-  } = useSingleTrackModal();
 
   const tracks = tracksResponse?.data;
   const playlist = plistResponse?.data;
@@ -81,21 +77,20 @@ export const PlaylistTracksPage: React.FC<{ playlistId: number }> = (
   };
 
   /** リストの曲をクリック時 */
-  const handleListTrackClick = (_track: TrackListItemData, index: number) => {
+  const handleListTrackClick = (track: TrackListItemData, index: number) => {
     if (tracks === undefined) {
       throw new Error("曲リストが読み込まれていません");
     }
 
-    // 単曲プロパティの Modal を開く
-    openSingleTrackModal({
-      trackIds: tracks.map((t) => t.id),
-      defaultIndex: index,
-      onClosed: (modified) => {
-        // 編集されていたらリストを再読込
-        if (modified) {
-          void mutateTracks();
-        }
-      },
+    const trackIds = tracks.map((t) => t.id);
+
+    // 単曲プロパティ画面を開く
+    pushPage({
+      render: () => (
+        <SingleTrackPage trackIds={trackIds} defaultIndex={index} />
+      ),
+      navigationMenuKey: undefined,
+      breadCrumb: track.title,
     });
   };
 
@@ -148,8 +143,6 @@ export const PlaylistTracksPage: React.FC<{ playlistId: number }> = (
         onTrackClick={handleListTrackClick}
         setSelectedTrackIds={setSelectedTrackIds}
       />
-
-      <SingleTrackModal modalArgs={singleTrackModalArgs} />
     </Paper>
   );
 };
