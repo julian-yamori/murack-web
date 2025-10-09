@@ -1,5 +1,10 @@
 import React, { memo } from "react";
-import { Control, FieldErrors, UseFormRegister } from "react-hook-form";
+import {
+  Control,
+  FieldErrors,
+  UseFormRegister,
+  UseFormWatch,
+} from "react-hook-form";
 import {
   Box,
   Button,
@@ -13,17 +18,17 @@ import { FormCheckbox } from "../../common_components/form/FormCheckbox.tsx";
 import { FormRating } from "../../common_components/form/FormRating.tsx";
 
 interface BasicInfoTabProps {
-  /** DB から取得した、変更元の値 (読み取り専用項目用) */
-  dbTrackProperty: SingleTrackProperty;
-
   register: UseFormRegister<SingleTrackProperty>;
+  watch: UseFormWatch<SingleTrackProperty>;
   errors: FieldErrors<SingleTrackProperty>;
   control: Control<SingleTrackProperty>;
 }
 
 export const BasicInfoTab: React.FC<BasicInfoTabProps> = (
-  { dbTrackProperty, register, errors, control },
+  { register, watch, errors, control },
 ) => {
+  const { duration, created_at, path } = watch();
+
   return (
     <Box>
       {/* 評価セクション（上部） */}
@@ -42,9 +47,9 @@ export const BasicInfoTab: React.FC<BasicInfoTabProps> = (
 
       {/* 読み取り専用項目 */}
       <ReadonlySection
-        duration={dbTrackProperty.duration}
-        createdAt={dbTrackProperty.created_at}
-        path={dbTrackProperty.path}
+        duration={duration}
+        createdAt={created_at}
+        path={path}
       />
     </Box>
   );

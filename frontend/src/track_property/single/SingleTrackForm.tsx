@@ -109,8 +109,8 @@ export const SingleTrackForm: React.FC<{
       <Box sx={{ flex: 1, overflow: "auto", p: 2 }}>
         {currentTab === 0 && (
           <BasicInfoTab
-            dbTrackProperty={dbTrackProperty}
             register={register}
+            watch={watch}
             errors={errors}
             control={control}
           />
