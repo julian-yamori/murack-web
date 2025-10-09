@@ -1,22 +1,16 @@
 import React from "react";
-import {
-  Control,
-  Controller,
-  FieldErrors,
-  UseFormRegister,
-} from "react-hook-form";
+import { Control, FieldErrors, UseFormRegister } from "react-hook-form";
 import {
   Box,
   Button,
-  Checkbox,
   Divider,
-  FormControlLabel,
-  Rating,
   Stack,
   TextField,
   Typography,
 } from "@mui/material";
 import { SingleTrackProperty } from "../../gen/backend_api.ts";
+import { FormCheckbox } from "../../common_components/form/FormCheckbox.tsx";
+import { FormRating } from "../../common_components/form/FormRating.tsx";
 
 interface BasicInfoTabProps {
   register: UseFormRegister<SingleTrackProperty>;
@@ -45,20 +39,7 @@ export const BasicInfoTab: React.FC<BasicInfoTabProps> = ({
           <Typography variant="body2" sx={{ mb: 1 }}>
             レート
           </Typography>
-          <Controller
-            name="rating"
-            control={control}
-            defaultValue={0}
-            render={({ field }) => (
-              <Rating
-                {...field}
-                value={field.value ?? 0}
-                onChange={(_, value) => field.onChange(value ?? 0)}
-                max={5}
-                size="large"
-              />
-            )}
-          />
+          <FormRating control={control} name="rating" />
         </Box>
 
         {/* 原曲情報 */}
@@ -72,12 +53,9 @@ export const BasicInfoTab: React.FC<BasicInfoTabProps> = ({
         />
 
         {/* アルバム推薦対象 */}
-        <FormControlLabel
-          control={
-            <Checkbox
-              {...register("suggest_target")}
-            />
-          }
+        <FormCheckbox
+          control={control}
+          name="suggest_target"
           label="アルバム推薦対象"
         />
 
