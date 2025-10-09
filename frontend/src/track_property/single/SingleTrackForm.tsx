@@ -93,17 +93,7 @@ export const SingleTrackForm: React.FC<{
       <ScreenLockBackdrop isLocked={isLocked} />
 
       {/* タブ */}
-      <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-        <Tabs
-          value={currentTab}
-          onChange={(_, newValue) => setCurrentTab(newValue)}
-          variant="fullWidth"
-        >
-          <Tab label="基本情報" />
-          <Tab label="歌詞" />
-          <Tab label="アートワーク" />
-        </Tabs>
-      </Box>
+      <TabsInput currentTab={currentTab} setCurrentTab={setCurrentTab} />
 
       {/* タブコンテンツ */}
       <Box sx={{ flex: 1, overflow: "auto", p: 2 }}>
@@ -167,6 +157,24 @@ export const SingleTrackForm: React.FC<{
     </Box>
   );
 };
+
+const TabsInput = React.memo<
+  { currentTab: number; setCurrentTab: (value: number) => unknown }
+>(({ currentTab, setCurrentTab }) => {
+  return (
+    <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+      <Tabs
+        value={currentTab}
+        onChange={(_, newValue) => setCurrentTab(newValue)}
+        variant="fullWidth"
+      >
+        <Tab label="基本情報" />
+        <Tab label="歌詞" />
+        <Tab label="アートワーク" />
+      </Tabs>
+    </Box>
+  );
+});
 
 /** フォームの値を、サーバーへの保存リクエストの値に変換 */
 function formDataToUpdate(

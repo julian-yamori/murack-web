@@ -33,7 +33,7 @@ export function useScreenLock(): {
 }
 
 /** isLocked フラグが立っているときに画面全体を暗転させてロックするコンポーネント */
-export const ScreenLockBackdrop: React.FC<{ isLocked: boolean }> = (
+export const ScreenLockBackdrop = React.memo<{ isLocked: boolean }>((
   { isLocked },
 ) => {
   return (
@@ -44,4 +44,4 @@ export const ScreenLockBackdrop: React.FC<{ isLocked: boolean }> = (
       <CircularProgress color="inherit" />
     </Backdrop>
   );
-};
+});
