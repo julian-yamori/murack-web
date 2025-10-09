@@ -107,7 +107,12 @@ export const SingleTrackForm: React.FC<{
       {/* タブコンテンツ */}
       <Box sx={{ flex: 1, overflow: "auto", p: 2 }}>
         {currentTab === 0 && (
-          <BasicInfoTab register={register} errors={errors} control={control} />
+          <BasicInfoTab
+            formData={formData}
+            register={register}
+            errors={errors}
+            control={control}
+          />
         )}
         {currentTab === 1 && <LyricsTab register={register} />}
         {currentTab === 2 && (

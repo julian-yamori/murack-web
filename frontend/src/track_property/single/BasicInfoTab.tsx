@@ -13,16 +13,15 @@ import { FormCheckbox } from "../../common_components/form/FormCheckbox.tsx";
 import { FormRating } from "../../common_components/form/FormRating.tsx";
 
 interface BasicInfoTabProps {
+  formData: SingleTrackProperty;
   register: UseFormRegister<SingleTrackProperty>;
   errors: FieldErrors<SingleTrackProperty>;
   control: Control<SingleTrackProperty>;
 }
 
-export const BasicInfoTab: React.FC<BasicInfoTabProps> = ({
-  register,
-  errors,
-  control,
-}) => {
+export const BasicInfoTab: React.FC<BasicInfoTabProps> = (
+  { formData, register, errors, control },
+) => {
   return (
     <Box>
       {/* 評価セクション（上部） */}
@@ -220,22 +219,44 @@ export const BasicInfoTab: React.FC<BasicInfoTabProps> = ({
             <Typography variant="caption" color="text.secondary">
               再生時間
             </Typography>
-            <Typography variant="body2">3:45</Typography>
+            <Typography variant="body2">
+              {formatDuration(formData.duration)}
+            </Typography>
           </Box>
           <Box>
             <Typography variant="caption" color="text.secondary">
               登録日
             </Typography>
-            <Typography variant="body2">2024/1/15</Typography>
+            <Typography variant="body2">{formData.created_at}</Typography>
           </Box>
           <Box>
             <Typography variant="caption" color="text.secondary">
               ファイルパス
             </Typography>
-            <Typography variant="body2" noWrap>/path/to/file.mp3</Typography>
+            <Typography variant="body2" noWrap>{formData.path}</Typography>
           </Box>
         </Stack>
       </Stack>
     </Box>
   );
 };
+
+/**
+ * 再生時間の文字列化
+ * @param duration 再生時間 (ミリ秒)
+ */
+function formatDuration(duration: number): string {
+  const sec = Math.floor(duration % 60000 / 1000);
+  const min = Math.floor(duration % 3600000 / 60000);
+  const hour = Math.floor(duration / 3600000);
+
+  if (hour == 0) {
+    return `${min}:${format02d(sec)}`;
+  } else {
+    return `${hour}:${format02d(min)}:${format02d(sec)}`;
+  }
+}
+
+function format02d(num: number): string {
+  return num.toString().padStart(2, "0");
+}
