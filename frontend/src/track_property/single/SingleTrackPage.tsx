@@ -20,6 +20,7 @@ export const SingleTrackPage: React.FC<
     currentIndex,
     moveToPrevTrack,
     moveToNextTrack,
+    onSaved,
   } = useTrackSelection({
     trackIds,
     defaultIndex,
@@ -35,6 +36,7 @@ export const SingleTrackPage: React.FC<
         totalCount={trackIds.length}
         moveToPrevTrack={moveToPrevTrack}
         moveToNextTrack={moveToNextTrack}
+        onSaved={onSaved}
       />
     );
   }

@@ -14,6 +14,11 @@ import { isFormEdited } from "./formUtils.ts";
 import { BasicInfoTab } from "./BasicInfoTab.tsx";
 import { LyricsTab } from "./LyricsTab.tsx";
 import { ArtworkTab } from "./ArtworkTab.tsx";
+import { toast } from "react-toastify";
+import {
+  ScreenLockBackdrop,
+  useScreenLock,
+} from "../../common_components/screen_lock.tsx";
 
 export const SingleTrackForm: React.FC<{
   dbTrackProperty: SingleTrackProperty;
@@ -21,14 +26,19 @@ export const SingleTrackForm: React.FC<{
   totalCount: number;
   moveToPrevTrack: () => unknown;
   moveToNextTrack: () => unknown;
+  onSaved: (savedData: SingleTrackProperty) => unknown;
 }> = ({
   dbTrackProperty,
   currentIndex,
   totalCount,
   moveToPrevTrack,
   moveToNextTrack,
+  onSaved,
 }) => {
+  const { isLocked, lockScreen } = useScreenLock();
+
   const [currentTab, setCurrentTab] = useState(0);
+
   const {
     register,
     watch,
@@ -38,7 +48,6 @@ export const SingleTrackForm: React.FC<{
   } = useForm<SingleTrackProperty>({
     defaultValues: dbTrackProperty,
   });
-
   const formData = watch();
 
   // 編集状態の判定
@@ -55,8 +64,13 @@ export const SingleTrackForm: React.FC<{
   // 保存API
   const updateMutation = useUpdateSingleTrackProps(dbTrackProperty.id);
 
-  const handleSave = async () => {
-    await updateMutation.trigger(formDataToUpdate(formData));
+  /** 保存ボタン押下時 */
+  const handleSave = () => {
+    return lockScreen(async () => {
+      await updateMutation.trigger(formDataToUpdate(formData));
+      toast.success("保存しました", { autoClose: 2000 });
+      onSaved(formData);
+    });
   };
 
   const {
@@ -75,6 +89,8 @@ export const SingleTrackForm: React.FC<{
 
   return (
     <Box sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
+      <ScreenLockBackdrop isLocked={isLocked} />
+
       {/* タブ */}
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
         <Tabs
@@ -133,10 +149,10 @@ export const SingleTrackForm: React.FC<{
 
         <Button
           onClick={handleSave}
-          disabled={!isEdited || updateMutation.isMutating}
+          disabled={!isEdited}
           variant="contained"
         >
-          保存{isEdited ? " *" : ""}
+          保存
         </Button>
       </Box>
 

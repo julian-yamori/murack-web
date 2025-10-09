@@ -26,6 +26,7 @@ export function useTrackSelection({ trackIds, defaultIndex, setFormState }: {
 
   moveToPrevTrack: () => Promise<void>;
   moveToNextTrack: () => Promise<void>;
+  onSaved: (savedData: SingleTrackProperty) => void;
 } {
   const [loadingState, setLoadingState] = useState<LoadingState>({
     state: "init",
@@ -97,11 +98,24 @@ export function useTrackSelection({ trackIds, defaultIndex, setFormState }: {
     await startLoading(loadingState.index + 1);
   }, [startLoading, loadingState.index]);
 
+  // 編集データがサーバーに保存された場合、とりあえず dbTrackProperty をそのまま保存データで置き換える
+  // (再読込した場合、現状の機構だとスクロール・タブ位置などもリセットされて面倒なので)
+  const onSaved = useCallback((savedData: SingleTrackProperty) => {
+    setLoadingState((oldState) => {
+      if (oldState.state === "completed") {
+        return { ...oldState, dbTrackProperty: savedData };
+      } else {
+        return oldState;
+      }
+    });
+  }, []);
+
   return {
     dbTrackProperty: loadingState.dbTrackProperty,
     currentIndex: loadingState.index,
     moveToPrevTrack,
     moveToNextTrack,
+    onSaved,
   };
 }
 
