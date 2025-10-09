@@ -212,38 +212,29 @@ export const BasicInfoTab: React.FC<BasicInfoTabProps> = ({
           helperText={errors.memo?.message}
         />
 
-        {/* 読み取り専用項目 */}
         <Divider sx={{ my: 2 }} />
-        <Typography variant="h6" gutterBottom>
-          楽曲情報
-        </Typography>
 
-        <Box sx={{ display: "flex", gap: 2 }}>
-          <TextField
-            label="再生時間"
-            value={`${Math.floor((0) / 60)}:${
-              String((0) % 60).padStart(2, "0")
-            }`}
-            size="small"
-            sx={{ width: "150px" }}
-            InputProps={{ readOnly: true }}
-          />
-          <TextField
-            label="ファイルパス"
-            value=""
-            fullWidth
-            size="small"
-            InputProps={{ readOnly: true }}
-          />
-        </Box>
-
-        <TextField
-          label="登録日"
-          value=""
-          size="small"
-          sx={{ width: "250px" }}
-          InputProps={{ readOnly: true }}
-        />
+        {/* 読み取り専用項目 */}
+        <Stack spacing={2} direction="row">
+          <Box>
+            <Typography variant="caption" color="text.secondary">
+              再生時間
+            </Typography>
+            <Typography variant="body2">3:45</Typography>
+          </Box>
+          <Box>
+            <Typography variant="caption" color="text.secondary">
+              登録日
+            </Typography>
+            <Typography variant="body2">2024/1/15</Typography>
+          </Box>
+          <Box>
+            <Typography variant="caption" color="text.secondary">
+              ファイルパス
+            </Typography>
+            <Typography variant="body2" noWrap>/path/to/file.mp3</Typography>
+          </Box>
+        </Stack>
       </Stack>
     </Box>
   );
