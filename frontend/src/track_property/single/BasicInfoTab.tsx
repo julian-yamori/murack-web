@@ -33,6 +33,13 @@ export const BasicInfoTab: React.FC<BasicInfoTabProps> = ({
     <Box>
       {/* 評価セクション（上部） */}
       <Box sx={{ mb: 3 }}>
+        {/* タグ */}
+        <Box sx={{ mb: 2 }}>
+          <Button variant="outlined" size="small">
+            タグを編集（未実装）
+          </Button>
+        </Box>
+
         {/* レート */}
         <Box sx={{ mb: 2 }}>
           <Typography variant="body2" sx={{ mb: 1 }}>
@@ -52,13 +59,6 @@ export const BasicInfoTab: React.FC<BasicInfoTabProps> = ({
               />
             )}
           />
-        </Box>
-
-        {/* タグ */}
-        <Box sx={{ mb: 2 }}>
-          <Button variant="outlined" size="small">
-            タグを編集（未実装）
-          </Button>
         </Box>
 
         {/* 原曲情報 */}
@@ -161,7 +161,7 @@ export const BasicInfoTab: React.FC<BasicInfoTabProps> = ({
           helperText={errors.genre?.message}
         />
 
-        {/* トラック・ディスク番号 */}
+        {/* トラック番号 */}
         <Box sx={{ display: "flex", gap: 2 }}>
           <TextField
             {...register("track_number", {
@@ -185,6 +185,10 @@ export const BasicInfoTab: React.FC<BasicInfoTabProps> = ({
             error={!!errors.track_max}
             helperText={errors.track_max?.message}
           />
+        </Box>
+
+        {/* ディスク番号 */}
+        <Box sx={{ display: "flex", gap: 2 }}>
           <TextField
             {...register("disc_number", {
               valueAsNumber: true,

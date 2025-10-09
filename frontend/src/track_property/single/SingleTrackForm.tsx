@@ -14,7 +14,6 @@ import { isFormEdited } from "./formUtils.ts";
 import { BasicInfoTab } from "./BasicInfoTab.tsx";
 import { LyricsTab } from "./LyricsTab.tsx";
 import { ArtworkTab } from "./ArtworkTab.tsx";
-import { usePopPage } from "../../navigation/navigation_hooks.ts";
 
 export const SingleTrackForm: React.FC<{
   dbTrackProperty: SingleTrackProperty;
@@ -29,8 +28,6 @@ export const SingleTrackForm: React.FC<{
   moveToPrevTrack,
   moveToNextTrack,
 }) => {
-  const popPage = usePopPage();
-
   const [currentTab, setCurrentTab] = useState(0);
   const {
     register,
@@ -78,16 +75,6 @@ export const SingleTrackForm: React.FC<{
 
   return (
     <Box sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
-      {/* ヘッダー */}
-      <Box sx={{ p: 2, borderBottom: 1, borderColor: "divider" }}>
-        <Typography variant="h6" gutterBottom>
-          {dbTrackProperty.title || "（タイトルなし）"}
-        </Typography>
-        <Typography variant="body2" color="text.secondary">
-          {dbTrackProperty.artist} • {currentIndex + 1} / {totalCount}
-        </Typography>
-      </Box>
-
       {/* タブ */}
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
         <Tabs
@@ -122,13 +109,12 @@ export const SingleTrackForm: React.FC<{
           justifyContent: "space-between",
         }}
       >
-        <Box>
+        <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
           <Button
             onClick={() => navigateWithSaveConfirm(moveToPrevTrack)}
             disabled={currentIndex <= 0}
             variant="outlined"
             size="small"
-            sx={{ mr: 1 }}
           >
             前の曲
           </Button>
@@ -140,23 +126,18 @@ export const SingleTrackForm: React.FC<{
           >
             次の曲
           </Button>
+          <Typography variant="body2" color="text.secondary">
+            {currentIndex + 1} / {totalCount}
+          </Typography>
         </Box>
 
-        <Box>
-          <Button
-            onClick={() => navigateWithSaveConfirm(popPage)}
-            sx={{ mr: 1 }}
-          >
-            閉じる
-          </Button>
-          <Button
-            onClick={handleSave}
-            disabled={!isEdited || updateMutation.isMutating}
-            variant="contained"
-          >
-            保存{isEdited ? " *" : ""}
-          </Button>
-        </Box>
+        <Button
+          onClick={handleSave}
+          disabled={!isEdited || updateMutation.isMutating}
+          variant="contained"
+        >
+          保存{isEdited ? " *" : ""}
+        </Button>
       </Box>
 
       {/* 保存確認ダイアログ */}
