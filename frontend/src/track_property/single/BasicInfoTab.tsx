@@ -32,16 +32,16 @@ export const BasicInfoTab: React.FC<BasicInfoTabProps> = ({
   return (
     <Box>
       {/* 評価セクション（上部） */}
-      <Box sx={{ mb: 3 }}>
+      <Stack spacing={2}>
         {/* タグ */}
-        <Box sx={{ mb: 2 }}>
+        <Box>
           <Button variant="outlined" size="small">
             タグを編集（未実装）
           </Button>
         </Box>
 
         {/* レート */}
-        <Box sx={{ mb: 2 }}>
+        <Box>
           <Typography variant="body2" sx={{ mb: 1 }}>
             レート
           </Typography>
@@ -67,7 +67,6 @@ export const BasicInfoTab: React.FC<BasicInfoTabProps> = ({
           label="原曲情報"
           fullWidth
           size="small"
-          sx={{ mb: 2 }}
           error={!!errors.original_track}
           helperText={errors.original_track?.message}
         />
@@ -80,7 +79,6 @@ export const BasicInfoTab: React.FC<BasicInfoTabProps> = ({
             />
           }
           label="アルバム推薦対象"
-          sx={{ mb: 2 }}
         />
 
         {/* 管理メモ */}
@@ -91,11 +89,10 @@ export const BasicInfoTab: React.FC<BasicInfoTabProps> = ({
           multiline
           rows={3}
           size="small"
-          sx={{ mb: 2 }}
           error={!!errors.memo_manage}
           helperText={errors.memo_manage?.message}
         />
-      </Box>
+      </Stack>
 
       <Divider sx={{ my: 3 }} />
 
