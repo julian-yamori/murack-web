@@ -67,9 +67,10 @@ export const SingleTrackForm: React.FC<{
   /** 保存ボタン押下時 */
   const handleSave = () => {
     return lockScreen(async () => {
-      await updateMutation.trigger(formDataToUpdate(formData));
+      const currentFormData = watch();
+      await updateMutation.trigger(formDataToUpdate(currentFormData));
       toast.success("保存しました", { autoClose: 2000 });
-      onSaved(formData);
+      onSaved(currentFormData);
     });
   };
 
@@ -108,7 +109,7 @@ export const SingleTrackForm: React.FC<{
       <Box sx={{ flex: 1, overflow: "auto", p: 2 }}>
         {currentTab === 0 && (
           <BasicInfoTab
-            formData={formData}
+            dbTrackProperty={dbTrackProperty}
             register={register}
             errors={errors}
             control={control}
