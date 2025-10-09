@@ -1,6 +1,7 @@
 import React from "react";
 import { Box, Card, CardMedia, Typography } from "@mui/material";
 import { TrackArtwork } from "../../gen/backend_api.ts";
+import { API_BASE_URL } from "../../api_base_url.ts";
 
 interface ArtworkTabProps {
   artworks: TrackArtwork[];
@@ -27,10 +28,6 @@ export const ArtworkTab: React.FC<ArtworkTabProps> = ({ artworks }) => {
 
   return (
     <Box>
-      <Typography variant="h6" gutterBottom>
-        アートワーク ({artworks.length}枚)
-      </Typography>
-
       <Box
         sx={{
           display: "grid",
@@ -42,7 +39,7 @@ export const ArtworkTab: React.FC<ArtworkTabProps> = ({ artworks }) => {
           <Card key={index} sx={{ maxWidth: 300 }}>
             <CardMedia
               component="img"
-              image={`/api/tracks/artwork/${artwork.artwork_id}/original`}
+              image={`${API_BASE_URL}/api/artworks/${artwork.artwork_id}/original`}
               alt={`アートワーク ${index + 1}`}
               sx={{
                 aspectRatio: "1/1",
@@ -52,8 +49,9 @@ export const ArtworkTab: React.FC<ArtworkTabProps> = ({ artworks }) => {
             />
             <Box sx={{ p: 1 }}>
               <Typography variant="caption" color="text.secondary">
-                {artwork.description || "アートワーク"} (Type:{" "}
-                {artwork.picture_type})
+                Type: {artwork.picture_type}
+                <br />
+                {artwork.description}
               </Typography>
             </Box>
           </Card>
